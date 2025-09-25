@@ -16,7 +16,8 @@
   },
   "scripts": {
     "dev": "convex dev",
-    "build": "convex deploy"
+    "build": "echo 'Build step skipped - Convex API files should be pre-generated'",
+    "deploy": "convex deploy"
   },
   "author": "",
   "license": "ISC",

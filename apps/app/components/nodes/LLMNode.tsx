@@ -6,15 +6,16 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Button } from "@/components/ui/button";
 import { Settings, Zap } from "lucide-react";
 
-interface LLMNodeData {
+export interface LLMNodeData {
   prompt: string;
   model: string;
 }
 
-export function LLMNode({ data, selected }: NodeProps<LLMNodeData>) {
+export function LLMNode({ data, selected }: NodeProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const [localPrompt, setLocalPrompt] = useState(data.prompt || "");
-  const [localModel, setLocalModel] = useState(data.model || "gpt-3.5-turbo");
+  const nodeData = data as unknown as LLMNodeData;
+  const [localPrompt, setLocalPrompt] = useState(nodeData.prompt || "");
+  const [localModel, setLocalModel] = useState(nodeData.model || "gpt-3.5-turbo");
 
   const models = [
     { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
@@ -24,7 +25,7 @@ export function LLMNode({ data, selected }: NodeProps<LLMNodeData>) {
 
   const updateNodeData = (updates: Partial<LLMNodeData>) => {
     // In a real implementation, this would update the node in the parent component
-    Object.assign(data, updates);
+    Object.assign(nodeData, updates);
   };
 
   const handlePromptChange = (value: string) => {
@@ -94,7 +95,7 @@ export function LLMNode({ data, selected }: NodeProps<LLMNodeData>) {
           {/* Preview */}
           {!isExpanded && localPrompt && (
             <div className="text-xs text-muted-foreground truncate">
-              "{localPrompt.slice(0, 50)}{localPrompt.length > 50 ? "..." : ""}"
+              &ldquo;{localPrompt.slice(0, 50)}{localPrompt.length > 50 ? "..." : ""}&rdquo;
             </div>
           )}
 

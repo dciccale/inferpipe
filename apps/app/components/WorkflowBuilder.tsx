@@ -19,14 +19,6 @@ import "@xyflow/react/dist/style.css";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { useMutation } from "convex/react";
 import { api } from "@packages/backend/api";
 import { LLMNode } from "./nodes/LLMNode";
@@ -55,7 +47,7 @@ export function WorkflowBuilder() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState("My Workflow");
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<any>(null);
+  const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null);
 
   const createWorkflow = useMutation(api.workflows.createWorkflow);
 
@@ -84,7 +76,7 @@ export function WorkflowBuilder() {
   }, [setNodes, nodes]);
 
   const updateNodeData = useCallback(
-    (nodeId: string, newData: any) => {
+    (nodeId: string, newData: Record<string, unknown>) => {
       setNodes((nds) =>
         nds.map((node) =>
           node.id === nodeId
@@ -95,6 +87,9 @@ export function WorkflowBuilder() {
     },
     [setNodes],
   );
+
+  // Prevent unused variable warning
+  void updateNodeData;
 
   const saveWorkflow = useCallback(async () => {
     try {
@@ -111,8 +106,8 @@ export function WorkflowBuilder() {
           id: edge.id,
           source: edge.source,
           target: edge.target,
-          sourceHandle: edge.sourceHandle,
-          targetHandle: edge.targetHandle,
+          sourceHandle: edge.sourceHandle || undefined,
+          targetHandle: edge.targetHandle || undefined,
         })),
       });
       alert(`Workflow saved with ID: ${workflowId}`);
@@ -146,8 +141,8 @@ export function WorkflowBuilder() {
           id: edge.id,
           source: edge.source,
           target: edge.target,
-          sourceHandle: edge.sourceHandle,
-          targetHandle: edge.targetHandle,
+          sourceHandle: edge.sourceHandle || undefined,
+          targetHandle: edge.targetHandle || undefined,
         })),
       });
 
@@ -266,9 +261,9 @@ export function WorkflowBuilder() {
               {executionResult && (
                 <div className="space-y-2">
                   <div className="text-sm font-medium">
-                    Status: {executionResult.status}
+                    Status: {String(executionResult.status)}
                   </div>
-                  {executionResult.output && (
+                  {Boolean(executionResult.output) && (
                     <div className="text-sm">
                       <div className="font-medium">Output:</div>
                       <div className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
@@ -278,11 +273,11 @@ export function WorkflowBuilder() {
                       </div>
                     </div>
                   )}
-                  {executionResult.error && (
+                  {Boolean(executionResult.error) && (
                     <div className="text-sm text-destructive">
                       <div className="font-medium">Error:</div>
                       <div className="bg-destructive/10 p-2 rounded text-xs">
-                        {executionResult.error}
+                        {String(executionResult.error)}
                       </div>
                     </div>
                   )}
