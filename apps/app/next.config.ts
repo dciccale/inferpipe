@@ -21,6 +21,29 @@ const nextConfig: NextConfig = {
   // The assetPrefix should point to the actual deployment URL in production
   basePath: isDev ? "/app" : "",
   assetPrefix: assetPrefix,
+  
+  // Add CORS headers to allow access from inferpipe.ai
+  async headers() {
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          {
+            key: "Access-Control-Allow-Origin",
+            value: "https://inferpipe.ai",
+          },
+          {
+            key: "Access-Control-Allow-Methods",
+            value: "GET, POST, PUT, DELETE, OPTIONS",
+          },
+          {
+            key: "Access-Control-Allow-Headers",
+            value: "Content-Type, Authorization",
+          },
+        ],
+      },
+    ];
+  },
 };
 
 export default nextConfig;
