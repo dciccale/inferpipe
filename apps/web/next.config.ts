@@ -5,8 +5,8 @@ const nextConfig: NextConfig = {
     const appOrigin = process.env.APP_ORIGIN || "http://localhost:3001";
     return [
       // Rewrite app routes
-      { source: "/app", destination: `${appOrigin}/app` },
-      { source: "/app/:path*", destination: `${appOrigin}/app/:path*` },
+      { source: "/app", destination: `${appOrigin}` },
+      { source: "/app/:path*", destination: `${appOrigin}/:path*` },
       // Forward API routes to app deployment
       { source: "/api/:path*", destination: `${appOrigin}/api/:path*` },
     ];
