@@ -6,12 +6,12 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["APP_ORIGIN", "VERCEL_URL"]
+      "env": ["APP_ORIGIN"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["APP_ORIGIN", "VERCEL_URL"]
+      "env": ["APP_ORIGIN"]
     },
     "lint": {},
     "clean": {
