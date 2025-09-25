@@ -48,7 +48,7 @@ export function LLMNode({ data }: NodeProps) {
     <div>
       <Handle type="target" position={Position.Left} />
 
-      <Card>
+      <Card className="rounded-lg border border-gray-300 shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">

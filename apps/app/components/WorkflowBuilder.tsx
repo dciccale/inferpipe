@@ -229,7 +229,8 @@ export function WorkflowBuilder() {
             }}
             connectionLineStyle={{ stroke: "#6366f1", strokeWidth: 2 }}
             snapToGrid={true}
-            snapGrid={[20, 20]}>
+            snapGrid={[20, 20]}
+            colorMode="dark">
             <Controls />
             <MiniMap />
             <Background

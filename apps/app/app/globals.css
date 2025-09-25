@@ -58,6 +58,7 @@ body {
 }
 
 /* React Flow dark theme overrides */
+/*
 .react-flow {
   background: var(--background);
 }
@@ -119,3 +120,4 @@ body {
   border: 1px solid var(--border);
   color: var(--muted-foreground);
 }
+*/
