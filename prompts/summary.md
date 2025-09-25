@@ -218,7 +218,49 @@ inferpipe is a visual, no-code interface that enables business teams to build so
 | **LangChain** | AI development      | ✅        | ❌               | ❌      | AI engineers     |
 | **inferpipe** | AI workflows        | ✅        | ✅               | ✅      | Business + Devs  |
 
+### Key Differentiators from n8n
+
+**1. AI-Native vs. Generic Automation**
+- **n8n:** Generic workflow automation with AI integrations as add-ons
+- **inferpipe:** Purpose-built for AI workflows with:
+  - Optimized LLM operations and token management
+  - Built-in cost tracking for AI model usage
+  - AI-first UX around prompt engineering and model selection
+
+**2. Business User Focus vs. Developer-Centric**
+- **n8n:** Targets developers requiring JavaScript/Python coding skills
+- **inferpipe:** Designed for business users (PMs, marketers, operations)
+  - True no-code experience without coding requirements
+  - Business-friendly interface abstracting technical complexity
+  - Templates built around business use cases
+
+**3. Production-Ready Infrastructure vs. Self-Hosted Complexity**
+- **n8n:** Requires DevOps knowledge for production deployment/scaling
+- **inferpipe:** Enterprise-grade execution from day one
+  - Powered by Inngest's robust orchestration engine
+  - Built-in reliability, retry logic, and observability
+  - Zero infrastructure management required
+
+**4. Async AI Workflow Specialization**
+- **n8n:** General automation, not optimized for long-running AI tasks
+- **inferpipe:** Built for async AI processing
+  - Optimized for multi-step LLM operations (minutes/hours)
+  - Streaming progress updates and real-time monitoring
+  - Sophisticated AI-specific error handling and retries
+
+**5. Developer Integration Layer**
+- **n8n:** Primarily standalone automation tool
+- **inferpipe:** Backend infrastructure for product integration
+  - Clean REST APIs for server-side integration
+  - Backend SDK for embedding in existing products
+  - API-first architecture with webhook delivery
+
 **Market Positioning (Complementary, Not Competitive):**
+
+**inferpipe vs n8n:**
+- **n8n:** "Technical workflows for developers who can code"
+- **inferpipe:** "AI workflows for business teams who want results"
+- **Relationship:** Different audiences, different problems - complementary market segments
 
 **inferpipe vs Inngest:**
 - **Inngest:** "Write TypeScript to build custom workflows" → Developer-focused infrastructure
@@ -231,6 +273,7 @@ inferpipe is a visual, no-code interface that enables business teams to build so
 2. **Perfect Segmentation:** Business interface (inferpipe) + Developer infrastructure (Inngest)
 3. **Best of Both Worlds:** Visual simplicity + robust orchestration
 4. **Complementary Ecosystem:** Strengthens rather than competes with existing tools
+5. **AI Workflow Optimization:** Purpose-built for LLM operations with cost transparency and AI-specific reliability
 
 ---
 
