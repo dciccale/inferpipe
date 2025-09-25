@@ -42,12 +42,18 @@ const initialNodes: Node[] = [
 
 const initialEdges: Edge[] = [];
 
+// Then execute it via Convex HTTP action
+const CONVEX_HTTP_URL = process.env.NEXT_PUBLIC_CONVEX_HTTP_URL;
+
 export function WorkflowBuilder() {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [workflowName, setWorkflowName] = useState("My Workflow");
   const [isExecuting, setIsExecuting] = useState(false);
-  const [executionResult, setExecutionResult] = useState<Record<string, unknown> | null>(null);
+  const [executionResult, setExecutionResult] = useState<Record<
+    string,
+    unknown
+  > | null>(null);
 
   const createWorkflow = useMutation(api.workflows.createWorkflow);
 
@@ -146,16 +152,8 @@ export function WorkflowBuilder() {
         })),
       });
 
-      // Then execute it via Convex HTTP action
-      const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-      if (!convexUrl) {
-        throw new Error(
-          "Convex URL not configured. Please add NEXT_PUBLIC_CONVEX_URL to your .env.local",
-        );
-      }
-
       const response = await fetch(
-        `${convexUrl}/v1/workflows/${workflowId}/runs`,
+        `${CONVEX_HTTP_URL}/v1/workflows/${workflowId}/runs`,
         {
           method: "POST",
           headers: {
