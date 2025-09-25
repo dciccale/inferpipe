@@ -5,9 +5,9 @@ const nextConfig: NextConfig = {
     const appOrigin = process.env.APP_ORIGIN || "http://localhost:3001";
     console.log("appOrigin", appOrigin);
     const rewrites = [
-      // Rewrite app routes
-      { source: "/app", destination: `${appOrigin}` },
-      { source: "/app/:path*", destination: `${appOrigin}/:path*` },
+      // Rewrite app routes - following Vercel Multi Zones guide pattern
+      { source: "/app", destination: `${appOrigin}/app` },
+      { source: "/app/:path*", destination: `${appOrigin}/app/:path*` },
       // Forward API routes to app deployment
       { source: "/api/:path*", destination: `${appOrigin}/api/:path*` },
     ];

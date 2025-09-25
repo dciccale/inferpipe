@@ -17,10 +17,10 @@ console.log("  basePath:", isDev ? "/app" : "");
 console.log("  assetPrefix:", assetPrefix);
 
 const nextConfig: NextConfig = {
-  // Use basePath when accessed through proxy (development) or when deployed standalone
-  // The assetPrefix should point to the actual deployment URL in production
-  basePath: isDev ? "/app" : "",
-  assetPrefix: assetPrefix,
+  // According to Vercel Multi Zones guide, basePath should match the rewrite path
+  // This app is served under /app via rewrites, so basePath should be /app
+  basePath: "/app",
+  // No assetPrefix needed - Next.js will handle this with basePath
   
   // Add CORS headers to allow access from inferpipe.ai
   async headers() {
