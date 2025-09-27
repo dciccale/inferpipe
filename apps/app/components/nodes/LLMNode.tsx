@@ -9,14 +9,19 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Zap } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Zap, X } from "lucide-react";
 
 export interface LLMNodeData {
   prompt: string;
   model: string;
 }
 
-export function LLMNode({ data }: NodeProps) {
+interface LLMNodeProps extends NodeProps {
+  onDeleteNode?: (nodeId: string) => void;
+}
+
+export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
   const nodeData = data as unknown as LLMNodeData;
   const [localPrompt, setLocalPrompt] = useState(nodeData.prompt || "");
   const [localModel, setLocalModel] = useState(
@@ -45,16 +50,26 @@ export function LLMNode({ data }: NodeProps) {
   };
 
   return (
-    <div>
-      <Handle type="target" position={Position.Left} />
-
-      <Card className="rounded-lg border border-gray-300 shadow-sm">
+    <>
+      <Card className="w-80 border-2 border-border shadow-sm">
         <CardHeader className="pb-2">
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
               <CardTitle className="text-sm">LLM Node</CardTitle>
             </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+              onClick={() => {
+                if (window.confirm("Delete this LLM node?")) {
+                  onDeleteNode?.(id);
+                }
+              }}
+            >
+              <X className="w-3 h-3" />
+            </Button>
           </div>
         </CardHeader>
 
@@ -100,8 +115,18 @@ export function LLMNode({ data }: NodeProps) {
           </div>
         </CardContent>
       </Card>
-
-      <Handle type="source" position={Position.Right} />
-    </div>
+      
+      {/* Handles positioned outside the card but within the node */}
+      <Handle 
+        type="target" 
+        position={Position.Left} 
+        className="!bg-primary !border-2 !border-background !w-3 !h-3"
+      />
+      <Handle 
+        type="source" 
+        position={Position.Right} 
+        className="!bg-primary !border-2 !border-background !w-3 !h-3"
+      />
+    </>
   );
 }

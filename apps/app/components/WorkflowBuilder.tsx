@@ -1,8 +1,9 @@
 "use client";
 
-import React, { useCallback, useState } from "react";
+import React, { useCallback, useState, useEffect, useMemo } from "react";
 import {
   ReactFlow,
+  ReactFlowProvider,
   Node,
   Edge,
   addEdge,
@@ -13,6 +14,7 @@ import {
   Background,
   BackgroundVariant,
   MiniMap,
+  useReactFlow,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -21,34 +23,57 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@packages/backend/api";
-import { LLMNode } from "./nodes/LLMNode";
+import { LLMNode } from "@/components/nodes/LLMNode";
+import { InputNode } from "@/components/nodes/InputNode";
 import { Plus, Play, Save } from "lucide-react";
 
-const nodeTypes = {
-  llm: LLMNode,
-};
 
-const initialNodes: Node[] = [
-  {
-    id: "1",
-    type: "llm",
-    position: { x: 100, y: 200 },
+
+interface WorkflowBuilderProps {
+  workflowId?: string;
+  initialWorkflow?: {
+    _id: string;
+    name: string;
+    description?: string;
+    nodes: any[];
+    edges: any[];
+  };
+}
+
+function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderProps = {}) {
+  // Initialize nodes and edges from initialWorkflow or defaults
+  const defaultNodes: Node[] = initialWorkflow?.nodes?.map(node => ({
+    id: node.id,
+    type: node.type,
+    position: node.position,
     data: {
-      prompt: "Hello! How can I help you today?",
-      model: "gpt-3.5-turbo",
+      ...node.data,
+      // Ensure input nodes have the workflowId
+      ...(node.type === "input" ? { workflowId: workflowId || "" } : {}),
     },
-  },
-];
+  })) || [
+    {
+      id: "input-1",
+      type: "input",
+      position: { x: 100, y: 200 },
+      data: {
+        textInput: "",
+        workflowId: workflowId || "",
+      },
+    },
+  ];
 
-const initialEdges: Edge[] = [];
+  const defaultEdges: Edge[] = initialWorkflow?.edges?.map(edge => ({
+    id: edge.id,
+    source: edge.source,
+    target: edge.target,
+    sourceHandle: edge.sourceHandle,
+    targetHandle: edge.targetHandle,
+  })) || [];
 
-// Then execute it via Convex HTTP action
-const CONVEX_HTTP_URL = process.env.NEXT_PUBLIC_CONVEX_HTTP_URL;
-
-export function WorkflowBuilder() {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
-  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
-  const [workflowName, setWorkflowName] = useState("My Workflow");
+  const [nodes, setNodes, onNodesChange] = useNodesState(defaultNodes);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(defaultEdges);
+  const [workflowName, setWorkflowName] = useState(initialWorkflow?.name || "My Workflow");
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState<Record<
     string,
@@ -56,6 +81,8 @@ export function WorkflowBuilder() {
   > | null>(null);
 
   const createWorkflow = useMutation(api.workflows.createWorkflow);
+  const updateWorkflow = useMutation(api.workflows.updateWorkflow);
+  const { getNodes, getEdges } = useReactFlow();
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -81,6 +108,46 @@ export function WorkflowBuilder() {
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes, nodes]);
 
+  const addInputNode = useCallback(() => {
+    // Find the leftmost node to position the new input node to its left
+    const leftmostX = nodes.reduce(
+      (minX, node) => Math.min(minX, node.position.x),
+      100,
+    );
+
+    const newNode: Node = {
+      id: `input-${Date.now()}`,
+      type: "input",
+      position: { x: leftmostX - 350, y: 200 },
+      data: {
+        textInput: "",
+        workflowId: workflowId || "",
+      },
+    };
+    setNodes((nds) => [...nds, newNode]);
+  }, [setNodes, nodes, workflowId]);
+
+  const deleteNode = useCallback((nodeId: string) => {
+    setNodes((currentNodes) => {
+      // Check if it's an input node
+      const nodeToDelete = currentNodes.find(node => node.id === nodeId);
+      if (nodeToDelete?.type === "input") {
+        // Count input nodes
+        const inputNodes = currentNodes.filter(node => node.type === "input");
+        if (inputNodes.length <= 1) {
+          alert("Cannot delete the last input node. At least one input node must exist.");
+          return currentNodes; // Return unchanged nodes
+        }
+      }
+
+      // Remove the node
+      return currentNodes.filter((node) => node.id !== nodeId);
+    });
+    
+    // Remove any edges connected to this node
+    setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
+  }, [setNodes, setEdges]);
+
   const updateNodeData = useCallback(
     (nodeId: string, newData: Record<string, unknown>) => {
       setNodes((nds) =>
@@ -97,11 +164,24 @@ export function WorkflowBuilder() {
   // Prevent unused variable warning
   void updateNodeData;
 
+  // Create node types with delete function - memoized to prevent recreation
+  const nodeTypes = useMemo(() => ({
+    llm: (props: any) => <LLMNode {...props} onDeleteNode={deleteNode} />,
+    input: (props: any) => <InputNode {...props} onDeleteNode={deleteNode} />,
+  }), [deleteNode]);
+
+  // Handle keyboard deletion
+  const onNodesDelete = useCallback((nodesToDelete: Node[]) => {
+    nodesToDelete.forEach(node => {
+      deleteNode(node.id);
+    });
+  }, [deleteNode]);
+
   const saveWorkflow = useCallback(async () => {
     try {
-      const workflowId = await createWorkflow({
+      const workflowData = {
         name: workflowName,
-        description: "Created with workflow builder",
+        description: initialWorkflow?.description || "Created with workflow builder",
         nodes: nodes.map((node) => ({
           id: node.id,
           type: node.type || "llm",
@@ -115,13 +195,27 @@ export function WorkflowBuilder() {
           sourceHandle: edge.sourceHandle || undefined,
           targetHandle: edge.targetHandle || undefined,
         })),
-      });
-      alert(`Workflow saved with ID: ${workflowId}`);
+      };
+
+      if (workflowId && initialWorkflow) {
+        // Update existing workflow
+        await updateWorkflow({
+          workflowId: workflowId as any,
+          ...workflowData,
+        });
+        alert("Workflow updated successfully!");
+      } else {
+        // Create new workflow
+        const newWorkflowId = await createWorkflow(workflowData);
+        alert(`Workflow saved with ID: ${newWorkflowId}`);
+      }
     } catch (error) {
       console.error("Error saving workflow:", error);
       alert("Error saving workflow");
     }
-  }, [createWorkflow, workflowName, nodes, edges]);
+  }, [createWorkflow, updateWorkflow, workflowName, nodes, edges, workflowId, initialWorkflow]);
+
+  const executeWorkflowMutation = useMutation(api.workflows.executeWorkflow);
 
   const executeWorkflow = useCallback(async () => {
     if (nodes.length === 0) {
@@ -129,47 +223,28 @@ export function WorkflowBuilder() {
       return;
     }
 
+    if (!workflowId) {
+      alert("Please save the workflow first before executing");
+      return;
+    }
+
     setIsExecuting(true);
     setExecutionResult(null);
 
     try {
-      // First save the workflow
-      const workflowId = await createWorkflow({
-        name: workflowName,
-        description: "Created with workflow builder",
-        nodes: nodes.map((node) => ({
-          id: node.id,
-          type: node.type || "llm",
-          position: node.position,
-          data: node.data,
-        })),
-        edges: edges.map((edge) => ({
-          id: edge.id,
-          source: edge.source,
-          target: edge.target,
-          sourceHandle: edge.sourceHandle || undefined,
-          targetHandle: edge.targetHandle || undefined,
-        })),
+      // Update existing workflow before executing
+      await saveWorkflow();
+
+      // Get input from input node if it exists
+      const inputNode = nodes.find(node => node.type === "input");
+      const inputData = inputNode?.data?.textInput || "Hello from the workflow builder!";
+
+      // Execute workflow using Convex mutation
+      const result = await executeWorkflowMutation({
+        workflowId: workflowId as any,
+        input: { text: inputData },
       });
 
-      const response = await fetch(
-        `${CONVEX_HTTP_URL}/v1/workflows/${workflowId}/runs`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-          },
-          body: JSON.stringify({
-            input: { text: "Hello from the workflow builder!" },
-          }),
-        },
-      );
-
-      if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
-      }
-
-      const result = await response.json();
       setExecutionResult(result);
     } catch (error) {
       console.error("Error executing workflow:", error);
@@ -180,7 +255,7 @@ export function WorkflowBuilder() {
     } finally {
       setIsExecuting(false);
     }
-  }, [createWorkflow, workflowName, nodes, edges]);
+  }, [executeWorkflowMutation, workflowId, saveWorkflow, nodes]);
 
   return (
     <div className="w-full h-screen flex flex-col bg-background">
@@ -195,6 +270,10 @@ export function WorkflowBuilder() {
           />
         </div>
         <div className="flex items-center gap-2">
+          <Button variant="outline" onClick={addInputNode}>
+            <Plus className="w-4 h-4 mr-2" />
+            Add Input Node
+          </Button>
           <Button variant="outline" onClick={addLLMNode}>
             <Plus className="w-4 h-4 mr-2" />
             Add LLM Node
@@ -220,6 +299,7 @@ export function WorkflowBuilder() {
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onNodesDelete={onNodesDelete}
             nodeTypes={nodeTypes}
             fitView
             defaultEdgeOptions={{
@@ -230,7 +310,8 @@ export function WorkflowBuilder() {
             connectionLineStyle={{ stroke: "#6366f1", strokeWidth: 2 }}
             snapToGrid={true}
             snapGrid={[20, 20]}
-            colorMode="dark">
+            colorMode="dark"
+            deleteKeyCode="Delete">
             <Controls />
             <MiniMap />
             <Background
@@ -292,5 +373,13 @@ export function WorkflowBuilder() {
         </div>
       </div>
     </div>
+  );
+}
+
+export function WorkflowBuilder(props: WorkflowBuilderProps) {
+  return (
+    <ReactFlowProvider>
+      <WorkflowBuilderInner {...props} />
+    </ReactFlowProvider>
   );
 }

@@ -6,6 +6,11 @@ export default defineSchema({
   workflows: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
+    status: v.optional(v.union(
+      v.literal("draft"),
+      v.literal("published"),
+      v.literal("archived")
+    )),
     // Nodes in the workflow graph
     nodes: v.array(v.object({
       id: v.string(),

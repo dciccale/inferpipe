@@ -14,6 +14,7 @@ import type {
   FunctionReference,
 } from "convex/server";
 import type * as http from "../http.js";
+import type * as inngest from "../inngest.js";
 import type * as runs from "../runs.js";
 import type * as steps from "../steps.js";
 import type * as workflows from "../workflows.js";
@@ -28,6 +29,7 @@ import type * as workflows from "../workflows.js";
  */
 declare const fullApi: ApiFromModules<{
   http: typeof http;
+  inngest: typeof inngest;
   runs: typeof runs;
   steps: typeof steps;
   workflows: typeof workflows;
