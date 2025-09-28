@@ -35,7 +35,7 @@ export default function Home() {
         ],
         edges: [],
       });
-      
+
       router.push(`/builder/${workflowId}`);
     } catch (error) {
       console.error("Error creating workflow:", error);
@@ -47,7 +47,9 @@ export default function Home() {
       <div className="min-h-screen bg-background flex items-center justify-center">
         <div className="text-center">
           <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-          <p className="mt-2 text-sm text-muted-foreground">Loading workflows...</p>
+          <p className="mt-2 text-sm text-muted-foreground">
+            Loading workflows...
+          </p>
         </div>
       </div>
     );
@@ -92,8 +94,7 @@ export default function Home() {
               <Card
                 key={workflow._id}
                 className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => router.push(`/builder/${workflow._id}`)}
-              >
+                onClick={() => router.push(`/builder/${workflow._id}`)}>
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -101,13 +102,14 @@ export default function Home() {
                         <CardTitle className="text-lg truncate">
                           {workflow.name}
                         </CardTitle>
-                        <span className={`px-2 py-1 text-xs rounded-full ${
-                          workflow.status === "published" 
-                            ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                            : workflow.status === "archived"
-                            ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300" 
-                            : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                        }`}>
+                        <span
+                          className={`px-2 py-1 text-xs rounded-full ${
+                            workflow.status === "published"
+                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
+                              : workflow.status === "archived"
+                                ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
+                                : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
+                          }`}>
                           {workflow.status || "draft"}
                         </span>
                       </div>
@@ -132,7 +134,10 @@ export default function Home() {
                     </div>
                     <div className="flex items-center text-xs text-muted-foreground pt-2 border-t">
                       <Clock className="w-3 h-3 mr-1" />
-                      Updated {formatDistanceToNow(new Date(workflow.updatedAt), { addSuffix: true })}
+                      Updated{" "}
+                      {formatDistanceToNow(new Date(workflow.updatedAt), {
+                        addSuffix: true,
+                      })}
                     </div>
                   </div>
                   <div className="flex gap-2 mt-4">
@@ -143,8 +148,7 @@ export default function Home() {
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push(`/builder/${workflow._id}`);
-                      }}
-                    >
+                      }}>
                       Edit
                     </Button>
                     <Button
@@ -154,8 +158,7 @@ export default function Home() {
                         e.stopPropagation();
                         // TODO: Implement run workflow
                         console.log("Run workflow:", workflow._id);
-                      }}
-                    >
+                      }}>
                       <Play className="w-3 h-3 mr-1" />
                       Run
                     </Button>

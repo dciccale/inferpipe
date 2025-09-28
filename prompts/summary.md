@@ -1,18 +1,18 @@
-# inferpipe: No-Code AI Workflow Backend Platform
+# inferpipe: Visual AI Pipeline Builder
 
 ## Executive Summary
 
-inferpipe transforms AI workflows from complex development projects into drag-and-drop configurations, enabling non-technical teams to build production-ready AI backends without code. We provide the infrastructure, orchestration, and developer-friendly APIs that power AI features for any product.
+inferpipe is a visual AI pipeline builder that helps teams build, test, and deploy intelligent automation without complex development. Our drag-and-drop interface lets you create AI workflows, test prompts iteratively, and integrate seamlessly into any application via simple APIs.
 
 ---
 
 ## Problem Statement
 
-**For Businesses:** Product teams have AI feature ideas but lack technical resources. Building custom AI workflows requires senior developers, weeks of work, and ongoing maintenance.
+**For Businesses:** Product teams want to add AI features but building custom AI pipelines requires senior developers, weeks of work, and complex infrastructure setup.
 
-**For Developers:** Every AI integration becomes a custom backend project. No standardized way to handle multi-step LLM operations, error handling, or async processing.
+**For Developers:** Every AI integration becomes a custom backend project. Testing prompts, handling errors, and deploying reliable AI workflows requires significant engineering overhead.
 
-**Market Gap:** Zapier handles simple automations. n8n handles technical workflows. No platform purpose-built for production AI workflow orchestration with proper async handling, model optimization, and developer integration.
+**Market Gap:** Zapier handles simple automations. n8n handles technical workflows. No platform combines visual AI pipeline building with built-in testing capabilities and production-ready deployment.
 
 ---
 
@@ -20,11 +20,11 @@ inferpipe transforms AI workflows from complex development projects into drag-an
 
 ### Core Value Proposition
 
-"The Zapier for AI workflows - drag-and-drop AI orchestration with enterprise-grade execution."
+"Visual AI Pipeline Builder - Build, test, and deploy AI workflows with drag-and-drop simplicity and enterprise-grade execution."
 
 ### Product Description
 
-inferpipe is a visual, no-code interface that enables business teams to build sophisticated AI workflows, powered by robust infrastructure from Inngest. We provide the business-friendly layer on top of developer-focused orchestration tools, creating AI workflows without requiring code.
+inferpipe is a visual pipeline builder that enables teams to create sophisticated AI workflows through an intuitive drag-and-drop interface. Built on enterprise-grade infrastructure, we make it easy to test AI prompts, iterate on logic, and deploy intelligent automation that integrates seamlessly into any application.
 
 **Market Positioning:**
 - **inferpipe:** Visual AI workflow builder for business users (like Zapier)
@@ -33,10 +33,10 @@ inferpipe is a visual, no-code interface that enables business teams to build so
 
 **Key Differentiators:**
 
-- **Business-First:** No-code interface designed for product managers, marketers, operations teams
-- **AI-Native:** Purpose-built for LLM operations, not generic automation
-- **Enterprise Infrastructure:** Powered by Inngest's robust orchestration engine
-- **Developer Integration:** Clean REST APIs and backend SDK for seamless server-side integration
+- **Visual Pipeline Builder:** Drag-and-drop interface for building AI workflows without coding
+- **Test & Iterate:** Built-in prompt testing, A/B testing, and real-time debugging capabilities  
+- **Production-Ready:** Enterprise infrastructure with automatic scaling and error handling
+- **Easy Integration:** Simple APIs and SDKs for adding AI processes to any application
 
 ### Workflow Architecture
 
@@ -152,28 +152,44 @@ inferpipe is a visual, no-code interface that enables business teams to build so
 
 ### Tiered Pricing Model
 
-**Starter: $29/month**
+**Free: $0/month**
 
-- 5 workflows
+- 3 workflows
 - 1,000 executions/month
 - Basic models (GPT-3.5, Claude Haiku)
 - Community support
 
-**Professional: $99/month**
+**Starter: $49/month**
 
-- 25 workflows
-- 10,000 executions/month
+- 10 workflows
+- 5,000 executions/month
+- Basic models priority
+- Email support
+
+**Professional: $149/month**
+
+- 50 workflows
+- 25,000 executions/month
 - All models (GPT-4, Claude Sonnet/Opus)
 - Priority support
-- Custom webhook endpoints
+- Team collaboration (10 users)
+
+**Business: $399/month**
+
+- Unlimited workflows
+- 100,000 executions/month
+- Priority model access
+- Dedicated customer success
+- SSO integration
+- Team collaboration (50 users)
 
 **Enterprise: Custom**
 
-- Unlimited workflows
-- Volume pricing
+- Volume discounts
 - Dedicated infrastructure
-- SLA guarantees
 - On-premise deployment
+- White-label options
+- SLA guarantees
 
 ### Token Cost Structure
 
