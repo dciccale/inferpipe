@@ -1,9 +1,8 @@
 import React, { useState, useRef } from "react";
 import { Handle, Position, NodeProps } from "@xyflow/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BaseNode, BaseNodeHeader, BaseNodeContent, BaseNodeFooter } from "./BaseNode";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { FileText, Upload, Play, Shield } from "lucide-react";
 
 export interface InputNodeData {
@@ -55,21 +54,22 @@ export function InputNode({ data, id }: NodeProps) {
 
   return (
     <>
-      <Card className="w-80 border-2 border-border shadow-sm">
-        {/* No target handle for input node - it's the entry point */}
-        <CardHeader className="pb-2">
+      <BaseNode className="w-80">
+        <BaseNodeHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <FileText className="w-4 h-4 text-primary" />
-              <CardTitle className="text-sm">Input Node</CardTitle>
+              <span className="text-sm font-medium">Input Node</span>
             </div>
             <div className="flex items-center gap-1">
-              <Shield className="w-3 h-3 text-muted-foreground" title="Protected from deletion" />
+              <span title="Protected from deletion">
+                <Shield className="w-3 h-3 text-muted-foreground" />
+              </span>
             </div>
           </div>
-        </CardHeader>
+        </BaseNodeHeader>
 
-        <CardContent className="space-y-3">
+        <BaseNodeContent>
           {/* Endpoint Display */}
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
@@ -89,7 +89,7 @@ export function InputNode({ data, id }: NodeProps) {
               value={localTextInput}
               onChange={(e) => handleTextInputChange(e.target.value)}
               placeholder="Enter test input here..."
-              className="min-h-20 text-sm resize-none"
+              className="min-h-20 text-sm resize-none nodrag"
             />
           </div>
 
@@ -110,7 +110,7 @@ export function InputNode({ data, id }: NodeProps) {
                 variant="outline"
                 size="sm"
                 onClick={handleFileUpload}
-                className="w-full"
+                className="w-full nodrag"
               >
                 <Upload className="w-3 h-3 mr-2" />
                 {localFile ? "Change File" : "Upload File"}
@@ -123,34 +123,29 @@ export function InputNode({ data, id }: NodeProps) {
             </div>
           </div>
 
-          {/* Test Button */}
-          <div className="pt-2 border-t">
-            <Button
-              onClick={handleTestWorkflow}
-              size="sm"
-              className="w-full"
-              disabled={!localTextInput && !localFile}
-            >
-              <Play className="w-3 h-3 mr-2" />
-              Test Workflow
-            </Button>
-          </div>
+        </BaseNodeContent>
 
-          {/* Info */}
-          <div className="space-y-1 pt-2 border-t">
-            <div className="text-xs text-muted-foreground">
-              <div>Entry Point: {id}</div>
-              <div>Input Type: {localFile ? "File + Text" : "Text"}</div>
-            </div>
+        <BaseNodeFooter>
+          <Button
+            onClick={handleTestWorkflow}
+            size="sm"
+            className="w-full nodrag"
+            disabled={!localTextInput && !localFile}
+          >
+            <Play className="w-3 h-3 mr-2" />
+            Test Workflow
+          </Button>
+          
+          <div className="mt-2 space-y-0 text-xs text-muted-foreground">
+            <div>Entry Point: {id}</div>
+            <div>Input Type: {localFile ? "File + Text" : "Text"}</div>
           </div>
-        </CardContent>
-      </Card>
+        </BaseNodeFooter>
+      </BaseNode>
       
-      {/* Handle positioned outside the card but within the node */}
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-primary !border-2 !border-background !w-3 !h-3"
       />
     </>
   );

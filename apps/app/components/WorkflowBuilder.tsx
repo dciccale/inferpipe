@@ -1,6 +1,6 @@
 "use client";
 
-import React, { useCallback, useState, useEffect, useMemo } from "react";
+import React, { useCallback, useState, useMemo } from "react";
 import {
   ReactFlow,
   ReactFlowProvider,
@@ -14,7 +14,7 @@ import {
   Background,
   BackgroundVariant,
   MiniMap,
-  useReactFlow,
+  NodeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
 
@@ -26,8 +26,8 @@ import { api } from "@packages/backend/api";
 import { LLMNode } from "@/components/nodes/LLMNode";
 import { InputNode } from "@/components/nodes/InputNode";
 import { Plus, Play, Save } from "lucide-react";
-
-
+import { useTheme } from "@/components/theme-provider";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 interface WorkflowBuilderProps {
   workflowId?: string;
@@ -35,14 +35,27 @@ interface WorkflowBuilderProps {
     _id: string;
     name: string;
     description?: string;
-    nodes: any[];
-    edges: any[];
+    nodes: Node[];
+    edges: Edge[];
   };
 }
 
-function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderProps = {}) {
+function WorkflowBuilderInner({
+  workflowId,
+  initialWorkflow,
+}: WorkflowBuilderProps = {}) {
+  const { theme } = useTheme();
+
+  // Determine the actual theme (handle system preference)
+  const actualTheme =
+    theme === "system"
+      ? typeof window !== "undefined" &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+        ? "dark"
+        : "light"
+      : theme;
   // Initialize nodes and edges from initialWorkflow or defaults
-  const defaultNodes: Node[] = initialWorkflow?.nodes?.map(node => ({
+  const defaultNodes: Node[] = initialWorkflow?.nodes?.map((node) => ({
     id: node.id,
     type: node.type,
     position: node.position,
@@ -63,17 +76,20 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
     },
   ];
 
-  const defaultEdges: Edge[] = initialWorkflow?.edges?.map(edge => ({
-    id: edge.id,
-    source: edge.source,
-    target: edge.target,
-    sourceHandle: edge.sourceHandle,
-    targetHandle: edge.targetHandle,
-  })) || [];
+  const defaultEdges: Edge[] =
+    initialWorkflow?.edges?.map((edge) => ({
+      id: edge.id,
+      source: edge.source,
+      target: edge.target,
+      sourceHandle: edge.sourceHandle,
+      targetHandle: edge.targetHandle,
+    })) || [];
 
   const [nodes, setNodes, onNodesChange] = useNodesState(defaultNodes);
   const [edges, setEdges, onEdgesChange] = useEdgesState(defaultEdges);
-  const [workflowName, setWorkflowName] = useState(initialWorkflow?.name || "My Workflow");
+  const [workflowName, setWorkflowName] = useState(
+    initialWorkflow?.name || "My Workflow",
+  );
   const [isExecuting, setIsExecuting] = useState(false);
   const [executionResult, setExecutionResult] = useState<Record<
     string,
@@ -82,7 +98,6 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
 
   const createWorkflow = useMutation(api.workflows.createWorkflow);
   const updateWorkflow = useMutation(api.workflows.updateWorkflow);
-  const { getNodes, getEdges } = useReactFlow();
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds)),
@@ -127,26 +142,35 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
     setNodes((nds) => [...nds, newNode]);
   }, [setNodes, nodes, workflowId]);
 
-  const deleteNode = useCallback((nodeId: string) => {
-    setNodes((currentNodes) => {
-      // Check if it's an input node
-      const nodeToDelete = currentNodes.find(node => node.id === nodeId);
-      if (nodeToDelete?.type === "input") {
-        // Count input nodes
-        const inputNodes = currentNodes.filter(node => node.type === "input");
-        if (inputNodes.length <= 1) {
-          alert("Cannot delete the last input node. At least one input node must exist.");
-          return currentNodes; // Return unchanged nodes
+  const deleteNode = useCallback(
+    (nodeId: string) => {
+      setNodes((currentNodes) => {
+        // Check if it's an input node
+        const nodeToDelete = currentNodes.find((node) => node.id === nodeId);
+        if (nodeToDelete?.type === "input") {
+          // Count input nodes
+          const inputNodes = currentNodes.filter(
+            (node) => node.type === "input",
+          );
+          if (inputNodes.length <= 1) {
+            alert(
+              "Cannot delete the last input node. At least one input node must exist.",
+            );
+            return currentNodes; // Return unchanged nodes
+          }
         }
-      }
 
-      // Remove the node
-      return currentNodes.filter((node) => node.id !== nodeId);
-    });
-    
-    // Remove any edges connected to this node
-    setEdges((eds) => eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId));
-  }, [setNodes, setEdges]);
+        // Remove the node
+        return currentNodes.filter((node) => node.id !== nodeId);
+      });
+
+      // Remove any edges connected to this node
+      setEdges((eds) =>
+        eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
+      );
+    },
+    [setNodes, setEdges],
+  );
 
   const updateNodeData = useCallback(
     (nodeId: string, newData: Record<string, unknown>) => {
@@ -165,23 +189,30 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
   void updateNodeData;
 
   // Create node types with delete function - memoized to prevent recreation
-  const nodeTypes = useMemo(() => ({
-    llm: (props: any) => <LLMNode {...props} onDeleteNode={deleteNode} />,
-    input: (props: any) => <InputNode {...props} onDeleteNode={deleteNode} />,
-  }), [deleteNode]);
+  const nodeTypes = useMemo(
+    () => ({
+      llm: (props: NodeProps) => <LLMNode {...props} onDeleteNode={deleteNode} />,
+      input: (props: NodeProps) => <InputNode {...props} onDeleteNode={deleteNode} />,
+    }),
+    [deleteNode],
+  );
 
   // Handle keyboard deletion
-  const onNodesDelete = useCallback((nodesToDelete: Node[]) => {
-    nodesToDelete.forEach(node => {
-      deleteNode(node.id);
-    });
-  }, [deleteNode]);
+  const onNodesDelete = useCallback(
+    (nodesToDelete: Node[]) => {
+      nodesToDelete.forEach((node) => {
+        deleteNode(node.id);
+      });
+    },
+    [deleteNode],
+  );
 
   const saveWorkflow = useCallback(async () => {
     try {
       const workflowData = {
         name: workflowName,
-        description: initialWorkflow?.description || "Created with workflow builder",
+        description:
+          initialWorkflow?.description || "Created with workflow builder",
         nodes: nodes.map((node) => ({
           id: node.id,
           type: node.type || "llm",
@@ -200,7 +231,7 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
       if (workflowId && initialWorkflow) {
         // Update existing workflow
         await updateWorkflow({
-          workflowId: workflowId as any,
+          workflowId: workflowId as string,
           ...workflowData,
         });
         alert("Workflow updated successfully!");
@@ -213,7 +244,15 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
       console.error("Error saving workflow:", error);
       alert("Error saving workflow");
     }
-  }, [createWorkflow, updateWorkflow, workflowName, nodes, edges, workflowId, initialWorkflow]);
+  }, [
+    createWorkflow,
+    updateWorkflow,
+    workflowName,
+    nodes,
+    edges,
+    workflowId,
+    initialWorkflow,
+  ]);
 
   const executeWorkflowMutation = useMutation(api.workflows.executeWorkflow);
 
@@ -236,12 +275,13 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
       await saveWorkflow();
 
       // Get input from input node if it exists
-      const inputNode = nodes.find(node => node.type === "input");
-      const inputData = inputNode?.data?.textInput || "Hello from the workflow builder!";
+      const inputNode = nodes.find((node) => node.type === "input");
+      const inputData =
+        inputNode?.data?.textInput || "Hello from the workflow builder!";
 
       // Execute workflow using Convex mutation
       const result = await executeWorkflowMutation({
-        workflowId: workflowId as any,
+        workflowId: workflowId as string,
         input: { text: inputData },
       });
 
@@ -258,9 +298,9 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
   }, [executeWorkflowMutation, workflowId, saveWorkflow, nodes]);
 
   return (
-    <div className="w-full h-screen flex flex-col bg-background">
+    <div className="w-full h-full flex flex-col bg-background">
       {/* Header */}
-      <div className="bg-card border-b border-border p-4 flex items-center justify-between">
+      <div className="bg-card border-b border-border p-4 flex items-center justify-between flex-shrink-0">
         <div className="flex items-center gap-4">
           <Input
             value={workflowName}
@@ -286,13 +326,14 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
             <Play className="w-4 h-4 mr-2" />
             {isExecuting ? "Executing..." : "Execute"}
           </Button>
+          <ThemeToggle />
         </div>
       </div>
 
       {/* Main Content */}
-      <div className="flex-1 flex">
+      <div className="flex-1 flex min-h-0">
         {/* Canvas */}
-        <div className="flex-1 bg-background">
+        <div className="flex-1 bg-background overflow-hidden">
           <ReactFlow
             nodes={nodes}
             edges={edges}
@@ -310,7 +351,7 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
             connectionLineStyle={{ stroke: "#6366f1", strokeWidth: 2 }}
             snapToGrid={true}
             snapGrid={[20, 20]}
-            colorMode="dark"
+            colorMode={actualTheme}
             deleteKeyCode="Delete">
             <Controls />
             <MiniMap />
@@ -318,7 +359,7 @@ function WorkflowBuilderInner({ workflowId, initialWorkflow }: WorkflowBuilderPr
               variant={BackgroundVariant.Dots}
               gap={12}
               size={1}
-              color="#404040"
+              color={actualTheme === "light" ? "#e5e5e5" : "#404040"}
             />
           </ReactFlow>
         </div>

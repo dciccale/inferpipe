@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 import { Handle, Position, NodeProps } from "@xyflow/react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { BaseNode, BaseNodeHeader, BaseNodeContent } from "./BaseNode";
 import { Textarea } from "@/components/ui/textarea";
 import {
   Select,
@@ -51,17 +51,17 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
 
   return (
     <>
-      <Card className="w-80 border-2 border-border shadow-sm">
-        <CardHeader className="pb-2">
+      <BaseNode className="w-80">
+        <BaseNodeHeader>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
-              <CardTitle className="text-sm">LLM Node</CardTitle>
+              <span className="text-sm font-medium">LLM Node</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
-              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive"
+              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag"
               onClick={() => {
                 if (window.confirm("Delete this LLM node?")) {
                   onDeleteNode?.(id);
@@ -71,16 +71,16 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
               <X className="w-3 h-3" />
             </Button>
           </div>
-        </CardHeader>
+        </BaseNodeHeader>
 
-        <CardContent className="space-y-3">
+        <BaseNodeContent>
           {/* Model Selection */}
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
               Model
             </label>
             <Select value={localModel} onValueChange={handleModelChange}>
-              <SelectTrigger className="h-8">
+              <SelectTrigger className="h-8 nodrag">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -102,30 +102,25 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
               value={localPrompt}
               onChange={(e) => handlePromptChange(e.target.value)}
               placeholder="Enter your prompt here..."
-              className="min-h-20 text-sm resize-none"
+              className="min-h-20 text-sm resize-none nodrag"
             />
           </div>
 
           {/* Expanded Settings */}
-          <div className="space-y-2 pt-2 border-t">
-            <div className="text-xs text-muted-foreground">
-              <div>Model: {localModel}</div>
-              <div>Tokens: ~{Math.ceil(localPrompt.length / 4)}</div>
-            </div>
+          <div className="space-y-0 pt-3 mt-3 border-t text-xs text-muted-foreground">
+            <div>Model: {localModel}</div>
+            <div>Tokens: ~{Math.ceil(localPrompt.length / 4)}</div>
           </div>
-        </CardContent>
-      </Card>
+        </BaseNodeContent>
+      </BaseNode>
       
-      {/* Handles positioned outside the card but within the node */}
       <Handle 
         type="target" 
         position={Position.Left} 
-        className="!bg-primary !border-2 !border-background !w-3 !h-3"
       />
       <Handle 
         type="source" 
         position={Position.Right} 
-        className="!bg-primary !border-2 !border-background !w-3 !h-3"
       />
     </>
   );

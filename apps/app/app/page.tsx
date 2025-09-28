@@ -8,6 +8,7 @@ import { api } from "@packages/backend/api";
 import { Plus, Workflow, Clock, Play } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { formatDistanceToNow } from "date-fns";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export default function Home() {
   const workflows = useQuery(api.workflows.listWorkflows);
@@ -63,10 +64,13 @@ export default function Home() {
               Build and manage your AI workflows
             </p>
           </div>
-          <Button onClick={handleCreateWorkflow}>
-            <Plus className="w-4 h-4 mr-2" />
-            Create Workflow
-          </Button>
+          <div className="flex items-center gap-2">
+            <ThemeToggle />
+            <Button onClick={handleCreateWorkflow}>
+              <Plus className="w-4 h-4 mr-2" />
+              Create Workflow
+            </Button>
+          </div>
         </div>
 
         {/* Workflows Grid */}
