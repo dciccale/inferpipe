@@ -23,6 +23,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { useMutation } from "convex/react";
 import { api } from "@packages/backend/api";
+import type { Id } from "@packages/backend/dataModel";
 import { LLMNode } from "@/components/nodes/LLMNode";
 import { InputNode } from "@/components/nodes/InputNode";
 import { Plus, Play, Save } from "lucide-react";
@@ -30,7 +31,7 @@ import { useTheme } from "@/components/theme-provider";
 import { ThemeToggle } from "@/components/theme-toggle";
 
 interface WorkflowBuilderProps {
-  workflowId?: string;
+  workflowId?: Id<"workflows">;
   initialWorkflow?: {
     _id: string;
     name: string;
@@ -62,7 +63,7 @@ function WorkflowBuilderInner({
     data: {
       ...node.data,
       // Ensure input nodes have the workflowId
-      ...(node.type === "input" ? { workflowId: workflowId || "" } : {}),
+      ...(node.type === "input" ? { workflowId: workflowId ? String(workflowId) : "" } : {}),
     },
   })) || [
     {
@@ -71,7 +72,7 @@ function WorkflowBuilderInner({
       position: { x: 100, y: 200 },
       data: {
         textInput: "",
-        workflowId: workflowId || "",
+        workflowId: workflowId ? String(workflowId) : "",
       },
     },
   ];
@@ -136,7 +137,7 @@ function WorkflowBuilderInner({
       position: { x: leftmostX - 350, y: 200 },
       data: {
         textInput: "",
-        workflowId: workflowId || "",
+        workflowId: workflowId ? String(workflowId) : "",
       },
     };
     setNodes((nds) => [...nds, newNode]);
@@ -231,7 +232,7 @@ function WorkflowBuilderInner({
       if (workflowId && initialWorkflow) {
         // Update existing workflow
         await updateWorkflow({
-          workflowId: workflowId as string,
+          workflowId,
           ...workflowData,
         });
         alert("Workflow updated successfully!");
@@ -281,7 +282,7 @@ function WorkflowBuilderInner({
 
       // Execute workflow using Convex mutation
       const result = await executeWorkflowMutation({
-        workflowId: workflowId as string,
+        workflowId,
         input: { text: inputData },
       });
 

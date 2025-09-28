@@ -12,7 +12,11 @@ export interface InputNodeData {
   workflowId?: string;
 }
 
-export function InputNode({ data, id }: NodeProps) {
+interface InputNodeProps extends NodeProps {
+  onDeleteNode?: (nodeId: string) => void;
+}
+
+export function InputNode({ data, id, onDeleteNode: _onDeleteNode }: InputNodeProps) {
   const nodeData = data as unknown as InputNodeData;
   const [localTextInput, setLocalTextInput] = useState(nodeData.textInput || "");
   const [localFile, setLocalFile] = useState<File | null>(nodeData.fileInput || null);
