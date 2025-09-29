@@ -1,5 +1,6 @@
 import { v } from "convex/values";
 import { mutation, query } from "./_generated/server";
+import type { Id } from "./_generated/dataModel";
 
 // Create a new workflow
 export const createWorkflow = mutation({
@@ -217,6 +218,22 @@ export const deleteWorkflow = mutation({
   },
 });
 
+interface WorkflowNode {
+  id: string;
+  type: string;
+  position: { x: number; y: number };
+  data: any;
+}
+
+interface Workflow {
+  nodes: WorkflowNode[];
+  userId: string;
+}
+
+interface UserIdentity {
+  subject: string;
+}
+
 // Execute a workflow - creates a run and executes it
 export const executeWorkflow = mutation({
   args: {
@@ -263,19 +280,20 @@ export const executeWorkflow = mutation({
         updatedAt: Date.now(),
       });
 
-      let result;
+      let result: unknown;
       if (args.stepId) {
         // Execute only a specific step
         result = await executeStep(
           ctx,
-          workflow,
-          runId,
-          args.input,
+          workflow as Workflow,
+          runId as Id<"runs">,
+          args.input as Record<string, unknown>,
           args.stepId,
+          identity as UserIdentity
         );
       } else {
         // Execute the full workflow
-        result = await executeFullWorkflow(ctx, workflow, runId, args.input);
+        result = await executeFullWorkflow(ctx, workflow as Workflow, runId as Id<"runs">, args.input as Record<string, unknown>, identity as UserIdentity);
       }
 
       // Update run status to completed
@@ -306,13 +324,14 @@ export const executeWorkflow = mutation({
 // Execute a single step
 async function executeStep(
   ctx: any,
-  workflow: any,
-  runId: any,
-  input: any,
+  workflow: Workflow,
+  runId: Id<"runs">,
+  input: Record<string, unknown>,
   targetStepId: string,
+  identity: UserIdentity
 ) {
   const targetNode = workflow.nodes.find(
-    (node: any) => node.id === targetStepId,
+    (node: WorkflowNode) => node.id === targetStepId,
   );
   if (!targetNode) {
     throw new Error(`Step ${targetStepId} not found in workflow`);
@@ -333,7 +352,7 @@ async function executeStep(
       status: "running",
     });
 
-    let result;
+    let result: { output: unknown; metadata?: Record<string, unknown> };
     if (targetNode.type === "ai") {
       result = await executeAINode(targetNode, input);
     } else if (targetNode.type === "input") {
@@ -363,21 +382,22 @@ async function executeStep(
 // Execute the full workflow
 async function executeFullWorkflow(
   ctx: any,
-  workflow: any,
-  runId: any,
-  input: any,
+  workflow: Workflow,
+  runId: Id<"runs">,
+  input: Record<string, unknown>,
+  identity: UserIdentity
 ) {
   // For now, execute AI nodes sequentially (MVP approach)
   // TODO: Replace with Inngest for background execution and proper graph traversal
   // See inngest.ts for the planned implementation
-  const aiNodes = workflow.nodes.filter((node: any) => node.type === "ai");
+  const aiNodes = workflow.nodes.filter((node: WorkflowNode) => node.type === "ai");
 
   if (aiNodes.length === 0) {
     return { message: "No executable nodes found in workflow" };
   }
 
   let currentInput = input;
-  let finalOutput = null;
+  let finalOutput: unknown = null;
 
   for (const node of aiNodes) {
     const stepId = await ctx.db.insert("steps", {
@@ -421,7 +441,7 @@ async function executeFullWorkflow(
 }
 
 // Execute an AI node (moved from http.ts)
-async function executeAINode(node: any, input: any) {
+async function executeAINode(node: WorkflowNode, input: Record<string, unknown>) {
   // This will be moved to Inngest later, but for now keep it simple
   const prompt = node.data.prompt || "Hello, how can I help you today?";
   const model = node.data.model || "gpt-3.5-turbo";
