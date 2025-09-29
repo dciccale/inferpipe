@@ -1,11 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import "@inferpipe/ui/styles/globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
 import { Header } from "@/components/Header";
+import { Toaster } from "@inferpipe/ui/components/sonner";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -45,13 +46,19 @@ export default function RootLayout({
       <html lang="en" suppressHydrationWarning>
         <body
           className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
-          <ThemeProvider defaultTheme="dark">
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
             <ConvexClientProvider>
               <div className="h-screen flex flex-col">
                 <Header />
                 <div className="flex-1 overflow-hidden">{children}</div>
               </div>
             </ConvexClientProvider>
+            <Toaster />
           </ThemeProvider>
         </body>
       </html>

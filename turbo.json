@@ -13,7 +13,9 @@
       "persistent": true,
       "env": ["APP_ORIGIN", "CLERK_SECRET_KEY"]
     },
-    "lint": {},
+    "lint": {
+      "dependsOn": ["^lint"]
+    },
     "clean": {
       "cache": false
     }

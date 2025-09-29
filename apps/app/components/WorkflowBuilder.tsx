@@ -15,16 +15,20 @@ import {
   NodeProps,
 } from "@xyflow/react";
 import "@xyflow/react/dist/style.css";
+import "../app/reactflow.css";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { useTheme } from "@/components/theme-provider";
+import { Card, CardContent, CardHeader, CardTitle } from "@inferpipe/ui/components/card";
+import { useTheme } from "next-themes";
+import { Button } from "@inferpipe/ui/components/button";
 
 import type { Node, Edge } from "@xyflow/react";
+import { Step } from "../hooks/useWorkflowBuilder";
 
 interface ExecutionResult {
   status?: unknown;
   output?: unknown;
   error?: unknown;
+  steps?: Step[];
 }
 
 interface WorkflowBuilderProps {
@@ -40,6 +44,9 @@ interface WorkflowBuilderProps {
   };
   isExecuting: boolean;
   executionResult: ExecutionResult | null;
+  steps?: Step[];
+  executeWorkflow?: () => Promise<void>;
+  clearExecution?: () => void;
 }
 
 function WorkflowBuilderInner({
@@ -52,17 +59,47 @@ function WorkflowBuilderInner({
   nodeTypes,
   isExecuting,
   executionResult,
+  executeWorkflow,
+  steps,
+  clearExecution,
 }: WorkflowBuilderProps) {
-  const { theme } = useTheme();
+  const { resolvedTheme } = useTheme();
 
   // Determine the actual theme (handle system preference)
-  const actualTheme =
-    theme === "system"
-      ? typeof window !== "undefined" &&
-        window.matchMedia("(prefers-color-scheme: dark)").matches
-        ? "dark"
-        : "light"
-      : theme;
+  const actualTheme = resolvedTheme as 'light' | 'dark';
+
+  if ((executionResult?.steps?.length ?? 0) > 0 || (steps?.length ?? 0) > 0) {
+    return (
+      <div className="space-y-4">
+        <h3 className="text-sm font-semibold">Execution Steps</h3>
+        {(executionResult?.steps || steps)!.map((step) => (
+          <Card key={step.id} className="p-3">
+            <div className="flex justify-between items-center mb-2">
+              <span className="text-xs font-medium">Step {step.step}: {step.id}</span>
+              {step.error && <span className="text-destructive text-xs">Error</span>}
+            </div>
+            {step.input && (
+              <details className="mb-2">
+                <summary className="text-xs cursor-pointer text-muted-foreground">Input</summary>
+                <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">
+                  {JSON.stringify(step.input, null, 2)}
+                </pre>
+              </details>
+            )}
+            <details>
+              <summary className="text-xs cursor-pointer text-muted-foreground">Output</summary>
+              <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">
+                {JSON.stringify(step.output, null, 2)}
+              </pre>
+            </details>
+            {step.error && (
+              <div className="text-xs text-destructive mt-1">{step.error}</div>
+            )}
+          </Card>
+        ))}
+      </div>
+    );
+  }
 
   return (
     <div className="w-full h-full flex bg-background">
@@ -77,6 +114,10 @@ function WorkflowBuilderInner({
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            isValidConnection={(connection) => {
+              console.log('Connection attempt:', connection);
+              return connection.source !== connection.target;
+            }}
             onNodesDelete={onNodesDelete}
             nodeTypes={nodeTypes}
             fitView
@@ -92,9 +133,9 @@ function WorkflowBuilderInner({
             defaultEdgeOptions={{
               type: "smoothstep",
               animated: true,
-              style: { stroke: "#6366f1", strokeWidth: 2 },
+              style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
             }}
-            connectionLineStyle={{ stroke: "#6366f1", strokeWidth: 2 }}
+            connectionLineStyle={{ stroke: "hsl(var(--primary))", strokeWidth: 2 }}
             snapToGrid={true}
             snapGrid={[10, 10]}
             colorMode={actualTheme}
@@ -107,7 +148,7 @@ function WorkflowBuilderInner({
               variant={BackgroundVariant.Dots}
               gap={12}
               size={1}
-              color={actualTheme === "light" ? "#e5e7eb" : "#374151"}
+              color={actualTheme === 'dark' ? 'hsl(var(--muted))' : 'hsl(var(--border))'}
             />
           </ReactFlow>
         </div>
@@ -119,6 +160,9 @@ function WorkflowBuilderInner({
               <CardTitle>Execution Result</CardTitle>
             </CardHeader>
             <CardContent>
+              <Button onClick={executeWorkflow} disabled={isExecuting} className="w-full mb-4">
+                {isExecuting ? "Running..." : "Run Full Workflow"}
+              </Button>
               {isExecuting && (
                 <div className="text-center py-4">
                   <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
@@ -154,6 +198,9 @@ function WorkflowBuilderInner({
                         <div className="bg-destructive/10 p-2 rounded text-xs">
                           {String(executionResult.error)}
                         </div>
+                        <Button variant="ghost" size="sm" onClick={clearExecution} className="mt-2">
+                          Clear
+                        </Button>
                       </div>
                     )}
                 </div>

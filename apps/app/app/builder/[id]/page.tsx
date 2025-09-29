@@ -6,8 +6,8 @@ import { api } from "@packages/backend/api";
 import { useParams, useRouter } from "next/navigation";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
 import { useWorkflowBuilder } from "@/hooks/useWorkflowBuilder";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
+import { Button } from "@inferpipe/ui/components/button";
+import { Input } from "@inferpipe/ui/components/input";
 import { ArrowLeft, Plus, Play, Save } from "lucide-react";
 import type { Id } from "@packages/backend/dataModel";
 
@@ -101,16 +101,18 @@ export default function BuilderPage() {
               <div className="group max-w-fit">
                 <Input
                   value={hookWorkflowName}
-                  onChange={(e) => setHookWorkflowName(e.target.value)}
+                  onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHookWorkflowName(e.target.value)}
                   className="text-2xl font-bold h-auto p-3 border-none shadow-none focus-visible:ring-1 focus-visible:ring-ring bg-transparent hover:bg-muted/50 focus:bg-background transition-colors duration-200 md:text-2xl min-w-0"
                   placeholder="Untitled Workflow"
                 />
               </div>
+              {/*
               {workflow.description && (
                 <p className="text-sm text-muted-foreground mt-2 ml-4">
                   {workflow.description}
                 </p>
               )}
+                */}
             </div>
             <div className="flex items-center gap-2 flex-shrink-0">
               <Button variant="outline" size="sm" onClick={addInputNode}>
@@ -144,6 +146,8 @@ export default function BuilderPage() {
               nodeTypes={nodeTypes}
               isExecuting={isExecuting}
               executionResult={executionResult}
+              steps={workflowHook.steps}
+              executeWorkflow={executeWorkflow}
             />
           </div>
         </div>

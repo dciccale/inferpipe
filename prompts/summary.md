@@ -27,6 +27,7 @@ inferpipe is a visual AI pipeline builder that helps teams build, test, and depl
 inferpipe is a visual pipeline builder that enables teams to create sophisticated AI workflows through an intuitive drag-and-drop interface. Built on enterprise-grade infrastructure, we make it easy to test AI prompts, iterate on logic, and deploy intelligent automation that integrates seamlessly into any application.
 
 **Market Positioning:**
+
 - **inferpipe:** Visual AI workflow builder for business users (like Zapier)
 - **Inngest:** Code-based workflow orchestration for developers (like AWS Lambda)
 - **Perfect Segmentation:** Different tools for different audiences, complementary not competitive
@@ -34,7 +35,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
 **Key Differentiators:**
 
 - **Visual Pipeline Builder:** Drag-and-drop interface for building AI workflows without coding
-- **Test & Iterate:** Built-in prompt testing, A/B testing, and real-time debugging capabilities  
+- **Test & Iterate:** Built-in prompt testing, A/B testing, and real-time debugging capabilities
 - **Production-Ready:** Enterprise infrastructure with automatic scaling and error handling
 - **Easy Integration:** Simple APIs and SDKs for adding AI processes to any application
 
@@ -60,12 +61,14 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
 **Why This Combination:**
 
 **Convex for Dashboard Layer:**
+
 - Real-time updates for workflow monitoring and builder
 - Excellent developer experience for UI state management
 - Built-in authentication and data management
 - Perfect for user-facing features
 
 **Inngest for Execution Layer:**
+
 - Purpose-built for long-running, complex workflows
 - Enterprise-grade reliability and observability
 - Unlimited execution time and sophisticated retry logic
@@ -74,23 +77,24 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
 **Architecture Flow:**
 
 ┌─────────────────┐ ┌──────────────────┐ ┌─────────────────┐
-│ inferpipe UI    │ │ inferpipe API    │ │ Convex Backend  │
-│ (React + Convex)│◄──►│ (Gateway)        │◄──►│ (User/Workflow  │
-└─────────────────┘ └──────────────────┘ │ Management)     │
-                                │         └─────────────────┘
-                                ▼                  │
-                       ┌──────────────────┐        │
-                       │ Inngest Platform │◄───────┘
-                       │ (Execution)      │
-                       └──────────────────┘
-                                │
-                                ▼
-                       ┌──────────────────┐
-                       │  External APIs   │
-                       │ (OpenAI, Claude) │
-                       └──────────────────┘
+│ inferpipe UI │ │ inferpipe API │ │ Convex Backend │
+│ (React + Convex)│◄──►│ (Gateway) │◄──►│ (User/Workflow │
+└─────────────────┘ └──────────────────┘ │ Management) │
+│ └─────────────────┘
+▼ │
+┌──────────────────┐ │
+│ Inngest Platform │◄───────┘
+│ (Execution) │
+└──────────────────┘
+│
+▼
+┌──────────────────┐
+│ External APIs │
+│ (OpenAI, Claude) │
+└──────────────────┘
 
 **Value Proposition:**
+
 - **For Users:** Simple visual interface that "just works"
 - **For Developers:** Enterprise-grade execution without infrastructure complexity
 - **For inferpipe:** Focus on UI/UX while leveraging proven orchestration platform
@@ -237,6 +241,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
 ### Key Differentiators from n8n
 
 **1. AI-Native vs. Generic Automation**
+
 - **n8n:** Generic workflow automation with AI integrations as add-ons
 - **inferpipe:** Purpose-built for AI workflows with:
   - Optimized LLM operations and token management
@@ -244,6 +249,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
   - AI-first UX around prompt engineering and model selection
 
 **2. Business User Focus vs. Developer-Centric**
+
 - **n8n:** Targets developers requiring JavaScript/Python coding skills
 - **inferpipe:** Designed for business users (PMs, marketers, operations)
   - True no-code experience without coding requirements
@@ -251,6 +257,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
   - Templates built around business use cases
 
 **3. Production-Ready Infrastructure vs. Self-Hosted Complexity**
+
 - **n8n:** Requires DevOps knowledge for production deployment/scaling
 - **inferpipe:** Enterprise-grade execution from day one
   - Powered by Inngest's robust orchestration engine
@@ -258,6 +265,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
   - Zero infrastructure management required
 
 **4. Async AI Workflow Specialization**
+
 - **n8n:** General automation, not optimized for long-running AI tasks
 - **inferpipe:** Built for async AI processing
   - Optimized for multi-step LLM operations (minutes/hours)
@@ -265,6 +273,7 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
   - Sophisticated AI-specific error handling and retries
 
 **5. Developer Integration Layer**
+
 - **n8n:** Primarily standalone automation tool
 - **inferpipe:** Backend infrastructure for product integration
   - Clean REST APIs for server-side integration
@@ -274,11 +283,13 @@ inferpipe is a visual pipeline builder that enables teams to create sophisticate
 **Market Positioning (Complementary, Not Competitive):**
 
 **inferpipe vs n8n:**
+
 - **n8n:** "Technical workflows for developers who can code"
 - **inferpipe:** "AI workflows for business teams who want results"
 - **Relationship:** Different audiences, different problems - complementary market segments
 
 **inferpipe vs Inngest:**
+
 - **Inngest:** "Write TypeScript to build custom workflows" → Developer-focused infrastructure
 - **inferpipe:** "Drag-and-drop to build AI workflows" → Business-focused interface
 - **Relationship:** inferpipe uses Inngest as execution infrastructure, similar to how Retool uses React

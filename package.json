@@ -2,21 +2,20 @@
   "name": "inferpipe",
   "private": true,
   "scripts": {
-    "dev": "turbo run dev",
     "build": "turbo run build",
-    "clean": "turbo run clean && rm -rf node_modules",
+    "dev": "turbo run dev --parallel",
+    "lint": "turbo run lint",
+    "type-check": "turbo run type-check",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,json,md}\" --ignore-path .gitignore"
   },
   "devDependencies": {
     "prettier": "^3.6.2",
-    "turbo": "^2.5.8"
+    "turbo": "latest",
+    "typescript": "^5.0.0"
   },
-  "engines": {
-    "node": ">=20"
-  },
-  "packageManager": "npm@11.5.1",
   "workspaces": [
     "apps/*",
     "packages/*"
-  ]
+  ],
+  "packageManager": "npm@10.8.3"
 }

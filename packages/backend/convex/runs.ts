@@ -1,5 +1,7 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, action } from "./_generated/server";
+import { generateText } from 'ai';
+import { openai } from '@ai-sdk/openai';
 
 // Create a new run for a workflow
 export const createRun = mutation({
@@ -14,8 +16,6 @@ export const createRun = mutation({
       throw new Error("Not authenticated");
     }
 
-    const now = Date.now();
-
     // Verify workflow exists
     const workflow = await ctx.db.get(args.workflowId);
     if (!workflow) {
@@ -26,6 +26,8 @@ export const createRun = mutation({
     if (workflow.userId !== identity.subject) {
       throw new Error("Access denied");
     }
+
+    const now = Date.now();
 
     const runId = await ctx.db.insert("runs", {
       workflowId: args.workflowId,
@@ -158,5 +160,60 @@ export const listRuns = query({
     }
 
     return await query.collect();
+  },
+});
+
+export const executeAIAction = action({
+  args: {
+    prompt: v.string(),
+    model: v.string(),
+    previousOutput: v.optional(v.any()),
+    web_search_options: v.optional(v.any()),
+  },
+  handler: async (ctx, args) => {
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    let fullPrompt = args.prompt;
+    if (args.previousOutput) {
+      fullPrompt = `Context from previous step:\n${JSON.stringify(args.previousOutput, null, 2)}\n\n${args.prompt}`;
+    }
+
+    let generateOptions = {
+      model: openai(args.model),
+      prompt: fullPrompt,
+    };
+
+    if (args.web_search_options) {
+      (generateOptions as any).tools = [{
+        name: 'web_search',
+        description: 'Search the web for current information',
+        parameters: v.object({
+          query: v.string(),
+        }),
+        execute: async ({ query }) => {
+          // MVP mock; later integrate Tavily or OpenAI assistants
+          return { results: [{ title: 'Mock Search', snippet: `Current price range for ${query}: $100-200` }] };
+        },
+      }];
+      // For real, use ctx.scheduler or external API, but keep simple
+    }
+
+    const { text, toolResults } = await generateText(generateOptions);
+
+    let output;
+    try {
+      output = JSON.parse(text);
+    } catch (e) {
+      output = { raw: text, parsed: false };
+    }
+
+    return {
+      output,
+      model: args.model,
+      timestamp: Date.now(),
+    };
   },
 });

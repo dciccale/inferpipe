@@ -1,4 +1,4 @@
-import React, { useState, useRef } from "react";
+import React, { useState } from "react";
 import { Handle, Position, NodeProps } from "@xyflow/react";
 import {
   BaseNode,
@@ -6,9 +6,9 @@ import {
   BaseNodeContent,
   BaseNodeFooter,
 } from "./BaseNode";
-import { Textarea } from "@/components/ui/textarea";
-import { Button } from "@/components/ui/button";
-import { FileText, Upload, Play, Shield } from "lucide-react";
+import { Textarea } from "@inferpipe/ui/components/textarea";
+import { Button } from "@inferpipe/ui/components/button";
+import { FileText, Play, Shield } from "lucide-react";
 
 export interface InputNodeData {
   textInput: string;
@@ -17,15 +17,14 @@ export interface InputNodeData {
   workflowId?: string;
 }
 
-export function InputNode({ data, id }: NodeProps) {
+export function InputNode({ data }: NodeProps) {
   const nodeData = data as unknown as InputNodeData;
   const [localTextInput, setLocalTextInput] = useState(
     nodeData.textInput || "",
   );
-  const [localFile, setLocalFile] = useState<File | null>(
+  const [localFile] = useState<File | null>(
     nodeData.fileInput || null,
   );
-  const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateNodeData = (updates: Partial<InputNodeData>) => {
     // In a real implementation, this would update the node in the parent component
@@ -37,16 +36,6 @@ export function InputNode({ data, id }: NodeProps) {
     updateNodeData({ textInput: value });
   };
 
-  const handleFileSelect = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0] || null;
-    setLocalFile(file);
-    updateNodeData({ fileInput: file });
-  };
-
-  const handleFileUpload = () => {
-    fileInputRef.current?.click();
-  };
-
   const handleTestWorkflow = async () => {
     // This will trigger workflow execution with the current input
     const input = localFile
@@ -56,11 +45,6 @@ export function InputNode({ data, id }: NodeProps) {
     console.log("Testing workflow with input:", input);
     // TODO: Implement actual workflow execution trigger
   };
-
-  // Generate endpoint URL based on workflow ID
-  const workflowId =
-    nodeData.workflowId || nodeData.endpoint?.split("/")[5] || "unknown";
-  const endpointUrl = `${process.env.NEXT_PUBLIC_CONVEX_HTTP_URL}/v1/workflows/${workflowId}/runs`;
 
   return (
     <>
@@ -81,6 +65,7 @@ export function InputNode({ data, id }: NodeProps) {
 
         <BaseNodeContent>
           {/* Endpoint Display */}
+          {/*
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
               Endpoint
@@ -89,6 +74,7 @@ export function InputNode({ data, id }: NodeProps) {
               POST {endpointUrl}
             </div>
           </div>
+          */}
 
           {/* Text Input */}
           <div>
@@ -97,13 +83,14 @@ export function InputNode({ data, id }: NodeProps) {
             </label>
             <Textarea
               value={localTextInput}
-              onChange={(e) => handleTextInputChange(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handleTextInputChange(e.target.value)}
               placeholder="Enter test input here..."
               className="min-h-20 text-sm resize-none nodrag"
             />
           </div>
 
           {/* File Upload */}
+          {/*
           <div>
             <label className="text-xs font-medium text-muted-foreground mb-1 block">
               File Input (Optional)
@@ -132,6 +119,7 @@ export function InputNode({ data, id }: NodeProps) {
               )}
             </div>
           </div>
+          */}
         </BaseNodeContent>
 
         <BaseNodeFooter>
@@ -143,11 +131,12 @@ export function InputNode({ data, id }: NodeProps) {
             <Play className="w-3 h-3 mr-2" />
             Test Workflow
           </Button>
-
+          {/*
           <div className="mt-2 space-y-0 text-xs text-muted-foreground">
             <div>Entry Point: {id}</div>
             <div>Input Type: {localFile ? "File + Text" : "Text"}</div>
           </div>
+          */}
         </BaseNodeFooter>
       </BaseNode>
 

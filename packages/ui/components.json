@@ -4,17 +4,17 @@
   "rsc": true,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "config": "",
+    "css": "src/styles/globals.css",
     "baseColor": "zinc",
     "cssVariables": true
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
+    "components": "@inferpipe/ui/components",
     "utils": "@inferpipe/ui/lib/utils",
+    "hooks": "@inferpipe/ui/hooks",
+    "lib": "@inferpipe/ui/lib",
     "ui": "@inferpipe/ui/components"
   }
 }

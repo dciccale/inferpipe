@@ -1,8 +1,8 @@
 "use client";
 
 import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@inferpipe/ui/components/card";
+import { Button } from "@inferpipe/ui/components/button";
 import { useQuery, useMutation, Authenticated, Unauthenticated } from "convex/react";
 import { api } from "@packages/backend/api";
 import { Plus, Workflow, Clock, Play } from "lucide-react";

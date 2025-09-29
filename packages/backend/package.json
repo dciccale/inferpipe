@@ -13,7 +13,7 @@
       "types": "./convex/_generated/dataModel.d.ts"
     },
     "./convex": {
-      "types": "./convex/_generated/server.d.ts", 
+      "types": "./convex/_generated/server.d.ts",
       "default": "./convex/_generated/server.js"
     }
   },
@@ -25,6 +25,8 @@
   "author": "",
   "license": "ISC",
   "dependencies": {
+    "@ai-sdk/openai": "^2.0.39",
+    "ai": "^5.0.57",
     "convex": "^1.27.3",
     "openai": "^5.23.0"
   },
