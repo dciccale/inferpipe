@@ -1,12 +1,14 @@
 "use client";
 
-import { ConvexProvider, ConvexReactClient } from "convex/react";
+import { ConvexProviderWithClerk } from "convex/react-clerk";
+import { ConvexReactClient } from "convex/react";
+import { useAuth } from "@clerk/nextjs";
 import { ReactNode } from "react";
 
 export function ConvexClientProvider({ children }: { children: ReactNode }) {
   // Check if Convex URL is configured
   const convexUrl = process.env.NEXT_PUBLIC_CONVEX_URL;
-  
+
   if (!convexUrl) {
     // Show helpful error message if Convex is not configured
     return (
@@ -30,5 +32,5 @@ export function ConvexClientProvider({ children }: { children: ReactNode }) {
   }
 
   const convex = new ConvexReactClient(convexUrl);
-  return <ConvexProvider client={convex}>{children}</ConvexProvider>;
+  return <ConvexProviderWithClerk client={convex} useAuth={useAuth}>{children}</ConvexProviderWithClerk>;
 }

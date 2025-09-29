@@ -11,6 +11,8 @@ export default defineSchema({
       v.literal("published"),
       v.literal("archived")
     )),
+    // User ID from Clerk authentication
+    userId: v.string(),
     // Nodes in the workflow graph
     nodes: v.array(v.object({
       id: v.string(),
@@ -37,14 +39,15 @@ export default defineSchema({
     }))),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }),
+  }).index("by_user", ["userId"]),
 
   // Runs table - stores workflow execution instances
   runs: defineTable({
     workflowId: v.id("workflows"),
+    userId: v.string(), // User ID from Clerk authentication
     status: v.union(
       v.literal("pending"),
-      v.literal("running"), 
+      v.literal("running"),
       v.literal("completed"),
       v.literal("failed")
     ),
@@ -59,17 +62,18 @@ export default defineSchema({
     })),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }).index("by_workflow", ["workflowId"]),
+  }).index("by_workflow", ["workflowId"]).index("by_user", ["userId"]),
 
   // Steps table - stores individual step executions within a run
   steps: defineTable({
     runId: v.id("runs"),
+    userId: v.string(), // User ID from Clerk authentication
     nodeId: v.string(), // Reference to node in workflow
     nodeType: v.string(),
     status: v.union(
       v.literal("pending"),
       v.literal("running"),
-      v.literal("completed"), 
+      v.literal("completed"),
       v.literal("failed")
     ),
     input: v.any(),
@@ -86,7 +90,7 @@ export default defineSchema({
     })),
     startedAt: v.optional(v.number()),
     completedAt: v.optional(v.number()),
-  }).index("by_run", ["runId"]),
+  }).index("by_run", ["runId"]).index("by_user", ["userId"]),
 
   // API Keys table - for authentication
   apiKeys: defineTable({

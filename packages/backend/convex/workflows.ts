@@ -46,12 +46,19 @@ export const createWorkflow = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
     const now = Date.now();
 
     const workflowId = await ctx.db.insert("workflows", {
       name: args.name,
       description: args.description,
       status: args.status || "draft",
+      userId: identity.subject,
       nodes: args.nodes || [],
       edges: args.edges || [],
       variables: args.variables,
@@ -67,7 +74,23 @@ export const createWorkflow = mutation({
 export const getWorkflow = query({
   args: { workflowId: v.id("workflows") },
   handler: async (ctx, args) => {
-    return await ctx.db.get(args.workflowId);
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    const workflow = await ctx.db.get(args.workflowId);
+    if (!workflow) {
+      return null;
+    }
+
+    // Check if the workflow belongs to the authenticated user
+    if (workflow.userId !== identity.subject) {
+      throw new Error("Access denied");
+    }
+
+    return workflow;
   },
 });
 
@@ -117,12 +140,23 @@ export const updateWorkflow = mutation({
     ),
   },
   handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
     const { workflowId, ...updates } = args;
 
     // Get existing workflow
     const existing = await ctx.db.get(workflowId);
     if (!existing) {
       throw new Error("Workflow not found");
+    }
+
+    // Check if the workflow belongs to the authenticated user
+    if (existing.userId !== identity.subject) {
+      throw new Error("Access denied");
     }
 
     // Update with new values
@@ -135,11 +169,21 @@ export const updateWorkflow = mutation({
   },
 });
 
-// List all workflows
+// List all workflows for the current user
 export const listWorkflows = query({
   args: {},
   handler: async (ctx) => {
-    return await ctx.db.query("workflows").order("desc").collect();
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    return await ctx.db
+      .query("workflows")
+      .withIndex("by_user", (q) => q.eq("userId", identity.subject))
+      .order("desc")
+      .collect();
   },
 });
 
@@ -147,6 +191,23 @@ export const listWorkflows = query({
 export const deleteWorkflow = mutation({
   args: { workflowId: v.id("workflows") },
   handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
+    // Get existing workflow
+    const existing = await ctx.db.get(args.workflowId);
+    if (!existing) {
+      throw new Error("Workflow not found");
+    }
+
+    // Check if the workflow belongs to the authenticated user
+    if (existing.userId !== identity.subject) {
+      throw new Error("Access denied");
+    }
+
     await ctx.db.delete(args.workflowId);
     return { success: true };
   },
@@ -160,15 +221,27 @@ export const executeWorkflow = mutation({
     stepId: v.optional(v.string()), // Optional: execute only a specific step
   },
   handler: async (ctx, args) => {
+    // Get the authenticated user
+    const identity = await ctx.auth.getUserIdentity();
+    if (identity === null) {
+      throw new Error("Not authenticated");
+    }
+
     // Check if workflow exists
     const workflow = await ctx.db.get(args.workflowId);
     if (!workflow) {
       throw new Error("Workflow not found");
     }
 
+    // Check if the workflow belongs to the authenticated user
+    if (workflow.userId !== identity.subject) {
+      throw new Error("Access denied");
+    }
+
     // Create a new run
     const runId = await ctx.db.insert("runs", {
       workflowId: args.workflowId,
+      userId: identity.subject,
       status: "pending",
       input: args.input,
       metadata: {
@@ -228,8 +301,9 @@ async function executeStep(ctx: any, workflow: any, runId: any, input: any, targ
     throw new Error(`Step ${targetStepId} not found in workflow`);
   }
 
-  const stepId = await ctx.db.insert("steps", {
+    const stepId = await ctx.db.insert("steps", {
     runId,
+    userId: identity.subject,
     nodeId: targetNode.id,
     nodeType: targetNode.type,
     status: "pending",
@@ -287,6 +361,7 @@ async function executeFullWorkflow(ctx: any, workflow: any, runId: any, input: a
   for (const node of llmNodes) {
     const stepId = await ctx.db.insert("steps", {
       runId,
+      userId: identity.subject,
       nodeId: node.id,
       nodeType: node.type,
       status: "pending",
