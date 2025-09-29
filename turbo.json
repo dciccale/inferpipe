@@ -8,6 +8,12 @@
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
       "env": ["APP_ORIGIN", "CLERK_SECRET_KEY"]
     },
+    "@inferpipe/ui#build": {
+      "outputs": []
+    },
+    "@packages/backend#build": {
+      "outputs": []
+    },
     "dev": {
       "cache": false,
       "persistent": true,

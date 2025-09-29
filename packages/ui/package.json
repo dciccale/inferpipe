@@ -6,7 +6,7 @@
   "types": "./src/index.ts",
   "scripts": {
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "build": "tsc",
+    "build": "echo 'UI package is consumed as source - no build needed'",
     "dev": "tsc --watch",
     "typecheck": "tsc --noEmit"
   },
