@@ -35,16 +35,10 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
-      signInFallbackRedirectUrl="/app"
-      signUpFallbackRedirectUrl="/app"
-      signInForceRedirectUrl="/app"
-      signUpForceRedirectUrl="/app"
-    >
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-        >
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ThemeProvider defaultTheme="dark">
             <ConvexClientProvider>
               <Header />

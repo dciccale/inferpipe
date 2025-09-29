@@ -8,20 +8,15 @@ import {
   UserButton,
 } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
+import Link from "next/link";
 
 export function Header() {
   return (
     <header className="flex justify-end items-center p-4 gap-4 h-16 border-b">
       <SignedOut>
-        <SignInButton>
-          <Button variant="outline" size="sm">
-            Sign In
-          </Button>
-        </SignInButton>
+        <Link href="/sign-in">Sign In</Link>
         <SignUpButton>
-          <Button size="sm">
-            Sign Up
-          </Button>
+          <Button size="sm">Sign Up</Button>
         </SignUpButton>
       </SignedOut>
       <SignedIn>
