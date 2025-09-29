@@ -1,4 +1,4 @@
-import { SignIn } from "@clerk/nextjs";
+import { SignUp } from "@clerk/nextjs";
 
 export default function Page() {
   return (
@@ -6,15 +6,15 @@ export default function Page() {
       <div className="w-full max-w-lg">
         <div className="text-center mb-8">
           <h1 className="text-3xl font-bold tracking-tight text-foreground mb-2">
-            Welcome to Inferpipe
+            Create your Inferpipe account
           </h1>
           <p className="text-muted-foreground">
-            Sign in to your account to build AI workflows
+            Sign up to start building AI workflows
           </p>
         </div>
         <div>
-          <SignIn
-            path="/app/sign-in"
+          <SignUp
+            path="/app/sign-up"
             routing="path"
             appearance={{
               elements: {
@@ -27,3 +27,4 @@ export default function Page() {
     </div>
   );
 }
+

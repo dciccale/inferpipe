@@ -6,7 +6,7 @@ The Inferpipe dashboard uses Clerk for user authentication and Convex for the ba
 
 ### Technology Stack
 
-- **Frontend Authentication**: Clerk React SDK
+- **Frontend Authentication**: Clerk Next.js SDK (@clerk/nextjs)
 - **Backend**: Convex with Clerk JWT validation
 - **User Management**: Clerk organizations and user roles
 - **Session Management**: Clerk sessions with Convex integration
@@ -38,30 +38,29 @@ export default {
 
 Install dependencies:
 ```bash
-npm install @clerk/clerk-react convex
+npm install @clerk/nextjs convex
 ```
 
-Set up providers in `src/main.tsx`:
+Set up providers in `app/layout.tsx`:
 
 ```typescript
-import React from "react";
-import ReactDOM from "react-dom/client";
-import App from "./App";
-import { ClerkProvider, useAuth } from "@clerk/clerk-react";
+import { ClerkProvider } from "@clerk/nextjs";
 import { ConvexProviderWithClerk } from "convex/react-clerk";
 import { ConvexReactClient } from "convex/react";
+import { useAuth } from "@clerk/nextjs";
 
-const convex = new ConvexReactClient(import.meta.env.VITE_CONVEX_URL as string);
-
-ReactDOM.createRoot(document.getElementById("root")!).render(
-  <React.StrictMode>
-    <ClerkProvider publishableKey={import.meta.env.VITE_CLERK_PUBLISHABLE_KEY}>
-      <ConvexProviderWithClerk client={convex} useAuth={useAuth}>
-        <App />
+export default function RootLayout({ children }: { children: React.ReactNode }) {
+  return (
+    <ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      <ConvexProviderWithClerk
+        client={new ConvexReactClient(process.env.NEXT_PUBLIC_CONVEX_URL!)}
+        useAuth={useAuth}
+      >
+        {children}
       </ConvexProviderWithClerk>
     </ClerkProvider>
-  </React.StrictMode>
-);
+  );
+}
 ```
 
 ### User Management
@@ -95,13 +94,85 @@ ReactDOM.createRoot(document.getElementById("root")!).render(
 
 ```env
 # Clerk Configuration
-VITE_CLERK_PUBLISHABLE_KEY=pk_test_...
+NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
 CLERK_JWT_ISSUER_DOMAIN=https://your-app.clerk.accounts.dev
 
 # Convex Configuration
-VITE_CONVEX_URL=https://your-convex-deployment.convex.cloud
+NEXT_PUBLIC_CONVEX_URL=https://your-convex-deployment.convex.cloud
 ```
+
+## Multi-Zone Deployment Configuration
+
+### After Sign-Out Redirect
+In multi-zone setups (e.g., marketing site at root domain, app at /app subpath), configure the `afterSignOutUrl` on ClerkProvider or globally in Clerk dashboard to redirect to the marketing site. This avoids using the deprecated prop on UserButton components.
+
+For development:
+```tsx
+// In app/layout.tsx, on ClerkProvider:
+<ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} afterSignOutUrl="http://localhost:3000">
+```
+
+For production, use an environment variable:
+```tsx
+// In app/layout.tsx:
+const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL || '/';
+<ClerkProvider publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY} afterSignOutUrl={marketingUrl}>
+```
+
+Set `NEXT_PUBLIC_MARKETING_URL=https://yourdomain.com` in your environment.
+
+### Complete ClerkProvider Configuration for Multi-Zone
+
+To handle sign-in/sign-up fallbacks and allow cross-origin redirects (e.g., from app at /app to marketing root), add these props:
+
+```tsx
+<ClerkProvider
+  publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+  afterSignOutUrl={marketingUrl}
+  signInUrl="/sign-in"
+  signUpUrl="/sign-up"
+  signInFallbackRedirectUrl="/app"
+  signUpFallbackRedirectUrl="/app"
+  allowedRedirectOrigins={['http://localhost:3000']}  // Add production domain in prod
+>
+```
+
+- `allowedRedirectOrigins`: Whitelists the marketing site for safe redirects (prevents 404/loop in local multi-port dev).
+- `signInUrl`/`signUpUrl`: Paths for auth screens in the app.
+- `signInFallbackRedirectUrl`/`signUpFallbackRedirectUrl`: Where to go after auth (dashboard root).
+
+### Theming Clerk Components
+
+To make Clerk components (SignIn, UserButton, etc.) match your app's light/dark theme and shadcn/ui styling, use the `shadcn` theme from `@clerk/themes`. This automatically adapts to the ThemeProvider's mode.
+
+1. **Install the package**:
+   ```bash
+   npm install @clerk/themes
+   ```
+
+2. **Import the CSS** in `app/globals.css` (after Tailwind import):
+   ```css
+   @import "tailwindcss";
+   @import '@clerk/themes/shadcn.css';
+   ```
+
+3. **Apply to ClerkProvider** in `app/layout.tsx`:
+   ```tsx
+   import { shadcn } from '@clerk/themes';
+   
+   <ClerkProvider
+     // ... other props
+     appearance={{
+       baseTheme: shadcn,
+     }}
+   >
+   ```
+
+This ensures seamless integration with your Tailwind v4 and shadcn/ui setup. For custom variables (e.g., primary color), add to `appearance.variables` (see [Clerk Themes docs](https://clerk.com/docs/guides/customizing-clerk/appearance-prop/themes)).
+
+### Note on Current Implementation
+The current code uses a plain `ConvexProvider` without Clerk integration. To enable authenticated Convex queries/mutations, update to `ConvexProviderWithClerk` as shown above and install `convex/react-clerk`. Also ensure the backend has `auth.config.ts` configured.
 
 ### Benefits of This Architecture
 

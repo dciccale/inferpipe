@@ -3,14 +3,8 @@ import { Geist, Geist_Mono } from "next/font/google";
 import "./globals.css";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { ThemeProvider } from "@/components/theme-provider";
-import {
-  ClerkProvider,
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { ClerkProvider } from "@clerk/nextjs";
+import { shadcn } from "@clerk/themes";
 import { Header } from "@/components/Header";
 
 const geistSans = Geist({
@@ -28,6 +22,9 @@ export const metadata: Metadata = {
   description: "Build and execute LLM workflows with ease",
 };
 
+const marketingUrl =
+  process.env.NEXT_PUBLIC_MARKETING_URL || "http://localhost:3000";
+
 export default function RootLayout({
   children,
 }: Readonly<{
@@ -35,14 +32,25 @@ export default function RootLayout({
 }>) {
   return (
     <ClerkProvider
-      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}>
+      publishableKey={process.env.NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY}
+      afterSignOutUrl={marketingUrl}
+      signInUrl="/sign-in"
+      signUpUrl="/sign-up"
+      signInFallbackRedirectUrl="/app"
+      signUpFallbackRedirectUrl="/app"
+      allowedRedirectOrigins={["http://localhost:3000"]}
+      appearance={{
+        baseTheme: shadcn,
+      }}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}>
           <ThemeProvider defaultTheme="dark">
             <ConvexClientProvider>
               <Header />
-              {children}
+              <div className="flex-1">
+                {children}
+              </div>
             </ConvexClientProvider>
           </ThemeProvider>
         </body>

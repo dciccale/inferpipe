@@ -1,27 +1,22 @@
-"use client";
-
-import {
-  SignedIn,
-  SignedOut,
-  SignInButton,
-  SignUpButton,
-  UserButton,
-} from "@clerk/nextjs";
+import { SignedIn, SignedOut, SignInButton, SignUpButton, UserButton } from "@clerk/nextjs";
 import { Button } from "@/components/ui/button";
-import Link from "next/link";
+import { ThemeToggle } from "@/components/theme-toggle";
 
 export function Header() {
   return (
     <header className="flex justify-end items-center p-4 gap-4 h-16 border-b">
       <SignedOut>
-        <Link href="/sign-in">Sign In</Link>
+        <SignInButton>
+          <Button size="sm" variant="ghost">Sign In</Button>
+        </SignInButton>
         <SignUpButton>
           <Button size="sm">Sign Up</Button>
         </SignUpButton>
       </SignedOut>
       <SignedIn>
-        <UserButton afterSignOutUrl="/app" />
+        <UserButton />
       </SignedIn>
+      <ThemeToggle />
     </header>
   );
 }
