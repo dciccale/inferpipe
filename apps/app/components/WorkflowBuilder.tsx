@@ -78,14 +78,14 @@ function WorkflowBuilderInner({
               <span className="text-xs font-medium">Step {step.step}: {step.id}</span>
               {step.error && <span className="text-destructive text-xs">Error</span>}
             </div>
-            {step.input && (
+            {step.input ? (
               <details className="mb-2">
                 <summary className="text-xs cursor-pointer text-muted-foreground">Input</summary>
                 <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">
                   {JSON.stringify(step.input, null, 2)}
                 </pre>
               </details>
-            )}
+            ) : null}
             <details>
               <summary className="text-xs cursor-pointer text-muted-foreground">Output</summary>
               <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">

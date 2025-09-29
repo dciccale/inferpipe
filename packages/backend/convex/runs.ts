@@ -193,7 +193,7 @@ export const executeAIAction = action({
         parameters: v.object({
           query: v.string(),
         }),
-        execute: async ({ query }) => {
+        execute: async ({ query }: { query: string }) => {
           // MVP mock; later integrate Tavily or OpenAI assistants
           return { results: [{ title: 'Mock Search', snippet: `Current price range for ${query}: $100-200` }] };
         },
