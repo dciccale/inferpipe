@@ -1,6 +1,7 @@
 import { Button } from "@inferpipe/ui/components/button";
 import { ArrowRight, Zap, Shield, Code, Users, CheckCircle, Star } from "lucide-react";
 import Link from "next/link";
+import Image from "next/image";
 
 export default function HomePage() {
   return (
@@ -43,16 +44,15 @@ export default function HomePage() {
             <div className="relative mx-auto max-w-5xl">
               <div className="absolute inset-0 bg-gradient-to-r from-primary/20 to-secondary/20 blur-3xl -z-10"></div>
               <div className="relative rounded-2xl border border-border bg-background/50 backdrop-blur p-2">
-                <div className="rounded-xl bg-muted/30 aspect-video flex items-center justify-center">
-                  <div className="text-center">
-                    <Code className="w-16 h-16 text-muted-foreground mx-auto mb-4" />
-                    <p className="text-lg font-medium text-muted-foreground">
-                      Visual Pipeline Builder
-                    </p>
-                    <p className="text-sm text-muted-foreground mt-2">
-                      Drag-and-drop AI workflows
-                    </p>
-                  </div>
+                <div className="rounded-xl overflow-hidden">
+                  <Image
+                    src="/workflow-builder.png"
+                    alt="Visual Pipeline Builder - Drag-and-drop AI workflows"
+                    width={1920}
+                    height={1080}
+                    className="w-full h-auto"
+                    priority
+                  />
                 </div>
               </div>
             </div>
