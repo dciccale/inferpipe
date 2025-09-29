@@ -140,7 +140,14 @@ export function InputNode({ data }: NodeProps) {
         </BaseNodeFooter>
       </BaseNode>
 
-      <Handle type="source" position={Position.Right} />
+      <Handle 
+        type="source" 
+        position={Position.Right}
+        style={{
+          right: -6,
+          top: '50%',
+        }}
+      />
     </>
   );
 }

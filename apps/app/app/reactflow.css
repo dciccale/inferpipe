@@ -1,6 +1,6 @@
 /* Custom overrides for dark mode and theme integration */
 .react-flow {
-  background: hsl(var(--background));
+  background: var(--background);
 }
 
 /* Custom node styling - remove default styles */
@@ -27,19 +27,19 @@
 /* Edge styling */
 .react-flow__edge-path,
 .react-flow__connection-path {
-  stroke: hsl(var(--primary));
+  stroke: var(--primary);
   stroke-width: 2;
 }
 
 .react-flow__edge.selected .react-flow__edge-path,
 .react-flow__edge:focus .react-flow__edge-path,
 .react-flow__edge:focus-visible .react-flow__edge-path {
-  stroke: hsl(var(--ring));
+  stroke: var(--ring);
 }
 
 /* Connection line styling */
 .react-flow__connectionline {
-  stroke: hsl(var(--primary)) !important;
+  stroke: var(--primary) !important;
   stroke-width: 2 !important;
 }
 
@@ -48,58 +48,58 @@
   width: 12px !important;
   height: 12px !important;
   border-radius: 100% !important;
-  border: 2px solid hsl(var(--background)) !important;
-  background: hsl(var(--primary)) !important;
+  border: 2px solid var(--background) !important;
+  background: var(--primary) !important;
   cursor: crosshair !important;
   transition: all 0.2s ease !important;
 }
 
 .react-flow__handle:hover {
-  background: hsl(var(--ring)) !important;
-  box-shadow: 0 0 0 3px hsla(var(--ring) / 0.3) !important;
+  background: var(--ring) !important;
+  box-shadow: 0 0 0 3px color-mix(in oklab, var(--ring), transparent 70%) !important;
 }
 
 .react-flow__handle.connecting {
-  background: hsl(var(--ring)) !important;
+  background: var(--ring) !important;
 }
 
 .react-flow__handle.valid {
-  background: hsl(var(--primary)) !important;
+  background: var(--primary) !important;
 }
 
 .react-flow__handle.invalid {
-  background: hsl(var(--destructive)) !important;
+  background: var(--destructive) !important;
 }
 
 /* Controls styling */
 .react-flow__controls {
-  background: hsl(var(--card)) !important;
-  border: 1px solid hsl(var(--border)) !important;
+  background: var(--card) !important;
+  border: 1px solid var(--border) !important;
   border-radius: 8px !important;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1) !important;
 }
 
 .react-flow__controls button {
-  background: hsl(var(--background)) !important;
-  border: 1px solid hsl(var(--border)) !important;
-  color: hsl(var(--foreground)) !important;
+  background: var(--background) !important;
+  border: 1px solid var(--border) !important;
+  color: var(--foreground) !important;
   border-radius: 4px !important;
   transition: all 0.2s ease !important;
 }
 
 .react-flow__controls button:hover {
-  background: hsl(var(--accent)) !important;
+  background: var(--accent) !important;
   transform: scale(1.05) !important;
 }
 
 /* MiniMap styling */
 .react-flow__minimap {
-  background: hsl(var(--card));
-  border: 1px solid hsl(var(--border));
+  background: var(--card);
+  border: 1px solid var(--border);
   border-radius: 8px;
   box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
 }
 
 .react-flow__minimap-mask {
-  fill: hsl(var(--muted));
+  fill: var(--muted);
 }

@@ -12,6 +12,17 @@ import {
 import { Button } from "@inferpipe/ui/components/button";
 import { Zap, X } from "lucide-react";
 import { Checkbox } from "@inferpipe/ui/components/checkbox";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@inferpipe/ui/components/alert-dialog";
 
 export interface AINodeData {
   prompt: string;
@@ -30,6 +41,7 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
     nodeData.model || "gpt-4o",
   );
   const [localWebSearch, setLocalWebSearch] = useState(nodeData.web_search_options ? true : false);
+  const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const models = [
     { value: "gpt-4o", label: "GPT-4o (Latest)" },
@@ -55,6 +67,7 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
 
   const handleDelete = () => {
     onDeleteNode?.(id);
+    setShowDeleteDialog(false);
   };
 
   return (
@@ -66,13 +79,30 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
               <Zap className="w-4 h-4 text-primary" />
               <span className="text-sm font-medium">AI Node</span>
             </div>
-            <Button
-              variant="ghost"
-              size="sm"
-              onClick={handleDelete}
-              className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag">
-              <X className="w-3 h-3" />
-            </Button>
+            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
+              <AlertDialogTrigger asChild>
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag">
+                  <X className="w-3 h-3" />
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Delete AI Node?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will permanently delete this node and all its connections. This action cannot be undone.
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                    Delete
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
           </div>
         </BaseNodeHeader>
 
@@ -99,7 +129,7 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
           {/* Enable Web Search */}
           <div className="flex items-center space-x-2 mt-2">
             <Checkbox
-              id="web-search"
+              id={`web-search-${id}`}
               checked={localWebSearch || false}
               onCheckedChange={(checked: boolean) => {
                 const newVal = checked ? { web_search_options: { user_location: { type: "approximate", approximate: { country: "US" } } } } : {};
@@ -135,8 +165,22 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
         </BaseNodeContent>
       </BaseNode>
 
-      <Handle type="target" position={Position.Left} />
-      <Handle type="source" position={Position.Right} />
+      <Handle 
+        type="target" 
+        position={Position.Left}
+        style={{
+          left: -6,
+          top: '50%',
+        }}
+      />
+      <Handle 
+        type="source" 
+        position={Position.Right}
+        style={{
+          right: -6,
+          top: '50%',
+        }}
+      />
     </>
   );
 }

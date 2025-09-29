@@ -133,9 +133,9 @@ function WorkflowBuilderInner({
             defaultEdgeOptions={{
               type: "smoothstep",
               animated: true,
-              style: { stroke: "hsl(var(--primary))", strokeWidth: 2 },
+              style: { stroke: "var(--primary)", strokeWidth: 2 },
             }}
-            connectionLineStyle={{ stroke: "hsl(var(--primary))", strokeWidth: 2 }}
+            connectionLineStyle={{ stroke: "var(--primary)", strokeWidth: 2 }}
             snapToGrid={true}
             snapGrid={[10, 10]}
             colorMode={actualTheme}
@@ -148,7 +148,7 @@ function WorkflowBuilderInner({
               variant={BackgroundVariant.Dots}
               gap={12}
               size={1}
-              color={actualTheme === 'dark' ? 'hsl(var(--muted))' : 'hsl(var(--border))'}
+              color={actualTheme === 'dark' ? 'var(--muted)' : 'var(--border)'}
             />
           </ReactFlow>
         </div>
