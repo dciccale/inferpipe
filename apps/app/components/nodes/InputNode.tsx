@@ -1,6 +1,11 @@
 import React, { useState, useRef } from "react";
 import { Handle, Position, NodeProps } from "@xyflow/react";
-import { BaseNode, BaseNodeHeader, BaseNodeContent, BaseNodeFooter } from "./BaseNode";
+import {
+  BaseNode,
+  BaseNodeHeader,
+  BaseNodeContent,
+  BaseNodeFooter,
+} from "./BaseNode";
 import { Textarea } from "@/components/ui/textarea";
 import { Button } from "@/components/ui/button";
 import { FileText, Upload, Play, Shield } from "lucide-react";
@@ -12,14 +17,14 @@ export interface InputNodeData {
   workflowId?: string;
 }
 
-interface InputNodeProps extends NodeProps {
-  onDeleteNode?: (nodeId: string) => void;
-}
-
-export function InputNode({ data, id, onDeleteNode: _onDeleteNode }: InputNodeProps) {
+export function InputNode({ data, id }: NodeProps) {
   const nodeData = data as unknown as InputNodeData;
-  const [localTextInput, setLocalTextInput] = useState(nodeData.textInput || "");
-  const [localFile, setLocalFile] = useState<File | null>(nodeData.fileInput || null);
+  const [localTextInput, setLocalTextInput] = useState(
+    nodeData.textInput || "",
+  );
+  const [localFile, setLocalFile] = useState<File | null>(
+    nodeData.fileInput || null,
+  );
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const updateNodeData = (updates: Partial<InputNodeData>) => {
@@ -44,16 +49,17 @@ export function InputNode({ data, id, onDeleteNode: _onDeleteNode }: InputNodePr
 
   const handleTestWorkflow = async () => {
     // This will trigger workflow execution with the current input
-    const input = localFile 
+    const input = localFile
       ? { file: localFile, text: localTextInput }
       : { text: localTextInput };
-    
+
     console.log("Testing workflow with input:", input);
     // TODO: Implement actual workflow execution trigger
   };
 
   // Generate endpoint URL based on workflow ID
-  const workflowId = nodeData.workflowId || nodeData.endpoint?.split('/')[5] || 'unknown';
+  const workflowId =
+    nodeData.workflowId || nodeData.endpoint?.split("/")[5] || "unknown";
   const endpointUrl = `${process.env.NEXT_PUBLIC_CONVEX_HTTP_URL}/v1/workflows/${workflowId}/runs`;
 
   return (
@@ -114,19 +120,18 @@ export function InputNode({ data, id, onDeleteNode: _onDeleteNode }: InputNodePr
                 variant="outline"
                 size="sm"
                 onClick={handleFileUpload}
-                className="w-full nodrag"
-              >
+                className="w-full nodrag">
                 <Upload className="w-3 h-3 mr-2" />
                 {localFile ? "Change File" : "Upload File"}
               </Button>
               {localFile && (
                 <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
-                  Selected: {localFile.name} ({Math.round(localFile.size / 1024)}KB)
+                  Selected: {localFile.name} (
+                  {Math.round(localFile.size / 1024)}KB)
                 </div>
               )}
             </div>
           </div>
-
         </BaseNodeContent>
 
         <BaseNodeFooter>
@@ -134,23 +139,19 @@ export function InputNode({ data, id, onDeleteNode: _onDeleteNode }: InputNodePr
             onClick={handleTestWorkflow}
             size="sm"
             className="w-full nodrag"
-            disabled={!localTextInput && !localFile}
-          >
+            disabled={!localTextInput && !localFile}>
             <Play className="w-3 h-3 mr-2" />
             Test Workflow
           </Button>
-          
+
           <div className="mt-2 space-y-0 text-xs text-muted-foreground">
             <div>Entry Point: {id}</div>
             <div>Input Type: {localFile ? "File + Text" : "Text"}</div>
           </div>
         </BaseNodeFooter>
       </BaseNode>
-      
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-      />
+
+      <Handle type="source" position={Position.Right} />
     </>
   );
 }

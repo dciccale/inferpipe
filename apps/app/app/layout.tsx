@@ -44,12 +44,14 @@ export default function RootLayout({
       }}>
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased flex flex-col`}>
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
           <ThemeProvider defaultTheme="dark">
             <ConvexClientProvider>
-              <Header />
-              <div className="flex-1">
-                {children}
+              <div className="h-screen flex flex-col">
+                <Header />
+                <div className="flex-1 overflow-hidden">
+                  {children}
+                </div>
               </div>
             </ConvexClientProvider>
           </ThemeProvider>

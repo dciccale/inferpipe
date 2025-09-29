@@ -6,12 +6,12 @@
     "build": {
       "dependsOn": ["^build"],
       "outputs": ["dist/**", ".next/**", "!.next/cache/**"],
-      "env": ["APP_ORIGIN"]
+      "env": ["APP_ORIGIN", "CLERK_SECRET_KEY"]
     },
     "dev": {
       "cache": false,
       "persistent": true,
-      "env": ["APP_ORIGIN"]
+      "env": ["APP_ORIGIN", "CLERK_SECRET_KEY"]
     },
     "lint": {},
     "clean": {
