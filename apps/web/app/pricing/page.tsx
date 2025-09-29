@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@inferpipe/ui/components/button";
 import { Check, Star } from "lucide-react";
 import Link from "next/link";
 

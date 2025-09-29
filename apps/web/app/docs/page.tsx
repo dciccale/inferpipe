@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@inferpipe/ui/components/button";
 import { Code, Zap, ArrowRight, Terminal, Globe, Shield } from "lucide-react";
 import Link from "next/link";
 

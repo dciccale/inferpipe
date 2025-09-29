@@ -1,6 +1,6 @@
 "use client";
 
-import { Button } from "@/components/ui/button";
+import { Button } from "@inferpipe/ui/components/button";
 import { ThemeToggle } from "@/components/theme-toggle";
 import { Zap } from "lucide-react";
 import Link from "next/link";

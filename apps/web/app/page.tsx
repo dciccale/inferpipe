@@ -1,4 +1,4 @@
-import { Button } from "@/components/ui/button";
+import { Button } from "@inferpipe/ui/components/button";
 import { ArrowRight, Zap, Shield, Code, Users, CheckCircle, Star } from "lucide-react";
 import Link from "next/link";
 
