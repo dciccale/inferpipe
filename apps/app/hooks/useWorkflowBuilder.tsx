@@ -12,7 +12,7 @@ import type {
   Connection,
 } from "@xyflow/react";
 import { applyNodeChanges, applyEdgeChanges, addEdge } from "@xyflow/react";
-import { LLMNode } from "../components/nodes/LLMNode";
+import { AINode } from "../components/nodes/AINode";
 import { InputNode } from "../components/nodes/InputNode";
 
 interface WorkflowData {
@@ -99,7 +99,7 @@ export function useWorkflowBuilder({
   );
 
   // Actions
-  const addLLMNode = useCallback(() => {
+  const addAINode = useCallback(() => {
     setNodes((currentNodes) => {
       const spacing = 400;
       let newX = 100;
@@ -112,8 +112,8 @@ export function useWorkflowBuilder({
       }
 
       const newNode: Node = {
-        id: `llm-${Date.now()}`,
-        type: "llm",
+        id: `ai-${Date.now()}`,
+        type: "ai",
         position: { x: newX, y: 200 },
         data: {
           prompt: "Enter your prompt here...",
@@ -206,7 +206,7 @@ export function useWorkflowBuilder({
           initialWorkflow?.description || "Created with workflow builder",
         nodes: nodes.map((node) => ({
           id: node.id,
-          type: node.type || "llm",
+          type: node.type || "ai",
           position: node.position,
           data: node.data,
         })),
@@ -284,9 +284,7 @@ export function useWorkflowBuilder({
   // Memoized node types
   const nodeTypes = useMemo(
     () => ({
-      llm: (props: NodeProps) => (
-        <LLMNode {...props} onDeleteNode={deleteNode} />
-      ),
+      ai: (props: NodeProps) => <AINode {...props} onDeleteNode={deleteNode} />,
       input: (props: NodeProps) => <InputNode {...props} />,
     }),
     [deleteNode],
@@ -342,7 +340,7 @@ export function useWorkflowBuilder({
 
     // Actions
     addInputNode,
-    addLLMNode,
+    addAINode,
     saveWorkflow,
     executeWorkflow,
     deleteNode,

@@ -40,7 +40,7 @@ export default function BuilderPage() {
 
   const {
     addInputNode,
-    addLLMNode,
+    addAINode,
     saveWorkflow,
     executeWorkflow,
     nodes,
@@ -117,9 +117,9 @@ export default function BuilderPage() {
                 <Plus className="w-4 h-4 mr-2" />
                 Add Input Node
               </Button>
-              <Button variant="outline" size="sm" onClick={addLLMNode}>
+              <Button variant="outline" size="sm" onClick={addAINode}>
                 <Plus className="w-4 h-4 mr-2" />
-                Add LLM Node
+                Add AI Node
               </Button>
               <Button variant="outline" size="sm" onClick={saveWorkflow}>
                 <Save className="w-4 h-4 mr-2" />

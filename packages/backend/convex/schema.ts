@@ -6,37 +6,47 @@ export default defineSchema({
   workflows: defineTable({
     name: v.string(),
     description: v.optional(v.string()),
-    status: v.optional(v.union(
-      v.literal("draft"),
-      v.literal("published"),
-      v.literal("archived")
-    )),
+    status: v.optional(
+      v.union(
+        v.literal("draft"),
+        v.literal("published"),
+        v.literal("archived"),
+      ),
+    ),
     // User ID from Clerk authentication
     userId: v.string(),
     // Nodes in the workflow graph
-    nodes: v.array(v.object({
-      id: v.string(),
-      type: v.string(), // "llm", "input", "output", "transform", "branch"
-      position: v.object({
-        x: v.number(),
-        y: v.number(),
+    nodes: v.array(
+      v.object({
+        id: v.string(),
+        type: v.string(), // "ai", "input", "output", "transform", "branch"
+        position: v.object({
+          x: v.number(),
+          y: v.number(),
+        }),
+        data: v.any(), // Node-specific configuration
       }),
-      data: v.any(), // Node-specific configuration
-    })),
+    ),
     // Edges connecting nodes
-    edges: v.array(v.object({
-      id: v.string(),
-      source: v.string(),
-      target: v.string(),
-      sourceHandle: v.optional(v.string()),
-      targetHandle: v.optional(v.string()),
-    })),
+    edges: v.array(
+      v.object({
+        id: v.string(),
+        source: v.string(),
+        target: v.string(),
+        sourceHandle: v.optional(v.string()),
+        targetHandle: v.optional(v.string()),
+      }),
+    ),
     // Workflow-level variables
-    variables: v.optional(v.array(v.object({
-      name: v.string(),
-      type: v.string(),
-      defaultValue: v.optional(v.any()),
-    }))),
+    variables: v.optional(
+      v.array(
+        v.object({
+          name: v.string(),
+          type: v.string(),
+          defaultValue: v.optional(v.any()),
+        }),
+      ),
+    ),
     createdAt: v.number(),
     updatedAt: v.number(),
   }).index("by_user", ["userId"]),
@@ -49,20 +59,24 @@ export default defineSchema({
       v.literal("pending"),
       v.literal("running"),
       v.literal("completed"),
-      v.literal("failed")
+      v.literal("failed"),
     ),
     input: v.any(), // Input data for the workflow
     output: v.optional(v.any()), // Final output
     error: v.optional(v.string()), // Error message if failed
-    metadata: v.optional(v.object({
-      totalSteps: v.optional(v.number()),
-      completedSteps: v.optional(v.number()),
-      cost: v.optional(v.number()),
-      duration: v.optional(v.number()),
-    })),
+    metadata: v.optional(
+      v.object({
+        totalSteps: v.optional(v.number()),
+        completedSteps: v.optional(v.number()),
+        cost: v.optional(v.number()),
+        duration: v.optional(v.number()),
+      }),
+    ),
     createdAt: v.number(),
     updatedAt: v.number(),
-  }).index("by_workflow", ["workflowId"]).index("by_user", ["userId"]),
+  })
+    .index("by_workflow", ["workflowId"])
+    .index("by_user", ["userId"]),
 
   // Steps table - stores individual step executions within a run
   steps: defineTable({
@@ -74,23 +88,29 @@ export default defineSchema({
       v.literal("pending"),
       v.literal("running"),
       v.literal("completed"),
-      v.literal("failed")
+      v.literal("failed"),
     ),
     input: v.any(),
     output: v.optional(v.any()),
     error: v.optional(v.string()),
-    metadata: v.optional(v.object({
-      model: v.optional(v.string()),
-      tokens: v.optional(v.object({
-        input: v.optional(v.number()),
-        output: v.optional(v.number()),
-      })),
-      cost: v.optional(v.number()),
-      duration: v.optional(v.number()),
-    })),
+    metadata: v.optional(
+      v.object({
+        model: v.optional(v.string()),
+        tokens: v.optional(
+          v.object({
+            input: v.optional(v.number()),
+            output: v.optional(v.number()),
+          }),
+        ),
+        cost: v.optional(v.number()),
+        duration: v.optional(v.number()),
+      }),
+    ),
     startedAt: v.optional(v.number()),
     completedAt: v.optional(v.number()),
-  }).index("by_run", ["runId"]).index("by_user", ["userId"]),
+  })
+    .index("by_run", ["runId"])
+    .index("by_user", ["userId"]),
 
   // API Keys table - for authentication
   apiKeys: defineTable({

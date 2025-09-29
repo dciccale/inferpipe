@@ -35,7 +35,7 @@ interface WorkflowBuilderProps {
   onConnect: (connection: Connection) => void;
   onNodesDelete: (nodes: Node[]) => void;
   nodeTypes: {
-    llm: (props: NodeProps) => ReactNode;
+    ai: (props: NodeProps) => ReactNode;
     input: (props: NodeProps) => ReactNode;
   };
   isExecuting: boolean;
@@ -60,8 +60,8 @@ function WorkflowBuilderInner({
     theme === "system"
       ? typeof window !== "undefined" &&
         window.matchMedia("(prefers-color-scheme: dark)").matches
-      ? "dark"
-      : "light"
+        ? "dark"
+        : "light"
       : theme;
 
   return (
@@ -130,26 +130,32 @@ function WorkflowBuilderInner({
               {executionResult && (
                 <div className="space-y-2">
                   <div className="text-sm font-medium">
-                    Status: {String(executionResult.status ?? '')}
+                    Status: {String(executionResult.status ?? "")}
                   </div>
-                  {executionResult.output !== undefined && executionResult.output != null && (
-                    <div className="text-sm">
-                      <div className="font-medium">Output:</div>
-                      <div className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
-                        {typeof executionResult.output === "string"
-                          ? executionResult.output
-                          : JSON.stringify(executionResult.output ?? {}, null, 2)}
+                  {executionResult.output !== undefined &&
+                    executionResult.output != null && (
+                      <div className="text-sm">
+                        <div className="font-medium">Output:</div>
+                        <div className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
+                          {typeof executionResult.output === "string"
+                            ? executionResult.output
+                            : JSON.stringify(
+                                executionResult.output ?? {},
+                                null,
+                                2,
+                              )}
+                        </div>
                       </div>
-                    </div>
-                  )}
-                  {executionResult.error !== undefined && executionResult.error != null && (
-                    <div className="text-sm text-destructive">
-                      <div className="font-medium">Error:</div>
-                      <div className="bg-destructive/10 p-2 rounded text-xs">
-                        {String(executionResult.error)}
+                    )}
+                  {executionResult.error !== undefined &&
+                    executionResult.error != null && (
+                      <div className="text-sm text-destructive">
+                        <div className="font-medium">Error:</div>
+                        <div className="bg-destructive/10 p-2 rounded text-xs">
+                          {String(executionResult.error)}
+                        </div>
                       </div>
-                    </div>
-                  )}
+                    )}
                 </div>
               )}
               {!isExecuting && !executionResult && (

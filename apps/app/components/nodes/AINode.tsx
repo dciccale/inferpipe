@@ -12,17 +12,17 @@ import {
 import { Button } from "@/components/ui/button";
 import { Zap, X } from "lucide-react";
 
-export interface LLMNodeData {
+export interface AINodeData {
   prompt: string;
   model: string;
 }
 
-interface LLMNodeProps extends NodeProps {
+interface AINodeProps extends NodeProps {
   onDeleteNode?: (nodeId: string) => void;
 }
 
-export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
-  const nodeData = data as unknown as LLMNodeData;
+export function AINode({ data, id, onDeleteNode }: AINodeProps) {
+  const nodeData = data as unknown as AINodeData;
   const [localPrompt, setLocalPrompt] = useState(nodeData.prompt || "");
   const [localModel, setLocalModel] = useState(
     nodeData.model || "gpt-3.5-turbo",
@@ -34,7 +34,7 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
     { value: "gpt-4o", label: "GPT-4o" },
   ];
 
-  const updateNodeData = (updates: Partial<LLMNodeData>) => {
+  const updateNodeData = (updates: Partial<AINodeData>) => {
     // In a real implementation, this would update the node in the parent component
     Object.assign(nodeData, updates);
   };
@@ -56,18 +56,17 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-2">
               <Zap className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">LLM Node</span>
+              <span className="text-sm font-medium">AI Node</span>
             </div>
             <Button
               variant="ghost"
               size="sm"
               className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag"
               onClick={() => {
-                if (window.confirm("Delete this LLM node?")) {
+                if (window.confirm("Delete this AI node?")) {
                   onDeleteNode?.(id);
                 }
-              }}
-            >
+              }}>
               <X className="w-3 h-3" />
             </Button>
           </div>
@@ -113,15 +112,9 @@ export function LLMNode({ data, id, onDeleteNode }: LLMNodeProps) {
           </div>
         </BaseNodeContent>
       </BaseNode>
-      
-      <Handle 
-        type="target" 
-        position={Position.Left} 
-      />
-      <Handle 
-        type="source" 
-        position={Position.Right} 
-      />
+
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
     </>
   );
 }

@@ -19,7 +19,7 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "Inferpipe - Workflow Builder",
-  description: "Build and execute LLM workflows with ease",
+  description: "Build and execute AI workflows with ease",
 };
 
 const marketingUrl =
@@ -49,9 +49,7 @@ export default function RootLayout({
             <ConvexClientProvider>
               <div className="h-screen flex flex-col">
                 <Header />
-                <div className="flex-1 overflow-hidden">
-                  {children}
-                </div>
+                <div className="flex-1 overflow-hidden">{children}</div>
               </div>
             </ConvexClientProvider>
           </ThemeProvider>

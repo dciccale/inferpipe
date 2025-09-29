@@ -6,11 +6,13 @@ export const createWorkflow = mutation({
   args: {
     name: v.string(),
     description: v.optional(v.string()),
-    status: v.optional(v.union(
-      v.literal("draft"),
-      v.literal("published"),
-      v.literal("archived")
-    )),
+    status: v.optional(
+      v.union(
+        v.literal("draft"),
+        v.literal("published"),
+        v.literal("archived"),
+      ),
+    ),
     nodes: v.optional(
       v.array(
         v.object({
@@ -100,11 +102,13 @@ export const updateWorkflow = mutation({
     workflowId: v.id("workflows"),
     name: v.optional(v.string()),
     description: v.optional(v.string()),
-    status: v.optional(v.union(
-      v.literal("draft"),
-      v.literal("published"),
-      v.literal("archived")
-    )),
+    status: v.optional(
+      v.union(
+        v.literal("draft"),
+        v.literal("published"),
+        v.literal("archived"),
+      ),
+    ),
     nodes: v.optional(
       v.array(
         v.object({
@@ -262,7 +266,13 @@ export const executeWorkflow = mutation({
       let result;
       if (args.stepId) {
         // Execute only a specific step
-        result = await executeStep(ctx, workflow, runId, args.input, args.stepId);
+        result = await executeStep(
+          ctx,
+          workflow,
+          runId,
+          args.input,
+          args.stepId,
+        );
       } else {
         // Execute the full workflow
         result = await executeFullWorkflow(ctx, workflow, runId, args.input);
@@ -280,7 +290,6 @@ export const executeWorkflow = mutation({
         status: "completed",
         output: result,
       };
-
     } catch (error) {
       // Update run status to failed
       await ctx.db.patch(runId, {
@@ -295,13 +304,21 @@ export const executeWorkflow = mutation({
 });
 
 // Execute a single step
-async function executeStep(ctx: any, workflow: any, runId: any, input: any, targetStepId: string) {
-  const targetNode = workflow.nodes.find((node: any) => node.id === targetStepId);
+async function executeStep(
+  ctx: any,
+  workflow: any,
+  runId: any,
+  input: any,
+  targetStepId: string,
+) {
+  const targetNode = workflow.nodes.find(
+    (node: any) => node.id === targetStepId,
+  );
   if (!targetNode) {
     throw new Error(`Step ${targetStepId} not found in workflow`);
   }
 
-    const stepId = await ctx.db.insert("steps", {
+  const stepId = await ctx.db.insert("steps", {
     runId,
     userId: identity.subject,
     nodeId: targetNode.id,
@@ -317,8 +334,8 @@ async function executeStep(ctx: any, workflow: any, runId: any, input: any, targ
     });
 
     let result;
-    if (targetNode.type === "llm") {
-      result = await executeLLMNode(targetNode, input);
+    if (targetNode.type === "ai") {
+      result = await executeAINode(targetNode, input);
     } else if (targetNode.type === "input") {
       result = { output: input };
     } else {
@@ -333,7 +350,6 @@ async function executeStep(ctx: any, workflow: any, runId: any, input: any, targ
     });
 
     return result.output;
-
   } catch (error) {
     await ctx.db.patch(stepId, {
       status: "failed",
@@ -345,20 +361,25 @@ async function executeStep(ctx: any, workflow: any, runId: any, input: any, targ
 }
 
 // Execute the full workflow
-async function executeFullWorkflow(ctx: any, workflow: any, runId: any, input: any) {
-  // For now, execute LLM nodes sequentially (MVP approach)
+async function executeFullWorkflow(
+  ctx: any,
+  workflow: any,
+  runId: any,
+  input: any,
+) {
+  // For now, execute AI nodes sequentially (MVP approach)
   // TODO: Replace with Inngest for background execution and proper graph traversal
   // See inngest.ts for the planned implementation
-  const llmNodes = workflow.nodes.filter((node: any) => node.type === "llm");
-  
-  if (llmNodes.length === 0) {
+  const aiNodes = workflow.nodes.filter((node: any) => node.type === "ai");
+
+  if (aiNodes.length === 0) {
     return { message: "No executable nodes found in workflow" };
   }
 
   let currentInput = input;
   let finalOutput = null;
 
-  for (const node of llmNodes) {
+  for (const node of aiNodes) {
     const stepId = await ctx.db.insert("steps", {
       runId,
       userId: identity.subject,
@@ -374,7 +395,7 @@ async function executeFullWorkflow(ctx: any, workflow: any, runId: any, input: a
         status: "running",
       });
 
-      const result = await executeLLMNode(node, currentInput);
+      const result = await executeAINode(node, currentInput);
 
       await ctx.db.patch(stepId, {
         status: "completed",
@@ -386,7 +407,6 @@ async function executeFullWorkflow(ctx: any, workflow: any, runId: any, input: a
       // Use output as input for next step
       currentInput = { ...currentInput, previousOutput: result.output };
       finalOutput = result.output;
-
     } catch (error) {
       await ctx.db.patch(stepId, {
         status: "failed",
@@ -400,8 +420,8 @@ async function executeFullWorkflow(ctx: any, workflow: any, runId: any, input: a
   return finalOutput;
 }
 
-// Execute an LLM node (moved from http.ts)
-async function executeLLMNode(node: any, input: any) {
+// Execute an AI node (moved from http.ts)
+async function executeAINode(node: any, input: any) {
   // This will be moved to Inngest later, but for now keep it simple
   const prompt = node.data.prompt || "Hello, how can I help you today?";
   const model = node.data.model || "gpt-3.5-turbo";
@@ -409,18 +429,18 @@ async function executeLLMNode(node: any, input: any) {
   // Simple template replacement
   let processedPrompt = prompt;
   if (input) {
-    Object.keys(input).forEach(key => {
+    Object.keys(input).forEach((key) => {
       processedPrompt = processedPrompt.replace(
-        new RegExp(`{{${key}}}`, 'g'), 
-        String(input[key])
+        new RegExp(`{{${key}}}`, "g"),
+        String(input[key]),
       );
     });
   }
 
   // For now, return a mock response
   // TODO: Integrate with OpenAI via Inngest
-  const mockOutput = `Mock LLM response for prompt: "${processedPrompt}" using model: ${model}`;
-  
+  const mockOutput = `Mock AI response for prompt: "${processedPrompt}" using model: ${model}`;
+
   return {
     output: mockOutput,
     metadata: {

@@ -1,5 +1,5 @@
 @import "tailwindcss";
-@import '@clerk/themes/shadcn.css';
+@import "@clerk/themes/shadcn.css";
 
 /* Dark mode variables (default) */
 :root {
@@ -101,11 +101,11 @@ body {
 }
 
 .react-flow.dark .react-flow__node-input,
-.react-flow.dark .react-flow__node-llm,
+.react-flow.dark .react-flow__node-ai,
 .react-flow.light .react-flow__node-input,
-.react-flow.light .react-flow__node-llm,
+.react-flow.light .react-flow__node-ai,
 .react-flow .react-flow__node-input,
-.react-flow .react-flow__node-llm {
+.react-flow .react-flow__node-ai {
   background: transparent !important;
   border: none !important;
   box-shadow: none !important;
@@ -147,3 +147,4 @@ body {
 .react-flow__minimap-mask {
   fill: var(--muted);
 }
+

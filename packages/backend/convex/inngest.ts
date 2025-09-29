@@ -47,7 +47,7 @@ export const executeStepWithInngest = action({
     // TODO: Implement Inngest step execution
     // This will:
     // 1. Send event to Inngest to execute a specific step
-    // 2. Handle LLM calls, API calls, transformations, etc.
+    // 2. Handle AI calls, API calls, transformations, etc.
     // 3. Update step status and results in Convex
 
     console.log("TODO: Implement Inngest step execution", args);
@@ -76,12 +76,12 @@ const executeWorkflow = inngest.createFunction(
   { event: "workflow.execute" },
   async ({ event, step }) => {
     const { workflowId, runId, input } = event.data;
-    
+
     // Get workflow definition
     const workflow = await step.run("get-workflow", async () => {
       // Call Convex to get workflow
     });
-    
+
     // Execute each step
     for (const node of workflow.nodes) {
       await step.run(`execute-step-${node.id}`, async () => {
@@ -97,13 +97,13 @@ const executeStep = inngest.createFunction(
   { event: "step.execute" },
   async ({ event, step }) => {
     const { stepId, nodeId, nodeType, input } = event.data;
-    
-    if (nodeType === "llm") {
-      // Execute LLM call
-      const result = await step.run("llm-call", async () => {
+
+    if (nodeType === "ai") {
+      // Execute AI call
+      const result = await step.run("ai-call", async () => {
         // OpenAI API call
       });
-      
+
       // Update step in Convex
       await step.run("update-step", async () => {
         // Call Convex mutation to update step
