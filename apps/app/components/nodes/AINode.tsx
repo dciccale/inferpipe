@@ -37,10 +37,10 @@ interface AINodeProps extends NodeProps {
 export function AINode({ data, id, onDeleteNode }: AINodeProps) {
   const nodeData = data as unknown as AINodeData;
   const [localPrompt, setLocalPrompt] = useState(nodeData.prompt || "");
-  const [localModel, setLocalModel] = useState(
-    nodeData.model || "gpt-4o",
+  const [localModel, setLocalModel] = useState(nodeData.model || "gpt-4o");
+  const [localWebSearch, setLocalWebSearch] = useState(
+    nodeData.web_search_options ? true : false,
   );
-  const [localWebSearch, setLocalWebSearch] = useState(nodeData.web_search_options ? true : false);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
   const models = [
@@ -71,116 +71,118 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
   };
 
   return (
-    <>
-      <BaseNode className="w-80">
-        <BaseNodeHeader>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2">
-              <Zap className="w-4 h-4 text-primary" />
-              <span className="text-sm font-medium">AI Node</span>
-            </div>
-            <AlertDialog open={showDeleteDialog} onOpenChange={setShowDeleteDialog}>
-              <AlertDialogTrigger asChild>
-                <Button
-                  variant="ghost"
-                  size="sm"
-                  className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag">
-                  <X className="w-3 h-3" />
-                </Button>
-              </AlertDialogTrigger>
-              <AlertDialogContent>
-                <AlertDialogHeader>
-                  <AlertDialogTitle>Delete AI Node?</AlertDialogTitle>
-                  <AlertDialogDescription>
-                    This will permanently delete this node and all its connections. This action cannot be undone.
-                  </AlertDialogDescription>
-                </AlertDialogHeader>
-                <AlertDialogFooter>
-                  <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction onClick={handleDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-                    Delete
-                  </AlertDialogAction>
-                </AlertDialogFooter>
-              </AlertDialogContent>
-            </AlertDialog>
-          </div>
-        </BaseNodeHeader>
+    <BaseNode className="w-80">
+      <Handle type="target" position={Position.Left} />
+      <Handle type="source" position={Position.Right} />
 
-        <BaseNodeContent>
-          {/* Model Selection */}
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Model
-            </label>
-            <Select value={localModel} onValueChange={handleModelChange}>
-              <SelectTrigger className="h-8 nodrag">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                {models.map((model) => (
-                  <SelectItem key={model.value} value={model.value}>
-                    {model.label}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+      <BaseNodeHeader>
+        <div className="flex items-center justify-between">
+          <div className="flex items-center gap-2">
+            <Zap className="w-4 h-4 text-primary" />
+            <span className="text-sm font-medium">AI Node</span>
           </div>
+          <AlertDialog
+            open={showDeleteDialog}
+            onOpenChange={setShowDeleteDialog}>
+            <AlertDialogTrigger asChild>
+              <Button
+                variant="ghost"
+                size="sm"
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag">
+                <X className="w-3 h-3" />
+              </Button>
+            </AlertDialogTrigger>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>Delete AI Node?</AlertDialogTitle>
+                <AlertDialogDescription>
+                  This will permanently delete this node and all its
+                  connections. This action cannot be undone.
+                </AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>Cancel</AlertDialogCancel>
+                <AlertDialogAction
+                  onClick={handleDelete}
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  Delete
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </div>
+      </BaseNodeHeader>
 
-          {/* Enable Web Search */}
-          <div className="flex items-center space-x-2 mt-2">
-            <Checkbox
-              id={`web-search-${id}`}
-              checked={localWebSearch || false}
-              onCheckedChange={(checked: boolean) => {
-                const newVal = checked ? { web_search_options: { user_location: { type: "approximate", approximate: { country: "US" } } } } : {};
-                setLocalWebSearch(!!checked);
-                updateNodeData(newVal);
-              }}
-            />
-            <label htmlFor={`web-search-${id}`} className="text-xs text-muted-foreground cursor-pointer">
-              Enable Web Search (uses tools for live results)
-            </label>
-          </div>
+      <BaseNodeContent>
+        {/* Model Selection */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+            Model
+          </label>
+          <Select value={localModel} onValueChange={handleModelChange}>
+            <SelectTrigger className="h-8 nodrag">
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              {models.map((model) => (
+                <SelectItem key={model.value} value={model.value}>
+                  {model.label}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
 
-          {/* Prompt */}
-          <div>
-            <label className="text-xs font-medium text-muted-foreground mb-1 block">
-              Prompt
-            </label>
-            <Textarea
-              value={localPrompt}
-              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => handlePromptChange(e.target.value)}
-              placeholder="Enter your prompt here..."
-              className="min-h-20 text-sm resize-none nodrag"
-            />
-          </div>
+        {/* Enable Web Search */}
+        <div className="flex items-center space-x-2 mt-2">
+          <Checkbox
+            id={`web-search-${id}`}
+            checked={localWebSearch || false}
+            onCheckedChange={(checked: boolean) => {
+              const newVal = checked
+                ? {
+                    web_search_options: {
+                      user_location: {
+                        type: "approximate",
+                        approximate: { country: "US" },
+                      },
+                    },
+                  }
+                : {};
+              setLocalWebSearch(!!checked);
+              updateNodeData(newVal);
+            }}
+          />
+          <label
+            htmlFor={`web-search-${id}`}
+            className="text-xs text-muted-foreground cursor-pointer">
+            Enable Web Search (uses tools for live results)
+          </label>
+        </div>
 
-          {/* Expanded Settings */}
-          {/*
-          <div className="space-y-0 pt-3 mt-3 border-t text-xs text-muted-foreground">
-            <div>Model: {localModel}</div>
-            <div>Tokens: ~{Math.ceil(localPrompt.length / 4)}</div>
-          </div>
-          */}
-        </BaseNodeContent>
-      </BaseNode>
+        {/* Prompt */}
+        <div>
+          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+            Prompt
+          </label>
+          <Textarea
+            value={localPrompt}
+            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
+              handlePromptChange(e.target.value)
+            }
+            placeholder="Enter your prompt here..."
+            className="min-h-20 text-sm resize-none nodrag"
+          />
+        </div>
 
-      <Handle 
-        type="target" 
-        position={Position.Left}
-        style={{
-          left: -6,
-          top: '50%',
-        }}
-      />
-      <Handle 
-        type="source" 
-        position={Position.Right}
-        style={{
-          right: -6,
-          top: '50%',
-        }}
-      />
-    </>
+        {/* Expanded Settings */}
+        {/*
+        <div className="space-y-0 pt-3 mt-3 border-t text-xs text-muted-foreground">
+          <div>Model: {localModel}</div>
+          <div>Tokens: ~{Math.ceil(localPrompt.length / 4)}</div>
+        </div>
+        */}
+      </BaseNodeContent>
+    </BaseNode>
   );
 }
