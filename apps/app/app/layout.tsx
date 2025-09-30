@@ -48,6 +48,7 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
+            storageKey="inferpipe-theme"
             disableTransitionOnChange>
             <ConvexClientProvider>
               <div className="h-screen flex flex-col">
