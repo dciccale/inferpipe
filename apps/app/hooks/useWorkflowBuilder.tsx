@@ -2,7 +2,7 @@
 import React, { useState, useCallback, useMemo, useEffect } from "react";
 import { useMutation } from "convex/react";
 import { useAction } from "convex/react";
-import { api } from "@packages/backend/api";  // This is the correct import
+import { api } from "@packages/backend/api"; // This is the correct import
 import { toast } from "sonner";
 import type { Id } from "@packages/backend/dataModel";
 import type {
@@ -16,6 +16,7 @@ import type {
 import { applyNodeChanges, applyEdgeChanges, addEdge } from "@xyflow/react";
 import { AINode } from "../components/nodes/AINode";
 import { InputNode } from "../components/nodes/InputNode";
+import { DEFAULT_MODEL } from "../constants/models";
 
 // Define Step interface here, after imports
 export interface Step {
@@ -132,7 +133,7 @@ export function useWorkflowBuilder({
         position: { x: newX, y: 200 },
         data: {
           prompt: "Enter your prompt here...",
-          model: "gpt-3.5-turbo",
+          model: DEFAULT_MODEL,
         },
       };
 
@@ -175,7 +176,9 @@ export function useWorkflowBuilder({
             (node) => node.type === "input",
           );
           if (inputNodes.length <= 1) {
-            console.error("Cannot delete the last input node. At least one input node must exist.");
+            console.error(
+              "Cannot delete the last input node. At least one input node must exist.",
+            );
             return currentNodes;
           }
         }
@@ -270,10 +273,13 @@ export function useWorkflowBuilder({
     try {
       const inputNode = nodes.find((node) => node.type === "input");
       if (!inputNode) {
-        throw new Error("No input node found. Add an input node to start the workflow.");
+        throw new Error(
+          "No input node found. Add an input node to start the workflow.",
+        );
       }
 
-      const initialInputValue = inputNode.data.textInput || "Default input text";
+      const initialInputValue =
+        inputNode.data.textInput || "Default input text";
 
       const inputStep: Step = {
         id: inputNode.id,
@@ -293,7 +299,7 @@ export function useWorkflowBuilder({
       for (let i = 0; i < aiNodes.length; i++) {
         const node = aiNodes[i];
         const prompt = String(node.data.prompt || "Default prompt");
-        const model = String(node.data.model || "gpt-4o");
+        const model = String(node.data.model || DEFAULT_MODEL);
 
         setRunningNodeId(node.id);
         const aiResult = await executeAI({
@@ -317,7 +323,8 @@ export function useWorkflowBuilder({
       setExecutionResult({ steps: finalSteps });
     } catch (error) {
       console.error("Error executing workflow:", error);
-      const errorMsg = error instanceof Error ? error.message : "Failed to execute workflow";
+      const errorMsg =
+        error instanceof Error ? error.message : "Failed to execute workflow";
       setExecutionResult({ error: errorMsg });
     } finally {
       setIsExecuting(false);
@@ -326,75 +333,87 @@ export function useWorkflowBuilder({
   }, [nodes, executeAI]);
 
   // Updated executeStep similarly, without breaking comments
-  const executeStep = useCallback(async (nodeId: string, providedInput?: unknown) => {
-    const node = nodes.find((n) => n.id === nodeId);
-    if (!node) {
-      throw new Error("Node not found");
-    }
-
-    if (node.type === "input") {
-      const inputStep: Step = {
-        id: nodeId,
-        step: 1,
-        input: null,
-        output: { text: node.data.textInput || providedInput || "Default input" },
-      };
-      setSteps([inputStep]);
-      setExecutionResult({ steps: [inputStep] });
-      return inputStep.output;
-    } else if (node.type === "ai") {
-      const prompt = String(node.data.prompt || "");
-      const model = String(node.data.model || "gpt-4o");
-      const input = providedInput || steps[steps.length - 1]?.output || {};
-
-      setIsExecuting(true);
-
-      try {
-        setRunningNodeId(node.id);
-        const aiResult = await executeAI({
-          prompt,
-          model,
-          previousOutput: JSON.stringify(input ?? {}),
-        });
-
-        const aiStep: Step = {
-          id: nodeId,
-          step: steps.length + 1,
-          input,
-          output: aiResult.output,
-        };
-
-        const newSteps = [...steps, aiStep];
-        setSteps(newSteps);
-        setExecutionResult({ steps: newSteps });
-        return aiResult.output;
-      } catch (error) {
-        const errorMsg = error instanceof Error ? error.message : "AI execution failed";
-        const errorStep: Step = {
-          id: nodeId,
-          step: steps.length + 1,
-          input,
-          output: null,
-          error: errorMsg,
-        };
-        const newSteps = [...steps, errorStep];
-        setSteps(newSteps);
-        setExecutionResult({ error: errorMsg });
-        throw error;
-      } finally {
-        setIsExecuting(false);
-        setRunningNodeId(null);
+  const executeStep = useCallback(
+    async (nodeId: string, providedInput?: unknown) => {
+      const node = nodes.find((n) => n.id === nodeId);
+      if (!node) {
+        throw new Error("Node not found");
       }
-    }
-  }, [nodes, executeAI, steps]);
+
+      if (node.type === "input") {
+        const inputStep: Step = {
+          id: nodeId,
+          step: 1,
+          input: null,
+          output: {
+            text: node.data.textInput || providedInput || "Default input",
+          },
+        };
+        setSteps([inputStep]);
+        setExecutionResult({ steps: [inputStep] });
+        return inputStep.output;
+      } else if (node.type === "ai") {
+        const prompt = String(node.data.prompt || "");
+        const model = String(node.data.model || DEFAULT_MODEL);
+        const input = providedInput || steps[steps.length - 1]?.output || {};
+
+        setIsExecuting(true);
+
+        try {
+          setRunningNodeId(node.id);
+          const aiResult = await executeAI({
+            prompt,
+            model,
+            previousOutput: JSON.stringify(input ?? {}),
+          });
+
+          const aiStep: Step = {
+            id: nodeId,
+            step: steps.length + 1,
+            input,
+            output: aiResult.output,
+          };
+
+          const newSteps = [...steps, aiStep];
+          setSteps(newSteps);
+          setExecutionResult({ steps: newSteps });
+          return aiResult.output;
+        } catch (error) {
+          const errorMsg =
+            error instanceof Error ? error.message : "AI execution failed";
+          const errorStep: Step = {
+            id: nodeId,
+            step: steps.length + 1,
+            input,
+            output: null,
+            error: errorMsg,
+          };
+          const newSteps = [...steps, errorStep];
+          setSteps(newSteps);
+          setExecutionResult({ error: errorMsg });
+          throw error;
+        } finally {
+          setIsExecuting(false);
+          setRunningNodeId(null);
+        }
+      }
+    },
+    [nodes, executeAI, steps],
+  );
 
   // Memoized node types
   const nodeTypes = useMemo(
     () => ({
-      ai: (props: NodeProps) => <AINode {...props} onDeleteNode={deleteNode} />,
+      ai: (props: NodeProps) => (
+        <AINode
+          {...props}
+          onDeleteNode={deleteNode}
+          onUpdateNodeData={updateNodeData}
+        />
+      ),
       input: (props: NodeProps) => <InputNode {...props} />,
     }),
-    [deleteNode],
+    [deleteNode, updateNodeData],
   );
 
   // Update initial nodes if initialWorkflow changes (e.g., after query loads)
@@ -429,7 +448,10 @@ export function useWorkflowBuilder({
     }
   }, [initialWorkflow, workflowId]);
 
-  const nodeIsRunning = useCallback((nodeId: string) => runningNodeId === nodeId, [runningNodeId]);
+  const nodeIsRunning = useCallback(
+    (nodeId: string) => runningNodeId === nodeId,
+    [runningNodeId],
+  );
 
   return {
     // State

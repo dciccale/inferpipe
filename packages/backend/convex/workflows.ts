@@ -289,11 +289,17 @@ export const executeWorkflow = mutation({
           runId as Id<"runs">,
           args.input as Record<string, unknown>,
           args.stepId,
-          identity as UserIdentity
+          identity as UserIdentity,
         );
       } else {
         // Execute the full workflow
-        result = await executeFullWorkflow(ctx, workflow as Workflow, runId as Id<"runs">, args.input as Record<string, unknown>, identity as UserIdentity);
+        result = await executeFullWorkflow(
+          ctx,
+          workflow as Workflow,
+          runId as Id<"runs">,
+          args.input as Record<string, unknown>,
+          identity as UserIdentity,
+        );
       }
 
       // Update run status to completed
@@ -328,7 +334,7 @@ async function executeStep(
   runId: Id<"runs">,
   input: Record<string, unknown>,
   targetStepId: string,
-  identity: UserIdentity
+  identity: UserIdentity,
 ) {
   const targetNode = workflow.nodes.find(
     (node: WorkflowNode) => node.id === targetStepId,
@@ -385,12 +391,14 @@ async function executeFullWorkflow(
   workflow: Workflow,
   runId: Id<"runs">,
   input: Record<string, unknown>,
-  identity: UserIdentity
+  identity: UserIdentity,
 ) {
   // For now, execute AI nodes sequentially (MVP approach)
   // TODO: Replace with Inngest for background execution and proper graph traversal
   // See inngest.ts for the planned implementation
-  const aiNodes = workflow.nodes.filter((node: WorkflowNode) => node.type === "ai");
+  const aiNodes = workflow.nodes.filter(
+    (node: WorkflowNode) => node.type === "ai",
+  );
 
   if (aiNodes.length === 0) {
     return { message: "No executable nodes found in workflow" };
@@ -441,7 +449,10 @@ async function executeFullWorkflow(
 }
 
 // Execute an AI node (moved from http.ts)
-async function executeAINode(node: WorkflowNode, input: Record<string, unknown>) {
+async function executeAINode(
+  node: WorkflowNode,
+  input: Record<string, unknown>,
+) {
   // This will be moved to Inngest later, but for now keep it simple
   const prompt = node.data.prompt || "Hello, how can I help you today?";
   const model = node.data.model || "gpt-3.5-turbo";

@@ -1,7 +1,7 @@
 import { v } from "convex/values";
 import { mutation, query, action } from "./_generated/server";
-import { generateText } from 'ai';
-import { openai } from '@ai-sdk/openai';
+import { generateText } from "ai";
+import { openai } from "@ai-sdk/openai";
 
 // Create a new run for a workflow
 export const createRun = mutation({
@@ -87,16 +87,18 @@ export const updateRunStatus = mutation({
       v.literal("pending"),
       v.literal("running"),
       v.literal("completed"),
-      v.literal("failed")
+      v.literal("failed"),
     ),
     output: v.optional(v.any()),
     error: v.optional(v.string()),
-    metadata: v.optional(v.object({
-      totalSteps: v.optional(v.number()),
-      completedSteps: v.optional(v.number()),
-      cost: v.optional(v.number()),
-      duration: v.optional(v.number()),
-    })),
+    metadata: v.optional(
+      v.object({
+        totalSteps: v.optional(v.number()),
+        completedSteps: v.optional(v.number()),
+        cost: v.optional(v.number()),
+        duration: v.optional(v.number()),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     // Get the authenticated user
@@ -168,7 +170,6 @@ export const executeAIAction = action({
     prompt: v.string(),
     model: v.string(),
     previousOutput: v.optional(v.any()),
-    web_search_options: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -181,27 +182,10 @@ export const executeAIAction = action({
       fullPrompt = `Context from previous step:\n${JSON.stringify(args.previousOutput, null, 2)}\n\n${args.prompt}`;
     }
 
-    let generateOptions = {
+    const { text } = await generateText({
       model: openai(args.model),
       prompt: fullPrompt,
-    };
-
-    if (args.web_search_options) {
-      (generateOptions as any).tools = [{
-        name: 'web_search',
-        description: 'Search the web for current information',
-        parameters: v.object({
-          query: v.string(),
-        }),
-        execute: async ({ query }: { query: string }) => {
-          // MVP mock; later integrate Tavily or OpenAI assistants
-          return { results: [{ title: 'Mock Search', snippet: `Current price range for ${query}: $100-200` }] };
-        },
-      }];
-      // For real, use ctx.scheduler or external API, but keep simple
-    }
-
-    const { text, toolResults } = await generateText(generateOptions);
+    });
 
     let output;
     try {

@@ -86,7 +86,7 @@ export function InputNode({ data }: NodeProps) {
               handleTextInputChange(e.target.value)
             }
             placeholder="Enter test input here..."
-            className="min-h-20 text-sm resize-none nodrag"
+            className="min-h-20 text-sm nodrag"
           />
         </div>
 

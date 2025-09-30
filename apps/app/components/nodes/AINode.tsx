@@ -5,13 +5,14 @@ import { Textarea } from "@inferpipe/ui/components/textarea";
 import {
   Select,
   SelectContent,
+  SelectGroup,
   SelectItem,
+  SelectLabel,
   SelectTrigger,
   SelectValue,
 } from "@inferpipe/ui/components/select";
 import { Button } from "@inferpipe/ui/components/button";
 import { Zap, X } from "lucide-react";
-import { Checkbox } from "@inferpipe/ui/components/checkbox";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -23,36 +24,41 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@inferpipe/ui/components/alert-dialog";
+import {
+  MODEL_GROUPS,
+  MODEL_METADATA,
+  DEFAULT_MODEL,
+} from "@/constants/models";
 
 export interface AINodeData {
   prompt: string;
   model: string;
-  web_search_options?: unknown;
 }
 
 interface AINodeProps extends NodeProps {
   onDeleteNode?: (nodeId: string) => void;
+  onUpdateNodeData?: (nodeId: string, updates: Partial<AINodeData>) => void;
 }
 
-export function AINode({ data, id, onDeleteNode }: AINodeProps) {
+export function AINode({
+  data,
+  id,
+  onDeleteNode,
+  onUpdateNodeData,
+}: AINodeProps) {
   const nodeData = data as unknown as AINodeData;
   const [localPrompt, setLocalPrompt] = useState(nodeData.prompt || "");
-  const [localModel, setLocalModel] = useState(nodeData.model || "gpt-4o");
-  const [localWebSearch, setLocalWebSearch] = useState(
-    nodeData.web_search_options ? true : false,
-  );
+  const [localModel, setLocalModel] = useState(nodeData.model || DEFAULT_MODEL);
   const [showDeleteDialog, setShowDeleteDialog] = useState(false);
 
-  const models = [
-    { value: "gpt-4o", label: "GPT-4o (Latest)" },
-    { value: "gpt-4o-mini", label: "GPT-4o Mini" },
-    { value: "gpt-4-turbo", label: "GPT-4 Turbo" },
-    { value: "gpt-3.5-turbo", label: "GPT-3.5 Turbo" },
-  ];
+  const selectedModel = MODEL_METADATA[localModel];
 
   const updateNodeData = (updates: Partial<AINodeData>) => {
-    // In a real implementation, this would update the node in the parent component
-    Object.assign(nodeData, updates);
+    if (onUpdateNodeData) {
+      onUpdateNodeData(id, updates);
+    } else {
+      Object.assign(nodeData, updates);
+    }
   };
 
   const handlePromptChange = (value: string) => {
@@ -124,40 +130,59 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              {models.map((model) => (
-                <SelectItem key={model.value} value={model.value}>
-                  {model.label}
-                </SelectItem>
+              {MODEL_GROUPS.map((group) => (
+                <SelectGroup key={group.label}>
+                  <SelectLabel>{group.label}</SelectLabel>
+                  {group.options.map((option) => {
+                    const capabilityHints: string[] = [];
+                    if (option.capabilities?.webSearch) {
+                      capabilityHints.push("Includes web search");
+                    }
+                    if (option.capabilities?.modality === "speech-to-text") {
+                      capabilityHints.push("Speech to text");
+                    }
+                    if (option.capabilities?.modality === "text-to-speech") {
+                      capabilityHints.push("Text to speech");
+                    }
+
+                    const tooltip = [option.description, ...capabilityHints]
+                      .filter(Boolean)
+                      .join(" • ")
+                      .trim();
+
+                    return (
+                      <SelectItem
+                        key={option.value}
+                        value={option.value}
+                        title={tooltip || undefined}>
+                        {option.label}
+                      </SelectItem>
+                    );
+                  })}
+                </SelectGroup>
               ))}
             </SelectContent>
           </Select>
-        </div>
-
-        {/* Enable Web Search */}
-        <div className="flex items-center space-x-2 mt-2">
-          <Checkbox
-            id={`web-search-${id}`}
-            checked={localWebSearch || false}
-            onCheckedChange={(checked: boolean) => {
-              const newVal = checked
-                ? {
-                    web_search_options: {
-                      user_location: {
-                        type: "approximate",
-                        approximate: { country: "US" },
-                      },
-                    },
-                  }
-                : {};
-              setLocalWebSearch(!!checked);
-              updateNodeData(newVal);
-            }}
-          />
-          <label
-            htmlFor={`web-search-${id}`}
-            className="text-xs text-muted-foreground cursor-pointer">
-            Enable Web Search (uses tools for live results)
-          </label>
+          {selectedModel?.description ? (
+            <p className="text-[11px] text-muted-foreground mt-1">
+              {selectedModel.description}
+            </p>
+          ) : null}
+          {selectedModel?.capabilities?.webSearch ? (
+            <p className="text-[11px] text-primary mt-1">
+              Includes live web search when supported.
+            </p>
+          ) : null}
+          {selectedModel?.capabilities?.modality === "speech-to-text" ? (
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Provide audio input when executing this node.
+            </p>
+          ) : null}
+          {selectedModel?.capabilities?.modality === "text-to-speech" ? (
+            <p className="text-[11px] text-muted-foreground mt-1">
+              Returns synthesized audio output.
+            </p>
+          ) : null}
         </div>
 
         {/* Prompt */}
@@ -171,7 +196,7 @@ export function AINode({ data, id, onDeleteNode }: AINodeProps) {
               handlePromptChange(e.target.value)
             }
             placeholder="Enter your prompt here..."
-            className="min-h-20 text-sm resize-none nodrag"
+            className="min-h-20 text-sm nodrag"
           />
         </div>
 
