@@ -23,8 +23,7 @@ export const metadata: Metadata = {
   description: "Build and execute AI workflows with ease",
 };
 
-const marketingUrl =
-  process.env.NEXT_PUBLIC_MARKETING_URL || "http://localhost:3000";
+const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL!;
 
 export default function RootLayout({
   children,
@@ -37,9 +36,8 @@ export default function RootLayout({
       afterSignOutUrl={marketingUrl}
       signInUrl="/sign-in"
       signUpUrl="/sign-up"
-      signInFallbackRedirectUrl="/app"
-      signUpFallbackRedirectUrl="/app"
-      allowedRedirectOrigins={["http://localhost:3000"]}
+      signInFallbackRedirectUrl="/"
+      signUpFallbackRedirectUrl="/"
       appearance={{
         baseTheme: shadcn,
       }}>
@@ -50,8 +48,7 @@ export default function RootLayout({
             attribute="class"
             defaultTheme="system"
             enableSystem
-            disableTransitionOnChange
-          >
+            disableTransitionOnChange>
             <ConvexClientProvider>
               <div className="h-screen flex flex-col">
                 <Header />

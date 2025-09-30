@@ -1,12 +1,19 @@
 import { Button } from "@inferpipe/ui/components/button";
-import { ArrowRight, Zap, Shield, Code, Users, CheckCircle, Star } from "lucide-react";
+import {
+  ArrowRight,
+  Zap,
+  Shield,
+  Code,
+  Users,
+  CheckCircle,
+  Star,
+} from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
 export default function HomePage() {
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="relative overflow-hidden py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -15,17 +22,18 @@ export default function HomePage() {
               <Star className="w-4 h-4 mr-2" />
               Visual AI Pipeline Builder
             </div>
-            
+
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
               <span className="block">AI Workflow</span>
               <span className="block text-primary">Builder</span>
             </h1>
-            
+
             <p className="mt-6 text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-              Build, test, and deploy AI pipelines visually. Add intelligent automation to any app 
-              without complex development or infrastructure setup.
+              Build, test, and deploy AI pipelines visually. Add intelligent
+              automation to any app without complex development or
+              infrastructure setup.
             </p>
-            
+
             <div className="mt-10 flex items-center justify-center gap-4">
               <Button size="lg" asChild>
                 <a href="/app">
@@ -38,7 +46,7 @@ export default function HomePage() {
               </Button>
             </div>
           </div>
-          
+
           {/* Workflow Builder Preview */}
           <div className="mt-16 lg:mt-20">
             <div className="relative mx-auto max-w-5xl">
@@ -68,44 +76,52 @@ export default function HomePage() {
               Why Choose inferpipe?
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              The fastest way to build, test, and deploy AI pipelines. Enterprise-grade infrastructure with visual simplicity.
+              The fastest way to build, test, and deploy AI pipelines.
+              Enterprise-grade infrastructure with visual simplicity.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Feature 1 */}
             <div className="bg-background rounded-xl p-8 border border-border">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <Users className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Visual Pipeline Builder</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                Visual Pipeline Builder
+              </h3>
               <p className="text-muted-foreground">
-                Drag-and-drop interface for building AI workflows. Test prompts, iterate on logic, 
-                and deploy to production without writing code.
+                Drag-and-drop interface for building AI workflows. Test prompts,
+                iterate on logic, and deploy to production without writing code.
               </p>
             </div>
-            
+
             {/* Feature 2 */}
             <div className="bg-background rounded-xl p-8 border border-border">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <Zap className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Test & Iterate Quickly</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                Test & Iterate Quickly
+              </h3>
               <p className="text-muted-foreground">
-                Built-in prompt testing, A/B testing for AI responses, real-time debugging, 
-                and performance monitoring for your pipelines.
+                Built-in prompt testing, A/B testing for AI responses, real-time
+                debugging, and performance monitoring for your pipelines.
               </p>
             </div>
-            
+
             {/* Feature 3 */}
             <div className="bg-background rounded-xl p-8 border border-border">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-6">
                 <Shield className="w-6 h-6 text-primary" />
               </div>
-              <h3 className="text-xl font-semibold mb-4">Production-Ready Deployment</h3>
+              <h3 className="text-xl font-semibold mb-4">
+                Production-Ready Deployment
+              </h3>
               <p className="text-muted-foreground">
-                Enterprise-grade infrastructure with automatic scaling, error handling, 
-                and seamless integration into any application via simple APIs.
+                Enterprise-grade infrastructure with automatic scaling, error
+                handling, and seamless integration into any application via
+                simple APIs.
               </p>
             </div>
           </div>
@@ -120,17 +136,20 @@ export default function HomePage() {
               Perfect for Every Team
             </h2>
             <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
-              From startups to enterprises, inferpipe scales with your AI workflow needs.
+              From startups to enterprises, inferpipe scales with your AI
+              workflow needs.
             </p>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h3 className="text-2xl font-bold mb-6">SaaS Companies</h3>
               <ul className="space-y-4">
                 <li className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
-                  <span>Customer support automation with intelligent routing</span>
+                  <span>
+                    Customer support automation with intelligent routing
+                  </span>
                 </li>
                 <li className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
@@ -142,27 +161,31 @@ export default function HomePage() {
                 </li>
               </ul>
             </div>
-            
+
             <div className="relative">
               <div className="aspect-video rounded-xl bg-muted/30 border border-border flex items-center justify-center">
                 <div className="text-center">
                   <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">SaaS Workflow Example</p>
+                  <p className="text-sm text-muted-foreground">
+                    SaaS Workflow Example
+                  </p>
                 </div>
               </div>
             </div>
           </div>
-          
+
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-20">
             <div className="relative lg:order-1">
               <div className="aspect-video rounded-xl bg-muted/30 border border-border flex items-center justify-center">
                 <div className="text-center">
                   <Code className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">E-commerce Workflow Example</p>
+                  <p className="text-sm text-muted-foreground">
+                    E-commerce Workflow Example
+                  </p>
                 </div>
               </div>
             </div>
-            
+
             <div className="lg:order-2">
               <h3 className="text-2xl font-bold mb-6">E-commerce Platforms</h3>
               <ul className="space-y-4">
@@ -191,9 +214,10 @@ export default function HomePage() {
             Simple, Transparent Pricing
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Start free, scale as you grow. No hidden fees, just transparent AI workflow execution.
+            Start free, scale as you grow. No hidden fees, just transparent AI
+            workflow execution.
           </p>
-          
+
           <div className="inline-flex items-center space-x-4 bg-background rounded-xl p-6 border border-border">
             <div className="text-left">
               <div className="text-2xl font-bold">$49/month</div>
@@ -202,7 +226,9 @@ export default function HomePage() {
             <div className="w-px h-12 bg-border"></div>
             <div className="text-left">
               <div className="text-2xl font-bold">5,000</div>
-              <div className="text-sm text-muted-foreground">executions included</div>
+              <div className="text-sm text-muted-foreground">
+                executions included
+              </div>
             </div>
             <div className="w-px h-12 bg-border"></div>
             <div className="text-left">
@@ -210,7 +236,7 @@ export default function HomePage() {
               <div className="text-sm text-muted-foreground">workflows</div>
             </div>
           </div>
-          
+
           <div className="mt-8">
             <Button size="lg" asChild>
               <Link href="/pricing">View All Plans</Link>
@@ -226,9 +252,10 @@ export default function HomePage() {
             Ready to Build Your AI Pipeline?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Join teams who are shipping AI features faster with visual workflows and enterprise infrastructure.
+            Join teams who are shipping AI features faster with visual workflows
+            and enterprise infrastructure.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
               <a href="/app">
@@ -242,7 +269,7 @@ export default function HomePage() {
           </div>
         </div>
       </section>
-
     </div>
   );
 }
+

@@ -17,7 +17,8 @@ const geistMono = Geist_Mono({
 
 export const metadata: Metadata = {
   title: "inferpipe - No-Code AI Workflow Platform",
-  description: "Transform AI workflows from complex development projects into drag-and-drop configurations. Build production-ready AI backends without code.",
+  description:
+    "Transform AI workflows from complex development projects into drag-and-drop configurations. Build production-ready AI backends without code.",
 };
 
 export default function RootLayout({
@@ -28,12 +29,8 @@ export default function RootLayout({
   return (
     <html lang="en" suppressHydrationWarning>
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
-      >
-        <ThemeProvider
-          defaultTheme="light"
-          storageKey="inferpipe-theme"
-        >
+        className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+        <ThemeProvider defaultTheme="light" storageKey="inferpipe-theme">
           <Header />
           {children}
           <Footer />

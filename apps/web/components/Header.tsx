@@ -21,26 +21,24 @@ export function Header() {
               <span className="text-xl font-bold">inferpipe</span>
             </Link>
           </div>
-          
+
           <div className="flex items-center space-x-4">
-            <Link 
-              href="/docs" 
+            <Link
+              href="/docs"
               className={`text-sm transition-colors ${
-                pathname === '/docs' 
-                  ? 'font-medium text-foreground' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
+                pathname === "/docs"
+                  ? "font-medium text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}>
               Docs
             </Link>
-            <Link 
-              href="/pricing" 
+            <Link
+              href="/pricing"
               className={`text-sm transition-colors ${
-                pathname === '/pricing' 
-                  ? 'font-medium text-foreground' 
-                  : 'text-muted-foreground hover:text-foreground'
-              }`}
-            >
+                pathname === "/pricing"
+                  ? "font-medium text-foreground"
+                  : "text-muted-foreground hover:text-foreground"
+              }`}>
               Pricing
             </Link>
             <ThemeToggle />
