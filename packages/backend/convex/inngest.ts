@@ -11,8 +11,7 @@ import { action } from "./_generated/server";
 const INNGEST_API_BASE = process.env.INNGEST_API_BASE ?? "https://api.inngest.com";
 const INNGEST_API_KEY = process.env.INNGEST_API_KEY ?? "";
 
-// Optional flag to use the SDK for sending events. Falls back to HTTP API if false.
-const USE_INNGEST_SDK = false;
+// We consistently use the Inngest HTTP API from the backend.
 
 // Types representing our workflow graph persisted by the builder
 export type WorkflowNodeType = "llm" | "transform";
@@ -45,9 +44,9 @@ function renderPromptTemplate(
   if (!template) return "";
   // Very basic template replacement for MVP.
   // Replace {{input.*}} and {{node.<id>.*}} tokens with JSON values.
-  return template
-    .replaceAll("{{input}}", JSON.stringify(initialInput))
-    .replaceAll("{{results}}", JSON.stringify(nodeIdToResult));
+  const withInput = template.split("{{input}}").join(JSON.stringify(initialInput));
+  const withResults = withInput.split("{{results}}").join(JSON.stringify(nodeIdToResult));
+  return withResults;
 }
 
 async function inngestApi(path: string, init?: RequestInit) {
@@ -76,11 +75,10 @@ export const triggerInngestRun = action({
     input: v.any(),
   },
   handler: async (ctx, args) => {
-    if (USE_INNGEST_SDK) {
-      // Optional: use the SDK for sending events
-      const { Inngest } = await import("inngest");
-      const client = new Inngest({ id: "inferpipe" });
-      await client.send({
+    // Use Cloud API directly
+    await inngestApi(`/v1/events`, {
+      method: "POST",
+      body: JSON.stringify({
         name: "inferpipe/workflow.execute",
         data: {
           runId: args.runId,
@@ -89,23 +87,8 @@ export const triggerInngestRun = action({
           graph: args.graph as WorkflowGraph,
           input: args.input,
         },
-      });
-    } else {
-      // Default: use Cloud API directly
-      await inngestApi(`/v1/events`, {
-        method: "POST",
-        body: JSON.stringify({
-          name: "inferpipe/workflow.execute",
-          data: {
-            runId: args.runId,
-            workspaceId: args.workspaceId,
-            workflowVersionId: args.workflowVersionId,
-            graph: args.graph as WorkflowGraph,
-            input: args.input,
-          },
-        }),
-      });
-    }
+      }),
+    });
 
     return { runId: args.runId };
   },
@@ -131,13 +114,21 @@ export const compileAndTrigger = action({
       outputNodeId: "n2",
     };
 
-    return await triggerInngestRun.handler(ctx as any, {
-      workspaceId: args.workspaceId,
-      workflowVersionId: args.workflowVersionId,
-      runId: args.runId,
-      graph,
-      input: args.input,
+    await inngestApi(`/v1/events`, {
+      method: "POST",
+      body: JSON.stringify({
+        name: "inferpipe/workflow.execute",
+        data: {
+          runId: args.runId,
+          workspaceId: args.workspaceId,
+          workflowVersionId: args.workflowVersionId,
+          graph,
+          input: args.input,
+        },
+      }),
     });
+
+    return { runId: args.runId };
   },
 });
 
