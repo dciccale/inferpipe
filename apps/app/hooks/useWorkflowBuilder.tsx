@@ -1,19 +1,19 @@
 // useWorkflowBuilder.tsx
-import React, { useState, useCallback, useMemo, useEffect } from "react";
-import { useMutation } from "convex/react";
-import { useAction } from "convex/react";
+
 import { api } from "@packages/backend/api"; // This is the correct import
-import { toast } from "sonner";
 import type { Id } from "@packages/backend/dataModel";
 import type {
-  Node,
-  Edge,
-  NodeProps,
-  NodeChange,
-  EdgeChange,
   Connection,
+  Edge,
+  EdgeChange,
+  Node,
+  NodeChange,
+  NodeProps,
 } from "@xyflow/react";
-import { applyNodeChanges, applyEdgeChanges, addEdge } from "@xyflow/react";
+import { addEdge, applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
+import { useAction, useMutation } from "convex/react";
+import { useCallback, useEffect, useMemo, useState } from "react";
+import { toast } from "sonner";
 import { AINode } from "../components/nodes/AINode";
 import { InputNode } from "../components/nodes/InputNode";
 import { DEFAULT_MODEL } from "../constants/models";
@@ -111,7 +111,7 @@ export function useWorkflowBuilder({
 
   const onConnect = useCallback(
     (params: Connection) => setEdges((eds) => addEdge(params, eds) as Edge[]),
-    [setEdges],
+    [],
   );
 
   // Actions
@@ -139,7 +139,7 @@ export function useWorkflowBuilder({
 
       return [...currentNodes, newNode];
     });
-  }, [setNodes]);
+  }, []);
 
   const addInputNode = useCallback(() => {
     setNodes((currentNodes) => {
@@ -165,7 +165,7 @@ export function useWorkflowBuilder({
 
       return [...currentNodes, newNode];
     });
-  }, [setNodes, workflowId]);
+  }, [workflowId]);
 
   const deleteNode = useCallback(
     (nodeId: string) => {
@@ -189,7 +189,7 @@ export function useWorkflowBuilder({
         eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
       );
     },
-    [setNodes, setEdges],
+    [],
   );
 
   const updateNodeData = useCallback(
@@ -202,7 +202,7 @@ export function useWorkflowBuilder({
         ),
       );
     },
-    [setNodes],
+    [],
   );
 
   const onNodesDelete = useCallback(

@@ -1,4 +1,4 @@
-import React from "react";
+import type React from "react";
 import { cn } from "@/lib/utils";
 
 interface BaseNodeProps {
@@ -13,7 +13,7 @@ export function BaseNode({ children, className, selected }: BaseNodeProps) {
       className={cn(
         "relative bg-card border-2 border-border rounded-lg shadow-sm transition-all",
         selected && "border-primary shadow-lg",
-        className
+        className,
       )}
     >
       {children}
@@ -28,12 +28,7 @@ interface BaseNodeHeaderProps {
 
 export function BaseNodeHeader({ children, className }: BaseNodeHeaderProps) {
   return (
-    <div
-      className={cn(
-        "px-4 py-2 border-b border-border",
-        className
-      )}
-    >
+    <div className={cn("px-4 py-2 border-b border-border", className)}>
       {children}
     </div>
   );
@@ -45,11 +40,7 @@ interface BaseNodeContentProps {
 }
 
 export function BaseNodeContent({ children, className }: BaseNodeContentProps) {
-  return (
-    <div className={cn("p-4 space-y-3", className)}>
-      {children}
-    </div>
-  );
+  return <div className={cn("p-4 space-y-3", className)}>{children}</div>;
 }
 
 interface BaseNodeFooterProps {

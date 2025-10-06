@@ -25,28 +25,32 @@ export function Footer() {
               <li>
                 <Link
                   href="/features"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Features
                 </Link>
               </li>
               <li>
                 <Link
                   href="/pricing"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Pricing
                 </Link>
               </li>
               <li>
                 <Link
                   href="/docs"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Documentation
                 </Link>
               </li>
               <li>
                 <Link
                   href="/api"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   API Reference
                 </Link>
               </li>
@@ -59,28 +63,32 @@ export function Footer() {
               <li>
                 <Link
                   href="/about"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   About
                 </Link>
               </li>
               <li>
                 <Link
                   href="/blog"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Blog
                 </Link>
               </li>
               <li>
                 <Link
                   href="/contact"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Contact
                 </Link>
               </li>
               <li>
                 <Link
                   href="/privacy"
-                  className="hover:text-foreground transition-colors">
+                  className="hover:text-foreground transition-colors"
+                >
                   Privacy
                 </Link>
               </li>

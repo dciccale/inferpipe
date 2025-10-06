@@ -62,3 +62,9 @@
 - TypeScript/JS backend SDK with typed clients and streaming helpers
 - Server-side only - no client-side/browser SDKs (similar to Inngest pattern)
 - Python and Go based on OpenAPI spec
+
+### Competition
+
+https://openai.github.io/openai-agents-js/
+https://platform.openai.com/docs/guides/agents
+https://platform.openai.com/docs/guides/evals?api-mode=responses

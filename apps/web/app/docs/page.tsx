@@ -1,11 +1,10 @@
 import { Button } from "@inferpipe/ui/components/button";
-import { Code, Zap, ArrowRight, Terminal, Globe, Shield } from "lucide-react";
+import { ArrowRight, Code, Globe, Shield, Terminal, Zap } from "lucide-react";
 import Link from "next/link";
 
 export default function DocsPage() {
   return (
     <div className="min-h-screen bg-background">
-
       {/* Hero Section */}
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
@@ -14,9 +13,10 @@ export default function DocsPage() {
               <span className="block">inferpipe</span>
               <span className="block text-primary">Documentation</span>
             </h1>
-            
+
             <p className="text-lg leading-8 text-muted-foreground max-w-2xl mx-auto">
-              Learn how to build, test, and deploy AI pipelines with our visual workflow builder and backend SDK integration.
+              Learn how to build, test, and deploy AI pipelines with our visual
+              workflow builder and backend SDK integration.
             </p>
           </div>
 
@@ -28,33 +28,36 @@ export default function DocsPage() {
               </div>
               <h3 className="text-xl font-semibold mb-3">Quick Start</h3>
               <p className="text-muted-foreground mb-4">
-                Get started with your first AI workflow in minutes using our visual builder.
+                Get started with your first AI workflow in minutes using our
+                visual builder.
               </p>
               <Button variant="outline" asChild>
                 <a href="/app">Start Building</a>
               </Button>
             </div>
-            
+
             <div className="bg-background rounded-xl p-6 border border-border">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Code className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-3">SDK Integration</h3>
               <p className="text-muted-foreground mb-4">
-                Integrate AI workflows into your application using our backend SDK.
+                Integrate AI workflows into your application using our backend
+                SDK.
               </p>
               <Button variant="outline" asChild>
                 <Link href="#sdk">View SDK Docs</Link>
               </Button>
             </div>
-            
+
             <div className="bg-background rounded-xl p-6 border border-border">
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Globe className="w-6 h-6 text-primary" />
               </div>
               <h3 className="text-xl font-semibold mb-3">API Reference</h3>
               <p className="text-muted-foreground mb-4">
-                Complete API documentation for advanced integrations and custom workflows.
+                Complete API documentation for advanced integrations and custom
+                workflows.
               </p>
               <Button variant="outline" asChild>
                 <Link href="#api">API Docs</Link>
@@ -65,15 +68,21 @@ export default function DocsPage() {
       </section>
 
       {/* Getting Started */}
+      {/* biome-ignore lint/correctness/useUniqueElementIds: This page is rendered once; anchors are stable and intentional. */}
       <section id="getting-started" className="py-20 lg:py-28 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">Getting Started</h2>
-          
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
+            Getting Started
+          </h2>
+
           <div className="space-y-8">
             <div>
-              <h3 className="text-2xl font-semibold mb-4">1. Create Your First Workflow</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                1. Create Your First Workflow
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Start by creating a workflow in the visual builder. Choose from pre-built templates or create a custom pipeline:
+                Start by creating a workflow in the visual builder. Choose from
+                pre-built templates or create a custom pipeline:
               </p>
               <ul className="list-disc list-inside text-muted-foreground space-y-2 ml-4">
                 <li>Content generation and editing</li>
@@ -83,9 +92,11 @@ export default function DocsPage() {
                 <li>Image and document processing</li>
               </ul>
             </div>
-            
+
             <div>
-              <h3 className="text-2xl font-semibold mb-4">2. Test Your Pipeline</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                2. Test Your Pipeline
+              </h3>
               <p className="text-muted-foreground mb-4">
                 Use the built-in testing tools to validate your workflow:
               </p>
@@ -96,11 +107,14 @@ export default function DocsPage() {
                 <li>Monitor performance and cost metrics</li>
               </ul>
             </div>
-            
+
             <div>
-              <h3 className="text-2xl font-semibold mb-4">3. Deploy to Production</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                3. Deploy to Production
+              </h3>
               <p className="text-muted-foreground mb-4">
-                Once tested, deploy your workflow and integrate it into your application using our SDK or webhooks.
+                Once tested, deploy your workflow and integrate it into your
+                application using our SDK or webhooks.
               </p>
             </div>
           </div>
@@ -108,19 +122,24 @@ export default function DocsPage() {
       </section>
 
       {/* SDK Documentation */}
+      {/* biome-ignore lint/correctness/useUniqueElementIds: Single-render docs page with anchor links. */}
       <section id="sdk" className="py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">SDK Integration</h2>
-          
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
+            SDK Integration
+          </h2>
+
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-semibold mb-4">Installation</h3>
               <div className="bg-muted rounded-lg p-4 font-mono text-sm">
-                <div className="text-muted-foreground mb-2"># Install the inferpipe SDK</div>
+                <div className="text-muted-foreground mb-2">
+                  # Install the inferpipe SDK
+                </div>
                 <div>npm install @inferpipe/sdk</div>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-2xl font-semibold mb-4">Basic Setup</h3>
               <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
@@ -132,7 +151,7 @@ const inferpipe = new InferPipe({
 });`}</pre>
               </div>
             </div>
-            
+
             <div>
               <h3 className="text-2xl font-semibold mb-4">Execute Workflows</h3>
               <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
@@ -149,9 +168,11 @@ const result = await inferpipe.execute({
 console.log(result.data);`}</pre>
               </div>
             </div>
-            
+
             <div>
-              <h3 className="text-2xl font-semibold mb-4">Async Execution with Webhooks</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                Async Execution with Webhooks
+              </h3>
               <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
                 <pre>{`// Asynchronous execution (immediate return)
 const execution = await inferpipe.executeAsync({
@@ -163,9 +184,11 @@ const execution = await inferpipe.executeAsync({
 console.log('Execution ID:', execution.id);`}</pre>
               </div>
             </div>
-            
+
             <div>
-              <h3 className="text-2xl font-semibold mb-4">Framework Examples</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                Framework Examples
+              </h3>
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
                   <h4 className="font-semibold mb-3">Next.js API Route</h4>
@@ -181,7 +204,7 @@ export default async function handler(req, res) {
 }`}</pre>
                   </div>
                 </div>
-                
+
                 <div>
                   <h4 className="font-semibold mb-3">Express.js Route</h4>
                   <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
@@ -205,8 +228,10 @@ app.post('/extract', async (req, res) => {
       {/* Best Practices */}
       <section className="py-20 lg:py-28 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">Best Practices</h2>
-          
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
+            Best Practices
+          </h2>
+
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             <div>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
@@ -220,7 +245,7 @@ app.post('/extract', async (req, res) => {
                 <li>• Implement rate limiting in your app</li>
               </ul>
             </div>
-            
+
             <div>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Terminal className="w-6 h-6 text-primary" />
@@ -233,7 +258,7 @@ app.post('/extract', async (req, res) => {
                 <li>• Use batch processing for multiple items</li>
               </ul>
             </div>
-            
+
             <div>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Code className="w-6 h-6 text-primary" />
@@ -246,7 +271,7 @@ app.post('/extract', async (req, res) => {
                 <li>• Set up monitoring and alerting</li>
               </ul>
             </div>
-            
+
             <div>
               <div className="w-12 h-12 bg-primary/10 rounded-lg flex items-center justify-center mb-4">
                 <Zap className="w-6 h-6 text-primary" />
@@ -264,10 +289,13 @@ app.post('/extract', async (req, res) => {
       </section>
 
       {/* API Reference */}
+      {/* biome-ignore lint/correctness/useUniqueElementIds: Single-render docs page with anchor links. */}
       <section id="api" className="py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">API Reference</h2>
-          
+          <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
+            API Reference
+          </h2>
+
           <div className="space-y-8">
             <div>
               <h3 className="text-2xl font-semibold mb-4">Core Methods</h3>
@@ -275,27 +303,34 @@ app.post('/extract', async (req, res) => {
                 <div className="border border-border rounded-lg p-6">
                   <h4 className="font-mono text-lg mb-2">execute(options)</h4>
                   <p className="text-muted-foreground mb-4">
-                    Execute a workflow synchronously and wait for completion. Best for workflows that complete quickly (&lt; 30 seconds).
+                    Execute a workflow synchronously and wait for completion.
+                    Best for workflows that complete quickly (&lt; 30 seconds).
                   </p>
                   <div className="bg-muted rounded p-3 font-mono text-sm">
                     Promise&lt;ExecutionResult&gt;
                   </div>
                 </div>
-                
+
                 <div className="border border-border rounded-lg p-6">
-                  <h4 className="font-mono text-lg mb-2">executeAsync(options)</h4>
+                  <h4 className="font-mono text-lg mb-2">
+                    executeAsync(options)
+                  </h4>
                   <p className="text-muted-foreground mb-4">
-                    Execute a workflow asynchronously with immediate return. Results delivered via configured webhooks.
+                    Execute a workflow asynchronously with immediate return.
+                    Results delivered via configured webhooks.
                   </p>
                   <div className="bg-muted rounded p-3 font-mono text-sm">
                     Promise&lt;ExecutionInfo&gt;
                   </div>
                 </div>
-                
+
                 <div className="border border-border rounded-lg p-6">
-                  <h4 className="font-mono text-lg mb-2">executeStream(options)</h4>
+                  <h4 className="font-mono text-lg mb-2">
+                    executeStream(options)
+                  </h4>
                   <p className="text-muted-foreground mb-4">
-                    Execute a workflow with streaming responses. Perfect for real-time AI interactions.
+                    Execute a workflow with streaming responses. Perfect for
+                    real-time AI interactions.
                   </p>
                   <div className="bg-muted rounded p-3 font-mono text-sm">
                     AsyncIterable&lt;StreamChunk&gt;
@@ -303,9 +338,11 @@ app.post('/extract', async (req, res) => {
                 </div>
               </div>
             </div>
-            
+
             <div>
-              <h3 className="text-2xl font-semibold mb-4">Configuration Options</h3>
+              <h3 className="text-2xl font-semibold mb-4">
+                Configuration Options
+              </h3>
               <div className="bg-muted rounded-lg p-4 font-mono text-sm overflow-x-auto">
                 <pre>{`interface ExecuteOptions {
   workflowId: string;
@@ -331,9 +368,10 @@ app.post('/extract', async (req, res) => {
             Ready to Start Building?
           </h2>
           <p className="text-lg text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Create your first AI workflow in minutes with our visual builder and integrate it into your application.
+            Create your first AI workflow in minutes with our visual builder and
+            integrate it into your application.
           </p>
-          
+
           <div className="flex flex-col sm:flex-row gap-4 justify-center">
             <Button size="lg" asChild>
               <a href="/app">

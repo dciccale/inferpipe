@@ -1,15 +1,16 @@
 "use client";
 
-import React, { useMemo } from "react";
-import { useQuery } from "convex/react";
-import { api } from "@packages/backend/api";
-import { useParams, useRouter } from "next/navigation";
-import { WorkflowBuilder } from "@/components/WorkflowBuilder";
-import { useWorkflowBuilder } from "@/hooks/useWorkflowBuilder";
 import { Button } from "@inferpipe/ui/components/button";
 import { Input } from "@inferpipe/ui/components/input";
-import { ArrowLeft, Plus, Play, Save } from "lucide-react";
+import { api } from "@packages/backend/api";
 import type { Id } from "@packages/backend/dataModel";
+import { useQuery } from "convex/react";
+import { ArrowLeft, Play, Plus, Save } from "lucide-react";
+import { useParams, useRouter } from "next/navigation";
+import type React from "react";
+import { useMemo } from "react";
+import { WorkflowBuilder } from "@/components/WorkflowBuilder";
+import { useWorkflowBuilder } from "@/hooks/useWorkflowBuilder";
 
 export default function BuilderPage() {
   const params = useParams();
@@ -95,7 +96,8 @@ export default function BuilderPage() {
           variant="ghost"
           size="sm"
           onClick={() => router.push("/")}
-          className="flex-shrink-0">
+          className="flex-shrink-0"
+        >
           <ArrowLeft className="w-4 h-4 mr-2" />
           Back to Workflows
         </Button>
@@ -103,7 +105,9 @@ export default function BuilderPage() {
           <div className="group max-w-fit">
             <Input
               value={hookWorkflowName}
-              onChange={(e: React.ChangeEvent<HTMLInputElement>) => setHookWorkflowName(e.target.value)}
+              onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
+                setHookWorkflowName(e.target.value)
+              }
               className="text-2xl font-bold h-auto p-3 border-none shadow-none focus-visible:ring-1 focus-visible:ring-ring bg-transparent hover:bg-muted/50 focus:bg-background transition-colors duration-200 md:text-2xl min-w-0"
               placeholder="Untitled Workflow"
             />

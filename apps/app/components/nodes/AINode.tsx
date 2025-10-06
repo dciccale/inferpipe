@@ -1,18 +1,3 @@
-import React, { useState } from "react";
-import { Handle, Position, NodeProps } from "@xyflow/react";
-import { BaseNode, BaseNodeHeader, BaseNodeContent } from "./BaseNode";
-import { Textarea } from "@inferpipe/ui/components/textarea";
-import {
-  Select,
-  SelectContent,
-  SelectGroup,
-  SelectItem,
-  SelectLabel,
-  SelectTrigger,
-  SelectValue,
-} from "@inferpipe/ui/components/select";
-import { Button } from "@inferpipe/ui/components/button";
-import { Zap, X } from "lucide-react";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,11 +9,27 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@inferpipe/ui/components/alert-dialog";
+import { Button } from "@inferpipe/ui/components/button";
 import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@inferpipe/ui/components/select";
+import { Textarea } from "@inferpipe/ui/components/textarea";
+import { Handle, type NodeProps, Position } from "@xyflow/react";
+import { X, Zap } from "lucide-react";
+import type React from "react";
+import { useState } from "react";
+import {
+  DEFAULT_MODEL,
   MODEL_GROUPS,
   MODEL_METADATA,
-  DEFAULT_MODEL,
 } from "@/constants/models";
+import { BaseNode, BaseNodeContent, BaseNodeHeader } from "./BaseNode";
 
 export interface AINodeData {
   prompt: string;
@@ -89,12 +90,14 @@ export function AINode({
           </div>
           <AlertDialog
             open={showDeleteDialog}
-            onOpenChange={setShowDeleteDialog}>
+            onOpenChange={setShowDeleteDialog}
+          >
             <AlertDialogTrigger asChild>
               <Button
                 variant="ghost"
                 size="sm"
-                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag">
+                className="h-6 w-6 p-0 text-muted-foreground hover:text-destructive nodrag"
+              >
                 <X className="w-3 h-3" />
               </Button>
             </AlertDialogTrigger>
@@ -110,7 +113,8 @@ export function AINode({
                 <AlertDialogCancel>Cancel</AlertDialogCancel>
                 <AlertDialogAction
                   onClick={handleDelete}
-                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
+                >
                   Delete
                 </AlertDialogAction>
               </AlertDialogFooter>
@@ -122,9 +126,9 @@ export function AINode({
       <BaseNodeContent>
         {/* Model Selection */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <span className="text-xs font-medium text-muted-foreground mb-1 block">
             Model
-          </label>
+          </span>
           <Select value={localModel} onValueChange={handleModelChange}>
             <SelectTrigger className="h-8 nodrag">
               <SelectValue />
@@ -154,7 +158,8 @@ export function AINode({
                       <SelectItem
                         key={option.value}
                         value={option.value}
-                        title={tooltip || undefined}>
+                        title={tooltip || undefined}
+                      >
                         {option.label}
                       </SelectItem>
                     );
@@ -187,10 +192,11 @@ export function AINode({
 
         {/* Prompt */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label htmlFor={`prompt-${id}`} className="text-xs font-medium text-muted-foreground mb-1 block">
             Prompt
           </label>
           <Textarea
+            id={`prompt-${id}`}
             value={localPrompt}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               handlePromptChange(e.target.value)

@@ -1,13 +1,17 @@
 "use client";
 
-import React from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@inferpipe/ui/components/card";
 import { Button } from "@inferpipe/ui/components/button";
-import { useQuery, useMutation } from "convex/react";
+import {
+  Card,
+  CardContent,
+  CardHeader,
+  CardTitle,
+} from "@inferpipe/ui/components/card";
 import { api } from "@packages/backend/api";
-import { Plus, Workflow, Clock, Play } from "lucide-react";
-import { useRouter } from "next/navigation";
+import { useMutation, useQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
+import { Clock, Play, Plus, Workflow } from "lucide-react";
+import { useRouter } from "next/navigation";
 
 export default function Home() {
   const workflows = useQuery(api.workflows.listWorkflows);
@@ -90,7 +94,8 @@ export default function Home() {
               <Card
                 key={workflow._id}
                 className="cursor-pointer hover:shadow-md transition-shadow"
-                onClick={() => router.push(`/builder/${workflow._id}`)}>
+                onClick={() => router.push(`/builder/${workflow._id}`)}
+              >
                 <CardHeader>
                   <div className="flex items-start justify-between">
                     <div className="flex-1">
@@ -105,7 +110,8 @@ export default function Home() {
                               : workflow.status === "archived"
                                 ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
                                 : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                          }`}>
+                          }`}
+                        >
                           {workflow.status || "draft"}
                         </span>
                       </div>
@@ -144,7 +150,8 @@ export default function Home() {
                       onClick={(e) => {
                         e.stopPropagation();
                         router.push(`/builder/${workflow._id}`);
-                      }}>
+                      }}
+                    >
                       Edit
                     </Button>
                     <Button
@@ -154,7 +161,8 @@ export default function Home() {
                         e.stopPropagation();
                         // TODO: Implement run workflow
                         console.log("Run workflow:", workflow._id);
-                      }}>
+                      }}
+                    >
                       <Play className="w-3 h-3 mr-1" />
                       Run
                     </Button>

@@ -80,3 +80,9 @@ We will start with React Flow for speed, and evaluate moving specific features i
 - Start with React Flow + shadcn/ui to ship quickly
 - Revisit custom canvas only if we hit hard limitations
 - Adopt UX patterns inspired by Typebot’s builder for familiarity and speed
+
+### Textarea with variables
+
+https://uiwjs.github.io/react-codemirror/
+
+Example of openai using codemirror according to image in ./resources/openai_codemirror1.png and ./resources/openai_codemirror2.png

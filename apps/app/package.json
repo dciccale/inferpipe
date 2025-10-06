@@ -4,9 +4,10 @@
   "private": true,
   "scripts": {
     "dev": "next dev -p 3001 --turbopack",
-    "build": "next build ",
+    "build": "next build --turbopack",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "biome lint",
+    "check": "biome check --write"
   },
   "dependencies": {
     "@clerk/nextjs": "^6.33.0",
@@ -39,13 +40,10 @@
     "zustand": "^5.0.8"
   },
   "devDependencies": {
-    "@eslint/eslintrc": "^3",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",
     "autoprefixer": "^10.4.21",
-    "eslint": "^9",
-    "eslint-config-next": "15.5.4",
     "typescript": "^5"
   }
 }

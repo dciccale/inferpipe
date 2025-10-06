@@ -1,14 +1,15 @@
-import React, { useState } from "react";
-import { Handle, Position, NodeProps } from "@xyflow/react";
+import { Button } from "@inferpipe/ui/components/button";
+import { Textarea } from "@inferpipe/ui/components/textarea";
+import { Handle, type NodeProps, Position } from "@xyflow/react";
+import { FileText, Play, Shield } from "lucide-react";
+import type React from "react";
+import { useId, useState } from "react";
 import {
   BaseNode,
-  BaseNodeHeader,
   BaseNodeContent,
   BaseNodeFooter,
+  BaseNodeHeader,
 } from "./BaseNode";
-import { Textarea } from "@inferpipe/ui/components/textarea";
-import { Button } from "@inferpipe/ui/components/button";
-import { FileText, Play, Shield } from "lucide-react";
 
 export interface InputNodeData {
   textInput: string;
@@ -23,6 +24,7 @@ export function InputNode({ data }: NodeProps) {
     nodeData.textInput || "",
   );
   const [localFile] = useState<File | null>(nodeData.fileInput || null);
+  const textInputId = useId();
 
   const updateNodeData = (updates: Partial<InputNodeData>) => {
     // In a real implementation, this would update the node in the parent component
@@ -77,10 +79,11 @@ export function InputNode({ data }: NodeProps) {
 
         {/* Text Input */}
         <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
+          <label htmlFor={textInputId} className="text-xs font-medium text-muted-foreground mb-1 block">
             Text Input
           </label>
           <Textarea
+            id={textInputId}
             value={localTextInput}
             onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
               handleTextInputChange(e.target.value)
@@ -128,7 +131,8 @@ export function InputNode({ data }: NodeProps) {
           onClick={handleTestWorkflow}
           size="sm"
           className="w-full nodrag"
-          disabled={!localTextInput && !localFile}>
+          disabled={!localTextInput && !localFile}
+        >
           <Play className="w-3 h-3 mr-2" />
           Test Workflow
         </Button>

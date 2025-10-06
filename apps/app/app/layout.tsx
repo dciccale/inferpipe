@@ -1,12 +1,12 @@
 import type { Metadata } from "next";
 import { Geist, Geist_Mono } from "next/font/google";
 import "@inferpipe/ui/styles/globals.css";
-import { ConvexClientProvider } from "@/components/ConvexClientProvider";
-import { ThemeProvider } from "@/components/theme-provider";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
-import { Header } from "@/components/Header";
 import { Toaster } from "@inferpipe/ui/components/sonner";
+import { ConvexClientProvider } from "@/components/ConvexClientProvider";
+import { Header } from "@/components/Header";
+import { ThemeProvider } from "@/components/theme-provider";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   description: "Build and execute AI workflows with ease",
 };
 
-const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL!;
+const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL ?? "";
 
 export default function RootLayout({
   children,
@@ -40,16 +40,19 @@ export default function RootLayout({
       signUpFallbackRedirectUrl="/"
       appearance={{
         baseTheme: shadcn,
-      }}>
+      }}
+    >
       <html lang="en" suppressHydrationWarning>
         <body
-          className={`${geistSans.variable} ${geistMono.variable} antialiased`}>
+          className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        >
           <ThemeProvider
             attribute="class"
             defaultTheme="system"
             enableSystem
             storageKey="inferpipe-theme"
-            disableTransitionOnChange>
+            disableTransitionOnChange
+          >
             <ConvexClientProvider>
               <div className="h-screen flex flex-col">
                 <Header />

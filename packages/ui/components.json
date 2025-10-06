@@ -11,10 +11,10 @@
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@inferpipe/ui/components",
+    "components": "@/components",
+    "hooks": "@/hooks",
+    "lib": "@/lib",
     "utils": "@inferpipe/ui/lib/utils",
-    "hooks": "@inferpipe/ui/hooks",
-    "lib": "@inferpipe/ui/lib",
     "ui": "@inferpipe/ui/components"
   }
 }

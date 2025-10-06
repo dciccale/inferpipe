@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "tw-animate-css";
 
 /* Define source paths for Tailwind to scan in monorepo */
 @source "../../apps/app/**/*.{js,ts,jsx,tsx}";

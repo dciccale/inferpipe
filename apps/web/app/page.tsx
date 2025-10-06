@@ -1,15 +1,15 @@
 import { Button } from "@inferpipe/ui/components/button";
 import {
   ArrowRight,
-  Zap,
-  Shield,
-  Code,
-  Users,
   CheckCircle,
+  Code,
+  Shield,
   Star,
+  Users,
+  Zap,
 } from "lucide-react";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 
 export default function HomePage() {
   return (
@@ -272,4 +272,3 @@ export default function HomePage() {
     </div>
   );
 }
-
