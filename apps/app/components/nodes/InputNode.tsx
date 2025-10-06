@@ -1,9 +1,7 @@
 import { Button } from "@inferpipe/ui/components/button";
-import { Textarea } from "@inferpipe/ui/components/textarea";
 import { Handle, type NodeProps, Position } from "@xyflow/react";
 import { FileText, Play, Shield } from "lucide-react";
-import type React from "react";
-import { useId, useState } from "react";
+import { useState } from "react";
 import {
   BaseNode,
   BaseNodeContent,
@@ -18,23 +16,12 @@ export interface InputNodeData {
   workflowId?: string;
 }
 
-export function InputNode({ data }: NodeProps) {
+export function InputNode({ data, selected }: NodeProps) {
   const nodeData = data as unknown as InputNodeData;
-  const [localTextInput, setLocalTextInput] = useState(
-    nodeData.textInput || "",
-  );
+  const [localTextInput] = useState(nodeData.textInput || "");
   const [localFile] = useState<File | null>(nodeData.fileInput || null);
-  const textInputId = useId();
 
-  const updateNodeData = (updates: Partial<InputNodeData>) => {
-    // In a real implementation, this would update the node in the parent component
-    Object.assign(nodeData, updates);
-  };
-
-  const handleTextInputChange = (value: string) => {
-    setLocalTextInput(value);
-    updateNodeData({ textInput: value });
-  };
+  // Editing moved to inspector
 
   const handleTestWorkflow = async () => {
     // This will trigger workflow execution with the current input
@@ -47,7 +34,7 @@ export function InputNode({ data }: NodeProps) {
   };
 
   return (
-    <BaseNode className="w-80">
+    <BaseNode className="w-80" selected={selected}>
       <Handle type="source" position={Position.Right} />
 
       <BaseNodeHeader>
@@ -65,65 +52,8 @@ export function InputNode({ data }: NodeProps) {
       </BaseNodeHeader>
 
       <BaseNodeContent>
-        {/* Endpoint Display */}
-        {/*
-        <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-            Endpoint
-          </label>
-          <div className="bg-muted p-2 rounded text-xs font-mono break-all">
-            POST {endpointUrl}
-          </div>
-        </div>
-        */}
-
-        {/* Text Input */}
-        <div>
-          <label htmlFor={textInputId} className="text-xs font-medium text-muted-foreground mb-1 block">
-            Text Input
-          </label>
-          <Textarea
-            id={textInputId}
-            value={localTextInput}
-            onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) =>
-              handleTextInputChange(e.target.value)
-            }
-            placeholder="Enter test input here..."
-            className="min-h-20 text-sm nodrag"
-          />
-        </div>
-
-        {/* File Upload */}
-        {/*
-        <div>
-          <label className="text-xs font-medium text-muted-foreground mb-1 block">
-            File Input (Optional)
-          </label>
-          <div className="space-y-2">
-            <input
-              ref={fileInputRef}
-              type="file"
-              onChange={handleFileSelect}
-              className="hidden"
-              accept=".txt,.json,.csv,.md"
-            />
-            <Button
-              variant="outline"
-              size="sm"
-              onClick={handleFileUpload}
-              className="w-full nodrag">
-              <Upload className="w-3 h-3 mr-2" />
-              {localFile ? "Change File" : "Upload File"}
-            </Button>
-            {localFile && (
-              <div className="text-xs text-muted-foreground bg-muted p-2 rounded">
-                Selected: {localFile.name} (
-                {Math.round(localFile.size / 1024)}KB)
-              </div>
-            )}
-          </div>
-        </div>
-        */}
+        <div className="text-xs text-muted-foreground">Text</div>
+        <div className="text-xs line-clamp-2">{localTextInput || "Configure input in the inspector"}</div>
       </BaseNodeContent>
 
       <BaseNodeFooter>
@@ -136,12 +66,6 @@ export function InputNode({ data }: NodeProps) {
           <Play className="w-3 h-3 mr-2" />
           Test Workflow
         </Button>
-        {/*
-        <div className="mt-2 space-y-0 text-xs text-muted-foreground">
-          <div>Entry Point: {id}</div>
-          <div>Input Type: {localFile ? "File + Text" : "Text"}</div>
-        </div>
-        */}
       </BaseNodeFooter>
     </BaseNode>
   );

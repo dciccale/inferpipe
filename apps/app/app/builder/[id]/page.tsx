@@ -10,6 +10,8 @@ import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useMemo } from "react";
 import { WorkflowBuilder } from "@/components/WorkflowBuilder";
+import { StatusBadge } from "@/components/StatusBadge";
+// NodeInspector is rendered inside WorkflowBuilder now
 import { useWorkflowBuilder } from "@/hooks/useWorkflowBuilder";
 
 export default function BuilderPage() {
@@ -49,10 +51,17 @@ export default function BuilderPage() {
     onNodesChange,
     onEdgesChange,
     onConnect,
+    onNodeClick,
+    onNodeDragStart,
     onNodesDelete,
     nodeTypes,
     isExecuting,
     executionResult,
+    selectedNode,
+    isInspectorOpen,
+    setIsInspectorOpen,
+    updateNodeData,
+    clearSelection,
     workflowName: hookWorkflowName,
     setWorkflowName: setHookWorkflowName,
   } = workflowHook;
@@ -81,7 +90,7 @@ export default function BuilderPage() {
           </p>
           <Button onClick={() => router.push("/")}>
             <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Workflows
+            New Workflow
           </Button>
         </div>
       </div>
@@ -99,7 +108,7 @@ export default function BuilderPage() {
           className="flex-shrink-0"
         >
           <ArrowLeft className="w-4 h-4 mr-2" />
-          Back to Workflows
+          New Workflow
         </Button>
         <div className="flex-1 min-w-0 flex items-center">
           <div className="group max-w-fit">
@@ -108,10 +117,13 @@ export default function BuilderPage() {
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
                 setHookWorkflowName(e.target.value)
               }
-              className="text-2xl font-bold h-auto p-3 border-none shadow-none focus-visible:ring-1 focus-visible:ring-ring bg-transparent hover:bg-muted/50 focus:bg-background transition-colors duration-200 md:text-2xl min-w-0"
+              className="text-2xl font-bold h-auto p-3 border-none shadow-none focus-visible:ring-1 focus-visible:ring-ring bg-transparent hover:bg-muted/50 focus:bg-background transition-colors duration-200 md:text-2xl min-w-0 w-auto min-w-[8ch] max-w-[50vw]"
               placeholder="Untitled Workflow"
             />
           </div>
+          {workflow?.status && (
+            <StatusBadge status={workflow.status} className="ml-3" />
+          )}
           {/*
           {workflow.description && (
             <p className="text-sm text-muted-foreground mt-2 ml-4">
@@ -148,12 +160,20 @@ export default function BuilderPage() {
           onNodesChange={onNodesChange}
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
+          onNodeClick={onNodeClick}
+          onNodeDragStart={onNodeDragStart}
           onNodesDelete={onNodesDelete}
           nodeTypes={nodeTypes}
           isExecuting={isExecuting}
           executionResult={executionResult}
           steps={workflowHook.steps}
           executeWorkflow={executeWorkflow}
+          isInspectorOpen={isInspectorOpen}
+          selectedNode={selectedNode as unknown as never}
+          setIsInspectorOpen={setIsInspectorOpen}
+          updateNodeData={updateNodeData}
+          deleteNode={workflowHook.deleteNode}
+          onClearSelection={clearSelection}
         />
       </div>
     </div>

@@ -11,6 +11,7 @@ import { api } from "@packages/backend/api";
 import { useMutation, useQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
 import { Clock, Play, Plus, Workflow } from "lucide-react";
+import { StatusBadge } from "@/components/StatusBadge";
 import { useRouter } from "next/navigation";
 
 export default function Home() {
@@ -103,17 +104,7 @@ export default function Home() {
                         <CardTitle className="text-lg truncate">
                           {workflow.name}
                         </CardTitle>
-                        <span
-                          className={`px-2 py-1 text-xs rounded-full ${
-                            workflow.status === "published"
-                              ? "bg-green-100 text-green-700 dark:bg-green-900 dark:text-green-300"
-                              : workflow.status === "archived"
-                                ? "bg-gray-100 text-gray-700 dark:bg-gray-800 dark:text-gray-300"
-                                : "bg-yellow-100 text-yellow-700 dark:bg-yellow-900 dark:text-yellow-300"
-                          }`}
-                        >
-                          {workflow.status || "draft"}
-                        </span>
+                        <StatusBadge status={workflow.status || "draft"} />
                       </div>
                       {workflow.description && (
                         <p className="text-sm text-muted-foreground mt-1 line-clamp-2">

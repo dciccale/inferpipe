@@ -27,6 +27,7 @@ import {
 import type { Edge, Node } from "@xyflow/react";
 import { useTheme } from "next-themes";
 import type { Step } from "../hooks/useWorkflowBuilder";
+import { NodeInspector } from "./NodeInspector";
 
 interface ExecutionResult {
   status?: unknown;
@@ -42,6 +43,8 @@ interface WorkflowBuilderProps {
   onEdgesChange: (changes: EdgeChange[]) => void;
   onConnect: (connection: Connection) => void;
   onNodesDelete: (nodes: Node[]) => void;
+  onNodeClick?: (event: unknown, node: Node) => void;
+  onNodeDragStart?: (event: unknown, node: Node) => void;
   nodeTypes: {
     ai: (props: NodeProps) => ReactNode;
     input: (props: NodeProps) => ReactNode;
@@ -51,6 +54,13 @@ interface WorkflowBuilderProps {
   steps?: Step[];
   executeWorkflow?: () => Promise<void>;
   clearExecution?: () => void;
+  // Inspector state
+  isInspectorOpen?: boolean;
+  selectedNode?: Node | null;
+  setIsInspectorOpen?: (open: boolean) => void;
+  updateNodeData?: (nodeId: string, updates: Record<string, unknown>) => void;
+  deleteNode?: (nodeId: string) => void;
+  onClearSelection?: () => void;
 }
 
 function WorkflowBuilderInner({
@@ -60,58 +70,23 @@ function WorkflowBuilderInner({
   onEdgesChange,
   onConnect,
   onNodesDelete,
+  onNodeClick,
+  onNodeDragStart,
   nodeTypes,
   isExecuting,
-  executionResult,
   executeWorkflow,
   steps,
-  clearExecution,
+  selectedNode,
+  updateNodeData,
+  deleteNode,
+  onClearSelection,
 }: WorkflowBuilderProps) {
   const { resolvedTheme } = useTheme();
 
   // Determine the actual theme (handle system preference)
   const actualTheme = resolvedTheme as "light" | "dark";
 
-  if ((executionResult?.steps?.length ?? 0) > 0 || (steps?.length ?? 0) > 0) {
-    return (
-      <div className="space-y-4">
-        <h3 className="text-sm font-semibold">Execution Steps</h3>
-        {(executionResult?.steps || steps)?.map((step) => (
-          <Card key={step.id} className="p-3">
-            <div className="flex justify-between items-center mb-2">
-              <span className="text-xs font-medium">
-                Step {step.step}: {step.id}
-              </span>
-              {step.error && (
-                <span className="text-destructive text-xs">Error</span>
-              )}
-            </div>
-            {step.input ? (
-              <details className="mb-2">
-                <summary className="text-xs cursor-pointer text-muted-foreground">
-                  Input
-                </summary>
-                <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">
-                  {JSON.stringify(step.input, null, 2)}
-                </pre>
-              </details>
-            ) : null}
-            <details>
-              <summary className="text-xs cursor-pointer text-muted-foreground">
-                Output
-              </summary>
-              <pre className="text-xs bg-muted p-1 rounded mt-1 overflow-auto max-h-20">
-                {JSON.stringify(step.output, null, 2)}
-              </pre>
-            </details>
-            {step.error && (
-              <div className="text-xs text-destructive mt-1">{step.error}</div>
-            )}
-          </Card>
-        ))}
-      </div>
-    );
-  }
+  // Always keep canvas visible; execution shown on right panel
 
   return (
     <div className="w-full h-full flex bg-background">
@@ -126,6 +101,9 @@ function WorkflowBuilderInner({
             onNodesChange={onNodesChange}
             onEdgesChange={onEdgesChange}
             onConnect={onConnect}
+            onNodeClick={onNodeClick}
+            onNodeDragStart={onNodeDragStart}
+            onPaneClick={() => onClearSelection?.()}
             isValidConnection={(connection) => {
               console.log("Connection attempt:", connection);
               return connection.source !== connection.target;
@@ -166,71 +144,65 @@ function WorkflowBuilderInner({
           </ReactFlow>
         </div>
 
-        {/* Sidebar */}
-        <div className="w-80 bg-card border-l border-border p-4 overflow-y-auto">
+        {/* Execution Panel (right dock) */}
+        <div className="w-96 bg-card border-l border-border p-4 overflow-y-auto">
           <Card>
             <CardHeader>
-              <CardTitle>Execution Result</CardTitle>
+              <CardTitle>{selectedNode ? "Inspector" : "Execution"}</CardTitle>
             </CardHeader>
             <CardContent>
-              <Button
-                onClick={executeWorkflow}
-                disabled={isExecuting}
-                className="w-full mb-4"
-              >
-                {isExecuting ? "Running..." : "Run Full Workflow"}
-              </Button>
-              {isExecuting && (
-                <div className="text-center py-4">
-                  <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
-                  <p className="mt-2 text-sm text-muted-foreground">
-                    Executing workflow...
-                  </p>
-                </div>
-              )}
-              {executionResult && (
-                <div className="space-y-2">
-                  <div className="text-sm font-medium">
-                    Status: {String(executionResult.status ?? "")}
-                  </div>
-                  {executionResult.output !== undefined &&
-                    executionResult.output != null && (
-                      <div className="text-sm">
-                        <div className="font-medium">Output:</div>
-                        <div className="bg-muted p-2 rounded text-xs whitespace-pre-wrap">
-                          {typeof executionResult.output === "string"
-                            ? executionResult.output
-                            : JSON.stringify(
-                                executionResult.output ?? {},
-                                null,
-                                2,
-                              )}
-                        </div>
+              {selectedNode ? (
+                <NodeInspector
+                  node={selectedNode}
+                  onChange={(id, updates) => updateNodeData?.(id, updates)}
+                  onDelete={(id) => deleteNode?.(id)}
+                />
+              ) : (
+                <>
+                  <Button
+                    onClick={executeWorkflow}
+                    disabled={isExecuting}
+                    className="w-full mb-4"
+                  >
+                    {isExecuting ? "Running..." : "Run Full Workflow"}
+                  </Button>
+                  {isExecuting && (
+                    <div className="text-center py-4">
+                      <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary mx-auto"></div>
+                      <p className="mt-2 text-sm text-muted-foreground">
+                        Executing workflow...
+                      </p>
+                    </div>
+                  )}
+                  {(steps?.length ?? 0) > 0 && (
+                    <div className="space-y-2">
+                      <div className="text-xs font-semibold text-muted-foreground">Steps</div>
+                      <div className="space-y-2">
+                        {steps?.map((step) => (
+                          <Card key={`${step.id}-${step.step}`} className="p-2">
+                            <div className="flex items-center justify-between">
+                              <div className="text-xs font-medium">
+                                Step {step.step}: {step.id}
+                              </div>
+                              {step.error ? (
+                                <span className="text-[10px] text-destructive">Error</span>
+                              ) : null}
+                            </div>
+                            <details className="mt-1">
+                              <summary className="text-[11px] cursor-pointer text-muted-foreground">Output</summary>
+                              <pre className="text-[11px] bg-muted p-1 rounded mt-1 overflow-auto max-h-24 whitespace-pre-wrap">
+                                {JSON.stringify(step.output, null, 2)}
+                              </pre>
+                            </details>
+                          </Card>
+                        ))}
                       </div>
-                    )}
-                  {executionResult.error !== undefined &&
-                    executionResult.error != null && (
-                      <div className="text-sm text-destructive">
-                        <div className="font-medium">Error:</div>
-                        <div className="bg-destructive/10 p-2 rounded text-xs">
-                          {String(executionResult.error)}
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="sm"
-                          onClick={clearExecution}
-                          className="mt-2"
-                        >
-                          Clear
-                        </Button>
-                      </div>
-                    )}
-                </div>
-              )}
-              {!isExecuting && !executionResult && (
-                <p className="text-sm text-muted-foreground">
-                  Click Execute to run your workflow
-                </p>
+                    </div>
+                  )}
+                  {!isExecuting && (steps?.length ?? 0) === 0 && (
+                    <p className="text-sm text-muted-foreground">Click Execute to run your workflow</p>
+                  )}
+                </>
               )}
             </CardContent>
           </Card>
@@ -242,7 +214,9 @@ function WorkflowBuilderInner({
 
 export const WorkflowBuilder = (props: WorkflowBuilderProps) => (
   <ReactFlowProvider>
-    <WorkflowBuilderInner {...props} />
+    <div className="relative h-full">
+      <WorkflowBuilderInner {...props} />
+    </div>
   </ReactFlowProvider>
 );
 

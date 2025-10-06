@@ -95,6 +95,8 @@ export function useWorkflowBuilder({
 
   const [steps, setSteps] = useState<Step[]>([]);
   const [runningNodeId, setRunningNodeId] = useState<string | null>(null);
+  const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
+  const [isInspectorOpen, setIsInspectorOpen] = useState(false);
 
   // Handlers for React Flow
   const onNodesChange = useCallback(
@@ -113,6 +115,17 @@ export function useWorkflowBuilder({
     (params: Connection) => setEdges((eds) => addEdge(params, eds) as Edge[]),
     [],
   );
+
+  const onNodeClick = useCallback((_: unknown, node: Node) => {
+    setSelectedNodeId(node.id);
+    setIsInspectorOpen(true);
+  }, []);
+
+  // Select node on drag start as well, to keep inspector in sync with visual selection
+  const onNodeDragStart = useCallback((_: unknown, node: Node) => {
+    setSelectedNodeId(node.id);
+    setIsInspectorOpen(true);
+  }, []);
 
   // Actions
   const addAINode = useCallback(() => {
@@ -405,15 +418,11 @@ export function useWorkflowBuilder({
   const nodeTypes = useMemo(
     () => ({
       ai: (props: NodeProps) => (
-        <AINode
-          {...props}
-          onDeleteNode={deleteNode}
-          onUpdateNodeData={updateNodeData}
-        />
+        <AINode {...props} />
       ),
       input: (props: NodeProps) => <InputNode {...props} />,
     }),
-    [deleteNode, updateNodeData],
+    [],
   );
 
   // Update initial nodes if initialWorkflow changes (e.g., after query loads)
@@ -453,6 +462,16 @@ export function useWorkflowBuilder({
     [runningNodeId],
   );
 
+  const selectedNode = useMemo(
+    () => nodes.find((n) => n.id === selectedNodeId) || null,
+    [nodes, selectedNodeId],
+  );
+
+  const clearSelection = useCallback(() => {
+    setSelectedNodeId(null);
+    setIsInspectorOpen(false);
+  }, []);
+
   return {
     // State
     nodes,
@@ -463,11 +482,16 @@ export function useWorkflowBuilder({
     executionResult,
     steps,
     runningNodeId,
+    selectedNodeId,
+    selectedNode,
+    isInspectorOpen,
 
     // Handlers
     onNodesChange,
     onEdgesChange,
     onConnect,
+    onNodeClick,
+    onNodeDragStart,
     onNodesDelete,
     nodeTypes,
     nodeIsRunning,
@@ -480,5 +504,8 @@ export function useWorkflowBuilder({
     executeStep,
     deleteNode,
     updateNodeData,
+    clearSelection,
+    setIsInspectorOpen,
+    setSelectedNodeId,
   };
 }

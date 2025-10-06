@@ -12,6 +12,8 @@ export function BaseNode({ children, className, selected }: BaseNodeProps) {
     <div
       className={cn(
         "relative bg-card border-2 border-border rounded-lg shadow-sm transition-all",
+        // Hover: brighten border subtly (not primary) only when not selected
+        !selected && "hover:border-foreground/30 hover:shadow-md focus-within:border-foreground/30",
         selected && "border-primary shadow-lg",
         className,
       )}
