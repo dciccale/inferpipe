@@ -1,13 +1,8 @@
 import { Button } from "@inferpipe/ui/components/button";
-import { Handle, type NodeProps, Position } from "@xyflow/react";
+import { Handle, type NodeProps, Position, useStore } from "@xyflow/react";
 import { FileText, Play, Shield } from "lucide-react";
 import { useState } from "react";
-import {
-  BaseNode,
-  BaseNodeContent,
-  BaseNodeFooter,
-  BaseNodeHeader,
-} from "./BaseNode";
+import { BaseNode, BaseNodeContent, BaseNodeHeader } from "./BaseNode";
 
 export interface InputNodeData {
   textInput: string;
@@ -16,7 +11,7 @@ export interface InputNodeData {
   workflowId?: string;
 }
 
-export function InputNode({ data, selected }: NodeProps) {
+export function InputNode({ id, data, selected }: NodeProps) {
   const nodeData = data as unknown as InputNodeData;
   const [localTextInput] = useState(nodeData.textInput || "");
   const [localFile] = useState<File | null>(nodeData.fileInput || null);
@@ -33,9 +28,19 @@ export function InputNode({ data, selected }: NodeProps) {
     // TODO: Implement actual workflow execution trigger
   };
 
+  const hasOutgoing = useStore((s) => s.edges.some((e) => e.source === id));
+
   return (
     <BaseNode className="w-80" selected={selected}>
-      <Handle type="source" position={Position.Right} />
+      <Handle
+        type="source"
+        position={Position.Right}
+        className={[
+          hasOutgoing
+            ? "opacity-0 pointer-events-none group-hover:opacity-100 group-hover:pointer-events-auto"
+            : "",
+        ].join(" ")}
+      />
 
       <BaseNodeHeader>
         <div className="flex items-center justify-between">
@@ -51,12 +56,8 @@ export function InputNode({ data, selected }: NodeProps) {
         </div>
       </BaseNodeHeader>
 
+      {/* Remove input text display per request */}
       <BaseNodeContent>
-        <div className="text-xs text-muted-foreground">Text</div>
-        <div className="text-xs line-clamp-2">{localTextInput || "Configure input in the inspector"}</div>
-      </BaseNodeContent>
-
-      <BaseNodeFooter>
         <Button
           onClick={handleTestWorkflow}
           size="sm"
@@ -66,7 +67,7 @@ export function InputNode({ data, selected }: NodeProps) {
           <Play className="w-3 h-3 mr-2" />
           Test Workflow
         </Button>
-      </BaseNodeFooter>
+      </BaseNodeContent>
     </BaseNode>
   );
 }

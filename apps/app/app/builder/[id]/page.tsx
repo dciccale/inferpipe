@@ -9,8 +9,8 @@ import { ArrowLeft, Play, Plus, Save } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useMemo } from "react";
-import { WorkflowBuilder } from "@/components/WorkflowBuilder";
 import { StatusBadge } from "@/components/StatusBadge";
+import { WorkflowBuilder } from "@/components/WorkflowBuilder";
 // NodeInspector is rendered inside WorkflowBuilder now
 import { useWorkflowBuilder } from "@/hooks/useWorkflowBuilder";
 
@@ -53,14 +53,17 @@ export default function BuilderPage() {
     onConnect,
     onNodeClick,
     onNodeDragStart,
+    onEdgeClick,
     onNodesDelete,
     nodeTypes,
     isExecuting,
     executionResult,
     selectedNode,
+    selectedEdge,
     isInspectorOpen,
     setIsInspectorOpen,
     updateNodeData,
+    deleteSelectedEdge,
     clearSelection,
     workflowName: hookWorkflowName,
     setWorkflowName: setHookWorkflowName,
@@ -162,6 +165,7 @@ export default function BuilderPage() {
           onConnect={onConnect}
           onNodeClick={onNodeClick}
           onNodeDragStart={onNodeDragStart}
+          onEdgeClick={onEdgeClick}
           onNodesDelete={onNodesDelete}
           nodeTypes={nodeTypes}
           isExecuting={isExecuting}
@@ -170,9 +174,11 @@ export default function BuilderPage() {
           executeWorkflow={executeWorkflow}
           isInspectorOpen={isInspectorOpen}
           selectedNode={selectedNode as unknown as never}
+          selectedEdge={selectedEdge as unknown as never}
           setIsInspectorOpen={setIsInspectorOpen}
           updateNodeData={updateNodeData}
           deleteNode={workflowHook.deleteNode}
+          deleteSelectedEdge={deleteSelectedEdge}
           onClearSelection={clearSelection}
         />
       </div>

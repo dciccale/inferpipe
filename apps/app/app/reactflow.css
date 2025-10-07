@@ -27,19 +27,19 @@
 /* Edge styling */
 .react-flow__edge-path,
 .react-flow__connection-path {
-  stroke: var(--primary);
+  stroke: var(--border);
   stroke-width: 2;
 }
 
 .react-flow__edge.selected .react-flow__edge-path,
 .react-flow__edge:focus .react-flow__edge-path,
 .react-flow__edge:focus-visible .react-flow__edge-path {
-  stroke: var(--ring);
+  stroke: var(--primary) !important;
 }
 
 /* Connection line styling */
 .react-flow__connectionline {
-  stroke: var(--primary) !important;
+  stroke: var(--border) !important;
   stroke-width: 2 !important;
 }
 
@@ -53,6 +53,8 @@
   cursor: crosshair !important;
   transition: all 0.2s ease !important;
 }
+
+/* Handle visibility on hover is controlled via utility classes from the node components */
 
 .react-flow__handle:hover {
   background: var(--ring) !important;

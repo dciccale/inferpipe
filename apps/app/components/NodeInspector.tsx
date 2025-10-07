@@ -1,11 +1,28 @@
 "use client";
 
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@inferpipe/ui/components/alert-dialog";
 import { Button } from "@inferpipe/ui/components/button";
-import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "@inferpipe/ui/components/select";
+import {
+  Select,
+  SelectContent,
+  SelectGroup,
+  SelectItem,
+  SelectLabel,
+  SelectTrigger,
+  SelectValue,
+} from "@inferpipe/ui/components/select";
 import { Textarea } from "@inferpipe/ui/components/textarea";
-import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "@inferpipe/ui/components/alert-dialog";
-import { Trash } from "lucide-react";
 import type { Node } from "@xyflow/react";
+import { Trash } from "lucide-react";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { DEFAULT_MODEL, MODEL_GROUPS } from "@/constants/models";
@@ -16,7 +33,11 @@ interface NodeInspectorProps {
   onDelete?: (nodeId: string) => void;
 }
 
-export function NodeInspector({ node, onChange, onDelete }: NodeInspectorProps) {
+export function NodeInspector({
+  node,
+  onChange,
+  onDelete,
+}: NodeInspectorProps) {
   const [local, setLocal] = useState<Record<string, unknown>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -31,9 +52,12 @@ export function NodeInspector({ node, onChange, onDelete }: NodeInspectorProps) 
     return String(node.type || "Node");
   }, [node]);
 
-  if (!node) return (
-    <div className="text-sm text-muted-foreground">Select a node to edit. When running, this area shows execution details.</div>
-  );
+  if (!node)
+    return (
+      <div className="text-sm text-muted-foreground">
+        Select a node to edit. When running, this area shows execution details.
+      </div>
+    );
 
   return (
     <div className="space-y-4">
@@ -61,7 +85,10 @@ export function NodeInspector({ node, onChange, onDelete }: NodeInspectorProps) 
                 </AlertDialogHeader>
                 <AlertDialogFooter>
                   <AlertDialogCancel>Cancel</AlertDialogCancel>
-                  <AlertDialogAction className="bg-destructive text-destructive-foreground" onClick={() => onDelete?.(node.id)}>
+                  <AlertDialogAction
+                    className="bg-destructive text-destructive-foreground"
+                    onClick={() => onDelete?.(node.id)}
+                  >
                     Delete
                   </AlertDialogAction>
                 </AlertDialogFooter>
@@ -72,71 +99,75 @@ export function NodeInspector({ node, onChange, onDelete }: NodeInspectorProps) 
       </div>
 
       <div className="space-y-4">
-          {node.type === "ai" && (
-            <>
-              <div>
-                <div className="text-xs font-medium text-muted-foreground mb-1">Model</div>
-                <Select
-                  value={String((local as Record<string, unknown>).model || DEFAULT_MODEL)}
-                  onValueChange={(v) => {
-                    setLocal((prev) => ({ ...prev, model: v }));
-                    onChange(node.id, { model: v });
-                  }}
-                >
-                  <SelectTrigger className="h-8">
-                    <SelectValue />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {MODEL_GROUPS.map((g) => (
-                      <SelectGroup key={g.label}>
-                        <SelectLabel>{g.label}</SelectLabel>
-                        {g.options.map((o) => (
-                          <SelectItem key={o.value} value={o.value}>
-                            {o.label}
-                          </SelectItem>
-                        ))}
-                      </SelectGroup>
-                    ))}
-                  </SelectContent>
-                </Select>
+        {node.type === "ai" && (
+          <>
+            <div>
+              <div className="text-xs font-medium text-muted-foreground mb-1">
+                Model
               </div>
+              <Select
+                value={String(
+                  (local as Record<string, unknown>).model || DEFAULT_MODEL,
+                )}
+                onValueChange={(v) => {
+                  setLocal((prev) => ({ ...prev, model: v }));
+                  onChange(node.id, { model: v });
+                }}
+              >
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  {MODEL_GROUPS.map((g) => (
+                    <SelectGroup key={g.label}>
+                      <SelectLabel>{g.label}</SelectLabel>
+                      {g.options.map((o) => (
+                        <SelectItem key={o.value} value={o.value}>
+                          {o.label}
+                        </SelectItem>
+                      ))}
+                    </SelectGroup>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
 
-              <div>
-                <div className="text-xs font-medium text-muted-foreground mb-1">Prompt</div>
-                <Textarea
-                  value={String((local as Record<string, unknown>).prompt || "")}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    const v = e.target.value;
-                    setLocal((prev) => ({ ...prev, prompt: v }));
-                    onChange(node.id, { prompt: v });
-                  }}
-                  placeholder="Enter your prompt here..."
-                  className="min-h-28 text-sm"
-                />
+            <div>
+              <div className="text-xs font-medium text-muted-foreground mb-1">
+                Prompt
               </div>
-            </>
-          )}
+              <Textarea
+                value={String((local as Record<string, unknown>).prompt || "")}
+                onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                  const v = e.target.value;
+                  setLocal((prev) => ({ ...prev, prompt: v }));
+                  onChange(node.id, { prompt: v });
+                }}
+                placeholder="Enter your prompt here..."
+                className="min-h-28 text-sm"
+              />
+            </div>
+          </>
+        )}
 
-          {node.type === "input" && (
-            <>
-              <div>
-                <div className="text-xs font-medium text-muted-foreground mb-1">Text Input</div>
-                <Textarea
-                  value={String((local as Record<string, unknown>).textInput || "")}
-                  onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                    const v = e.target.value;
-                    setLocal((prev) => ({ ...prev, textInput: v }));
-                    onChange(node.id, { textInput: v });
-                  }}
-                  placeholder="Enter test input..."
-                  className="min-h-20 text-sm"
-                />
-              </div>
-            </>
-          )}
+        {node.type === "input" && (
+          <div>
+            <div className="text-xs font-medium text-muted-foreground mb-1">
+              Text Input
+            </div>
+            <Textarea
+              value={String((local as Record<string, unknown>).textInput || "")}
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
+                const v = e.target.value;
+                setLocal((prev) => ({ ...prev, textInput: v }));
+                onChange(node.id, { textInput: v });
+              }}
+              placeholder="Enter test input..."
+              className="min-h-20 text-sm"
+            />
+          </div>
+        )}
       </div>
     </div>
   );
 }
-
-

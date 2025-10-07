@@ -18,13 +18,13 @@ const marketingUrl = process.env.NEXT_PUBLIC_MARKETING_URL ?? "";
 export function Header() {
   const pathname = usePathname();
 
-  // Don't render header on builder pages since they have their own header
-  if (pathname?.startsWith("/app/builder")) {
-    return null;
-  }
-
   const isSignIn = pathname === "/sign-in";
   const isSignUp = pathname === "/sign-up";
+  const isBuilder = pathname?.startsWith("/builder/");
+
+  if (isBuilder) {
+    return null;
+  }
 
   return (
     <header className="border-b border-border/40">

@@ -1,6 +1,12 @@
 import { cn } from "@/lib/utils";
 
-type WorkflowStatus = "draft" | "published" | "archived" | string | null | undefined;
+type WorkflowStatus =
+  | "draft"
+  | "published"
+  | "archived"
+  | string
+  | null
+  | undefined;
 
 interface StatusBadgeProps {
   status: WorkflowStatus;
@@ -15,12 +21,17 @@ function stylesForStatus(status: string) {
     case "archived":
       return "bg-muted text-muted-foreground border-border";
     case "draft":
-    default:
       return "bg-amber-500/10 text-amber-500 border-amber-500/30";
+    default:
+      return "bg-gray-500/10 text-gray-500 border-gray-500/30";
   }
 }
 
-export function StatusBadge({ status, className, size = "sm" }: StatusBadgeProps) {
+export function StatusBadge({
+  status,
+  className,
+  size = "sm",
+}: StatusBadgeProps) {
   const normalized = (status || "draft").toString();
   return (
     <span
@@ -38,5 +49,3 @@ export function StatusBadge({ status, className, size = "sm" }: StatusBadgeProps
 }
 
 export default StatusBadge;
-
-

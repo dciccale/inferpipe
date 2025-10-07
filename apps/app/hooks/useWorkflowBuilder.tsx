@@ -97,6 +97,7 @@ export function useWorkflowBuilder({
   const [runningNodeId, setRunningNodeId] = useState<string | null>(null);
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
+  const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
 
   // Handlers for React Flow
   const onNodesChange = useCallback(
@@ -117,13 +118,21 @@ export function useWorkflowBuilder({
   );
 
   const onNodeClick = useCallback((_: unknown, node: Node) => {
+    setSelectedEdgeId(null);
     setSelectedNodeId(node.id);
     setIsInspectorOpen(true);
   }, []);
 
   // Select node on drag start as well, to keep inspector in sync with visual selection
   const onNodeDragStart = useCallback((_: unknown, node: Node) => {
+    setSelectedEdgeId(null);
     setSelectedNodeId(node.id);
+    setIsInspectorOpen(true);
+  }, []);
+
+  const onEdgeClick = useCallback((_: unknown, edge: Edge) => {
+    setSelectedNodeId(null);
+    setSelectedEdgeId(edge.id);
     setIsInspectorOpen(true);
   }, []);
 
@@ -180,30 +189,31 @@ export function useWorkflowBuilder({
     });
   }, [workflowId]);
 
-  const deleteNode = useCallback(
-    (nodeId: string) => {
-      setNodes((currentNodes) => {
-        const nodeToDelete = currentNodes.find((node) => node.id === nodeId);
-        if (nodeToDelete?.type === "input") {
-          const inputNodes = currentNodes.filter(
-            (node) => node.type === "input",
+  const deleteNode = useCallback((nodeId: string) => {
+    setNodes((currentNodes) => {
+      const nodeToDelete = currentNodes.find((node) => node.id === nodeId);
+      if (nodeToDelete?.type === "input") {
+        const inputNodes = currentNodes.filter((node) => node.type === "input");
+        if (inputNodes.length <= 1) {
+          console.error(
+            "Cannot delete the last input node. At least one input node must exist.",
           );
-          if (inputNodes.length <= 1) {
-            console.error(
-              "Cannot delete the last input node. At least one input node must exist.",
-            );
-            return currentNodes;
-          }
+          return currentNodes;
         }
-        return currentNodes.filter((node) => node.id !== nodeId);
-      });
+      }
+      return currentNodes.filter((node) => node.id !== nodeId);
+    });
 
-      setEdges((eds) =>
-        eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
-      );
-    },
-    [],
-  );
+    setEdges((eds) =>
+      eds.filter((edge) => edge.source !== nodeId && edge.target !== nodeId),
+    );
+  }, []);
+
+  const deleteSelectedEdge = useCallback(() => {
+    if (!selectedEdgeId) return;
+    setEdges((eds) => eds.filter((e) => e.id !== selectedEdgeId));
+    setSelectedEdgeId(null);
+  }, [selectedEdgeId]);
 
   const updateNodeData = useCallback(
     (nodeId: string, newData: Record<string, unknown>) => {
@@ -417,9 +427,7 @@ export function useWorkflowBuilder({
   // Memoized node types
   const nodeTypes = useMemo(
     () => ({
-      ai: (props: NodeProps) => (
-        <AINode {...props} />
-      ),
+      ai: (props: NodeProps) => <AINode {...props} />,
       input: (props: NodeProps) => <InputNode {...props} />,
     }),
     [],
@@ -467,8 +475,14 @@ export function useWorkflowBuilder({
     [nodes, selectedNodeId],
   );
 
+  const selectedEdge = useMemo(
+    () => edges.find((e) => e.id === selectedEdgeId) || null,
+    [edges, selectedEdgeId],
+  );
+
   const clearSelection = useCallback(() => {
     setSelectedNodeId(null);
+    setSelectedEdgeId(null);
     setIsInspectorOpen(false);
   }, []);
 
@@ -492,6 +506,7 @@ export function useWorkflowBuilder({
     onConnect,
     onNodeClick,
     onNodeDragStart,
+    onEdgeClick,
     onNodesDelete,
     nodeTypes,
     nodeIsRunning,
@@ -507,5 +522,7 @@ export function useWorkflowBuilder({
     clearSelection,
     setIsInspectorOpen,
     setSelectedNodeId,
+    selectedEdge,
+    deleteSelectedEdge,
   };
 }

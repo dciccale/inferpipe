@@ -29,6 +29,9 @@ import { useTheme } from "next-themes";
 import type { Step } from "../hooks/useWorkflowBuilder";
 import { NodeInspector } from "./NodeInspector";
 
+// (Edge already imported above)
+import { Trash } from "lucide-react";
+
 interface ExecutionResult {
   status?: unknown;
   output?: unknown;
@@ -45,6 +48,7 @@ interface WorkflowBuilderProps {
   onNodesDelete: (nodes: Node[]) => void;
   onNodeClick?: (event: unknown, node: Node) => void;
   onNodeDragStart?: (event: unknown, node: Node) => void;
+  onEdgeClick?: (event: unknown, edge: Edge) => void;
   nodeTypes: {
     ai: (props: NodeProps) => ReactNode;
     input: (props: NodeProps) => ReactNode;
@@ -57,9 +61,11 @@ interface WorkflowBuilderProps {
   // Inspector state
   isInspectorOpen?: boolean;
   selectedNode?: Node | null;
+  selectedEdge?: Edge | null;
   setIsInspectorOpen?: (open: boolean) => void;
   updateNodeData?: (nodeId: string, updates: Record<string, unknown>) => void;
   deleteNode?: (nodeId: string) => void;
+  deleteSelectedEdge?: () => void;
   onClearSelection?: () => void;
 }
 
@@ -72,13 +78,16 @@ function WorkflowBuilderInner({
   onNodesDelete,
   onNodeClick,
   onNodeDragStart,
+  onEdgeClick,
   nodeTypes,
   isExecuting,
   executeWorkflow,
   steps,
   selectedNode,
+  selectedEdge,
   updateNodeData,
   deleteNode,
+  deleteSelectedEdge,
   onClearSelection,
 }: WorkflowBuilderProps) {
   const { resolvedTheme } = useTheme();
@@ -103,6 +112,7 @@ function WorkflowBuilderInner({
             onConnect={onConnect}
             onNodeClick={onNodeClick}
             onNodeDragStart={onNodeDragStart}
+            onEdgeClick={onEdgeClick}
             onPaneClick={() => onClearSelection?.()}
             isValidConnection={(connection) => {
               console.log("Connection attempt:", connection);
@@ -122,12 +132,12 @@ function WorkflowBuilderInner({
             }}
             defaultEdgeOptions={{
               type: "smoothstep",
-              animated: true,
-              style: { stroke: "var(--primary)", strokeWidth: 2 },
+              animated: false,
+              style: { stroke: "var(--border)", strokeWidth: 2 },
             }}
-            connectionLineStyle={{ stroke: "var(--primary)", strokeWidth: 2 }}
+            connectionLineStyle={{ stroke: "var(--border)", strokeWidth: 2 }}
             snapToGrid={true}
-            snapGrid={[10, 10]}
+            snapGrid={[20, 20]}
             colorMode={actualTheme}
             deleteKeyCode="Delete"
             className="react-flow-minimap-spacing h-full"
@@ -137,9 +147,9 @@ function WorkflowBuilderInner({
             <MiniMap position="bottom-right" pannable zoomable />
             <Background
               variant={BackgroundVariant.Dots}
-              gap={12}
-              size={1}
-              color={actualTheme === "dark" ? "var(--muted)" : "var(--border)"}
+              gap={20}
+              size={1.6}
+              color={actualTheme === "dark" ? "#2a2a2a" : "#e5e7eb"}
             />
           </ReactFlow>
         </div>
@@ -148,7 +158,27 @@ function WorkflowBuilderInner({
         <div className="w-96 bg-card border-l border-border p-4 overflow-y-auto">
           <Card>
             <CardHeader>
-              <CardTitle>{selectedNode ? "Inspector" : "Execution"}</CardTitle>
+              <div className="flex items-center justify-between">
+                <CardTitle>
+                  {selectedNode
+                    ? "Inspector"
+                    : selectedEdge
+                      ? "Edge"
+                      : "Execution"}
+                </CardTitle>
+                {selectedEdge ? (
+                  <Button
+                    variant="ghost"
+                    size="sm"
+                    className="h-7 w-7 p-0 text-destructive"
+                    onClick={() => deleteSelectedEdge?.()}
+                    title="Delete edge"
+                    aria-label="Delete edge"
+                  >
+                    <Trash className="w-4 h-4" />
+                  </Button>
+                ) : null}
+              </div>
             </CardHeader>
             <CardContent>
               {selectedNode ? (
@@ -157,6 +187,24 @@ function WorkflowBuilderInner({
                   onChange={(id, updates) => updateNodeData?.(id, updates)}
                   onDelete={(id) => deleteNode?.(id)}
                 />
+              ) : selectedEdge ? (
+                <div className="space-y-3 text-sm">
+                  <div className="text-xs text-muted-foreground">Edge</div>
+                  <div>
+                    <div>
+                      <span className="text-muted-foreground">ID:</span>{" "}
+                      {selectedEdge.id}
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Source:</span>{" "}
+                      {selectedEdge.source}
+                    </div>
+                    <div>
+                      <span className="text-muted-foreground">Target:</span>{" "}
+                      {selectedEdge.target}
+                    </div>
+                  </div>
+                </div>
               ) : (
                 <>
                   <Button
@@ -176,7 +224,9 @@ function WorkflowBuilderInner({
                   )}
                   {(steps?.length ?? 0) > 0 && (
                     <div className="space-y-2">
-                      <div className="text-xs font-semibold text-muted-foreground">Steps</div>
+                      <div className="text-xs font-semibold text-muted-foreground">
+                        Steps
+                      </div>
                       <div className="space-y-2">
                         {steps?.map((step) => (
                           <Card key={`${step.id}-${step.step}`} className="p-2">
@@ -185,11 +235,15 @@ function WorkflowBuilderInner({
                                 Step {step.step}: {step.id}
                               </div>
                               {step.error ? (
-                                <span className="text-[10px] text-destructive">Error</span>
+                                <span className="text-[10px] text-destructive">
+                                  Error
+                                </span>
                               ) : null}
                             </div>
                             <details className="mt-1">
-                              <summary className="text-[11px] cursor-pointer text-muted-foreground">Output</summary>
+                              <summary className="text-[11px] cursor-pointer text-muted-foreground">
+                                Output
+                              </summary>
                               <pre className="text-[11px] bg-muted p-1 rounded mt-1 overflow-auto max-h-24 whitespace-pre-wrap">
                                 {JSON.stringify(step.output, null, 2)}
                               </pre>
@@ -200,7 +254,9 @@ function WorkflowBuilderInner({
                     </div>
                   )}
                   {!isExecuting && (steps?.length ?? 0) === 0 && (
-                    <p className="text-sm text-muted-foreground">Click Execute to run your workflow</p>
+                    <p className="text-sm text-muted-foreground">
+                      Click Execute to run your workflow
+                    </p>
                   )}
                 </>
               )}
