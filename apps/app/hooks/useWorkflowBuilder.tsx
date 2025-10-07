@@ -163,31 +163,7 @@ export function useWorkflowBuilder({
     });
   }, []);
 
-  const addInputNode = useCallback(() => {
-    setNodes((currentNodes) => {
-      const spacing = 400;
-      let newX = 100;
-
-      if (currentNodes.length > 0) {
-        const leftmostX = Math.min(
-          ...currentNodes.map((node) => node.position.x),
-        );
-        newX = leftmostX - spacing;
-      }
-
-      const newNode: Node = {
-        id: `input-${Date.now()}`,
-        type: "input",
-        position: { x: newX, y: 200 },
-        data: {
-          textInput: "",
-          workflowId: workflowId ? String(workflowId) : "",
-        },
-      };
-
-      return [...currentNodes, newNode];
-    });
-  }, [workflowId]);
+  // Removed addInputNode: input node is singular and created by default
 
   const deleteNode = useCallback((nodeId: string) => {
     setNodes((currentNodes) => {
@@ -512,7 +488,6 @@ export function useWorkflowBuilder({
     nodeIsRunning,
 
     // Actions
-    addInputNode,
     addAINode,
     saveWorkflow,
     executeWorkflow,

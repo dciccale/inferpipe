@@ -42,7 +42,6 @@ export default function BuilderPage() {
   });
 
   const {
-    addInputNode,
     addAINode,
     saveWorkflow,
     executeWorkflow,
@@ -136,10 +135,6 @@ export default function BuilderPage() {
             */}
         </div>
         <div className="flex items-center gap-2 flex-shrink-0">
-          <Button variant="outline" size="sm" onClick={addInputNode}>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Input Node
-          </Button>
           <Button variant="outline" size="sm" onClick={addAINode}>
             <Plus className="w-4 h-4 mr-2" />
             Add AI Node

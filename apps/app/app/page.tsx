@@ -10,7 +10,7 @@ import {
 import { api } from "@packages/backend/api";
 import { useMutation, useQuery } from "convex/react";
 import { formatDistanceToNow } from "date-fns";
-import { Clock, Play, Plus, Workflow } from "lucide-react";
+import { Clock, Plus, Workflow } from "lucide-react";
 import { useRouter } from "next/navigation";
 import { StatusBadge } from "@/components/StatusBadge";
 
@@ -94,7 +94,7 @@ export default function Home() {
             {workflows.map((workflow) => (
               <Card
                 key={workflow._id}
-                className="cursor-pointer hover:shadow-md transition-shadow"
+                className="cursor-pointer hover:shadow-md transition-shadow transition-colors hover:bg-accent/60 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                 onClick={() => router.push(`/builder/${workflow._id}`)}
               >
                 <CardHeader>
@@ -106,11 +106,6 @@ export default function Home() {
                         </CardTitle>
                         <StatusBadge status={workflow.status || "draft"} />
                       </div>
-                      {workflow.description && (
-                        <p className="text-sm text-muted-foreground mt-1 line-clamp-2">
-                          {workflow.description}
-                        </p>
-                      )}
                     </div>
                     <Workflow className="w-5 h-5 text-primary flex-shrink-0 ml-2" />
                   </div>
@@ -132,31 +127,6 @@ export default function Home() {
                         addSuffix: true,
                       })}
                     </div>
-                  </div>
-                  <div className="flex gap-2 mt-4">
-                    <Button
-                      size="sm"
-                      variant="outline"
-                      className="flex-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        router.push(`/builder/${workflow._id}`);
-                      }}
-                    >
-                      Edit
-                    </Button>
-                    <Button
-                      size="sm"
-                      className="flex-1"
-                      onClick={(e) => {
-                        e.stopPropagation();
-                        // TODO: Implement run workflow
-                        console.log("Run workflow:", workflow._id);
-                      }}
-                    >
-                      <Play className="w-3 h-3 mr-1" />
-                      Run
-                    </Button>
                   </div>
                 </CardContent>
               </Card>
