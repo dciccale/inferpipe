@@ -155,7 +155,7 @@ function WorkflowBuilderInner({
         </div>
 
         {/* Execution Panel (right dock) */}
-        <div className="w-96 bg-card border-l border-border p-4 overflow-y-auto">
+        <div className="overflow-y-auto absolute right-4 top-4 w-96">
           <Card>
             <CardHeader>
               <div className="flex items-center justify-between">

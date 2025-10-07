@@ -1,28 +1,23 @@
 import { Button } from "@inferpipe/ui/components/button";
 import { Handle, type NodeProps, Position, useStore } from "@xyflow/react";
 import { FileText, Play, Shield } from "lucide-react";
-import { useState } from "react";
 import { BaseNode, BaseNodeContent, BaseNodeHeader } from "./BaseNode";
 
 export interface InputNodeData {
   textInput: string;
-  fileInput?: File | null;
   endpoint?: string;
   workflowId?: string;
 }
 
 export function InputNode({ id, data, selected }: NodeProps) {
   const nodeData = data as unknown as InputNodeData;
-  const [localTextInput] = useState(nodeData.textInput || "");
-  const [localFile] = useState<File | null>(nodeData.fileInput || null);
+  const textInput = String(nodeData.textInput || "");
 
   // Editing moved to inspector
 
   const handleTestWorkflow = async () => {
     // This will trigger workflow execution with the current input
-    const input = localFile
-      ? { file: localFile, text: localTextInput }
-      : { text: localTextInput };
+    const input = { text: textInput };
 
     console.log("Testing workflow with input:", input);
     // TODO: Implement actual workflow execution trigger
@@ -62,7 +57,7 @@ export function InputNode({ id, data, selected }: NodeProps) {
           onClick={handleTestWorkflow}
           size="sm"
           className="w-full nodrag"
-          disabled={!localTextInput && !localFile}
+          disabled={textInput.trim().length === 0}
         >
           <Play className="w-3 h-3 mr-2" />
           Test Workflow
