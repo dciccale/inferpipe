@@ -12,7 +12,7 @@ import type {
 } from "@xyflow/react";
 import { addEdge, applyEdgeChanges, applyNodeChanges } from "@xyflow/react";
 import { useAction, useMutation } from "convex/react";
-import { useCallback, useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { toast } from "sonner";
 import { AINode } from "../components/nodes/AINode";
 import { InputNode } from "../components/nodes/InputNode";
@@ -98,6 +98,9 @@ export function useWorkflowBuilder({
   const [selectedNodeId, setSelectedNodeId] = useState<string | null>(null);
   const [isInspectorOpen, setIsInspectorOpen] = useState(false);
   const [selectedEdgeId, setSelectedEdgeId] = useState<string | null>(null);
+  const hasHydratedRef = useRef(false);
+  const autosaveTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const lastSavedSnapshotRef = useRef<string | null>(null);
 
   // Handlers for React Flow
   const onNodesChange = useCallback(
@@ -239,10 +242,8 @@ export function useWorkflowBuilder({
           workflowId,
           ...workflowData,
         });
-        toast.success("Workflow updated successfully!");
       } else {
-        const newWorkflowId = await createWorkflow(workflowData);
-        toast.success(`Workflow created with ID: ${newWorkflowId}`);
+        await createWorkflow(workflowData);
       }
     } catch (error) {
       console.error("Error saving workflow:", error);
@@ -257,6 +258,35 @@ export function useWorkflowBuilder({
     workflowId,
     initialWorkflow,
   ]);
+
+  // Debounced autosave whenever nodes/edges/name change (after hydration)
+  useEffect(() => {
+    if (!hasHydratedRef.current) return;
+
+    const snapshot = JSON.stringify({
+      name: workflowName || "My Workflow",
+      nodes: nodes.map((n) => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
+      edges: edges.map((e) => ({ id: e.id, s: e.source, t: e.target, sh: e.sourceHandle, th: e.targetHandle })),
+    });
+
+    if (lastSavedSnapshotRef.current === snapshot) return;
+
+    if (autosaveTimeoutRef.current) clearTimeout(autosaveTimeoutRef.current);
+
+    // Debounce 800ms general edits; reactflow drags will batch
+    autosaveTimeoutRef.current = setTimeout(async () => {
+      lastSavedSnapshotRef.current = snapshot;
+      try {
+        await saveWorkflow();
+      } catch (e) {
+        console.error("Autosave failed", e);
+      }
+    }, 800);
+
+    return () => {
+      if (autosaveTimeoutRef.current) clearTimeout(autosaveTimeoutRef.current);
+    };
+  }, [workflowName, nodes, edges, saveWorkflow]);
 
   // Updated executeWorkflow without inline comments
   const executeWorkflow = useCallback(async () => {
@@ -439,6 +469,15 @@ export function useWorkflowBuilder({
     if (initialWorkflow?.name) {
       setWorkflowName(initialWorkflow.name);
     }
+    // mark hydrated on first load of initialWorkflow changes
+    hasHydratedRef.current = true;
+    // prime lastSavedSnapshot to avoid immediate save after hydration
+    const snapshot = JSON.stringify({
+      name: (initialWorkflow?.name || "My Workflow") as string,
+      nodes: (initialWorkflow?.nodes || []).map((n) => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
+      edges: (initialWorkflow?.edges || []).map((e) => ({ id: e.id, s: e.source, t: e.target, sh: e.sourceHandle, th: e.targetHandle })),
+    });
+    lastSavedSnapshotRef.current = snapshot;
   }, [initialWorkflow, workflowId]);
 
   const nodeIsRunning = useCallback(

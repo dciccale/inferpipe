@@ -5,7 +5,7 @@ import { Input } from "@inferpipe/ui/components/input";
 import { api } from "@packages/backend/api";
 import type { Id } from "@packages/backend/dataModel";
 import { useQuery } from "convex/react";
-import { ArrowLeft, Play, Plus, Save } from "lucide-react";
+import { ArrowLeft, Play, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
 import type React from "react";
 import { useMemo } from "react";
@@ -43,7 +43,6 @@ export default function BuilderPage() {
 
   const {
     addAINode,
-    saveWorkflow,
     executeWorkflow,
     nodes,
     edges,
@@ -139,10 +138,7 @@ export default function BuilderPage() {
             <Plus className="w-4 h-4 mr-2" />
             Add AI Node
           </Button>
-          <Button variant="outline" size="sm" onClick={saveWorkflow}>
-            <Save className="w-4 h-4 mr-2" />
-            Save
-          </Button>
+          {/* Autosave enabled: remove manual Save button */}
           <Button size="sm" onClick={executeWorkflow}>
             <Play className="w-4 h-4 mr-2" />
             Execute
