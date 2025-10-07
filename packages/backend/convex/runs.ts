@@ -1,7 +1,8 @@
 import { v } from "convex/values";
 import { mutation, query, action } from "./_generated/server";
-import { generateText } from "ai";
+import { generateText, generateObject } from "ai";
 import { openai } from "@ai-sdk/openai";
+import { z } from "zod";
 
 // Create a new run for a workflow
 export const createRun = mutation({
@@ -170,6 +171,9 @@ export const executeAIAction = action({
     prompt: v.string(),
     model: v.string(),
     previousOutput: v.optional(v.any()),
+    outputFormat: v.optional(v.union(v.literal("text"), v.literal("json"))),
+    // Schema authored in the UI builder; stored as JSON description
+    schema: v.optional(v.any()),
   },
   handler: async (ctx, args) => {
     const identity = await ctx.auth.getUserIdentity();
@@ -182,20 +186,85 @@ export const executeAIAction = action({
       fullPrompt = `Context from previous step:\n${JSON.stringify(args.previousOutput, null, 2)}\n\n${args.prompt}`;
     }
 
+    const format = args.outputFormat || "text";
+
+    if (format === "json") {
+      // Convert UI schema JSON to zod. Fallback to a simple default.
+      type UiProp = {
+        name: string;
+        type: "STR" | "NUM" | "BOOL" | "ENUM" | "OBJ" | "ARR";
+        description?: string;
+        required?: boolean;
+        properties?: UiProp[];
+        enum?: string[];
+        items?: UiProp;
+      };
+
+      const buildZodForProp = (prop: UiProp): z.ZodTypeAny => {
+        switch (prop.type) {
+          case "STR":
+            return z.string();
+          case "NUM":
+            return z.number();
+          case "BOOL":
+            return z.boolean();
+          case "ENUM": {
+            const options = (Array.isArray(prop.enum) && prop.enum.length > 0
+              ? prop.enum
+              : ["A", "B"]) as [string, ...string[]];
+            return z.enum(options);
+          }
+          case "ARR":
+            return z.array(prop.items ? buildZodForProp(prop.items) : z.any());
+          case "OBJ": {
+            const childShape = (prop.properties || []).reduce(
+              (acc: Record<string, z.ZodTypeAny>, p: UiProp) => {
+                const child = buildZodForProp(p);
+                acc[p.name] = p.required === false ? child.optional() : child;
+                return acc;
+              },
+              {},
+            );
+            return z.object(childShape);
+          }
+          default:
+            return z.any();
+        }
+      };
+
+      const toZodObject = (props: UiProp[] | undefined) =>
+        z.object(
+          (props || []).reduce((acc: Record<string, z.ZodTypeAny>, p: UiProp) => {
+            const t = buildZodForProp(p);
+            acc[p.name] = p.required === false ? t.optional() : t;
+            return acc;
+          }, {}),
+        );
+
+      const schema = toZodObject((args.schema as { properties?: UiProp[] } | undefined)?.properties);
+
+      const { object } = await generateObject({
+        model: openai(args.model),
+        prompt: fullPrompt,
+        schema,
+      });
+
+      return {
+        output_text: JSON.stringify(object),
+        output_parsed: object,
+        model: args.model,
+        timestamp: Date.now(),
+      };
+    }
+
+    // Default to plain text output
     const { text } = await generateText({
       model: openai(args.model),
       prompt: fullPrompt,
     });
 
-    let output;
-    try {
-      output = JSON.parse(text);
-    } catch (e) {
-      output = { raw: text, parsed: false };
-    }
-
     return {
-      output,
+      output_text: text,
       model: args.model,
       timestamp: Date.now(),
     };

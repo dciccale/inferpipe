@@ -8,6 +8,7 @@ import { BaseNode, BaseNodeContent, BaseNodeHeader } from "./BaseNode";
 export interface AINodeData {
   prompt: string;
   model: string;
+  outputFormat?: "text" | "json";
 }
 
 export function AINode({ id, data, selected }: NodeProps) {
@@ -53,7 +54,8 @@ export function AINode({ id, data, selected }: NodeProps) {
 
       <BaseNodeContent>
         <div className="text-xs text-muted-foreground">
-          {selectedModel?.label || localModel || "Model"}
+          {(selectedModel?.label || localModel || "Model") +
+            (nodeData.outputFormat ? ` · ${String(nodeData.outputFormat).toUpperCase()}` : "")}
         </div>
         {localPrompt ? (
           <div className="text-xs line-clamp-2">{localPrompt}</div>

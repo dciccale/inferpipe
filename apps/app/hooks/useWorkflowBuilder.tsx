@@ -159,6 +159,7 @@ export function useWorkflowBuilder({
         data: {
           prompt: "Enter your prompt here...",
           model: DEFAULT_MODEL,
+          outputFormat: "text",
         },
       };
 
@@ -329,24 +330,28 @@ export function useWorkflowBuilder({
         const node = aiNodes[i];
         const prompt = String(node.data.prompt || "Default prompt");
         const model = String(node.data.model || DEFAULT_MODEL);
+        const outputFormat = String(node.data.outputFormat || "text");
+        const schema = node.data.schema as unknown;
 
         setRunningNodeId(node.id);
         const aiResult = await executeAI({
           prompt,
           model,
           previousOutput: JSON.stringify(currentOutput ?? {}),
-        });
+          outputFormat,
+          schema,
+        } as any);
 
         const aiStep: Step = {
           id: node.id,
           step: i + 2,
           input: currentOutput,
-          output: aiResult.output,
+          output: aiResult,
         };
 
         finalSteps.push(aiStep);
         setSteps(finalSteps);
-        currentOutput = aiResult.output;
+        currentOutput = aiResult;
       }
 
       setExecutionResult({ steps: finalSteps });
@@ -384,6 +389,8 @@ export function useWorkflowBuilder({
       } else if (node.type === "ai") {
         const prompt = String(node.data.prompt || "");
         const model = String(node.data.model || DEFAULT_MODEL);
+        const outputFormat = String(node.data.outputFormat || "text");
+        const schema = node.data.schema as unknown;
         const input = providedInput || steps[steps.length - 1]?.output || {};
 
         setIsExecuting(true);
@@ -394,19 +401,21 @@ export function useWorkflowBuilder({
             prompt,
             model,
             previousOutput: JSON.stringify(input ?? {}),
-          });
+            outputFormat,
+            schema,
+          } as any);
 
           const aiStep: Step = {
             id: nodeId,
             step: steps.length + 1,
             input,
-            output: aiResult.output,
+            output: aiResult,
           };
 
           const newSteps = [...steps, aiStep];
           setSteps(newSteps);
           setExecutionResult({ steps: newSteps });
-          return aiResult.output;
+          return aiResult;
         } catch (error) {
           const errorMsg =
             error instanceof Error ? error.message : "AI execution failed";

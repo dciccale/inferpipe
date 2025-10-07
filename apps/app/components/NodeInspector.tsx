@@ -22,10 +22,11 @@ import {
 } from "@inferpipe/ui/components/select";
 import { Textarea } from "@inferpipe/ui/components/textarea";
 import type { Node } from "@xyflow/react";
-import { Trash } from "lucide-react";
+import { Braces, Trash } from "lucide-react";
 import type React from "react";
 import { useEffect, useMemo, useState } from "react";
 import { DEFAULT_MODEL, MODEL_GROUPS } from "@/constants/models";
+import { SchemaBuilder, type StructuredSchema } from "./SchemaBuilder";
 
 interface NodeInspectorProps {
   node: Node | null;
@@ -40,6 +41,7 @@ export function NodeInspector({
 }: NodeInspectorProps) {
   const [local, setLocal] = useState<Record<string, unknown>>({});
   const [confirmOpen, setConfirmOpen] = useState(false);
+  const [schemaOpen, setSchemaOpen] = useState(false);
 
   useEffect(() => {
     setLocal(node?.data || {});
@@ -134,6 +136,58 @@ export function NodeInspector({
 
             <div>
               <div className="text-xs font-medium text-muted-foreground mb-1">
+                Output format
+              </div>
+              <Select
+                value={String(
+                  (local as Record<string, unknown>).outputFormat || "text",
+                )}
+                onValueChange={(v) => {
+                  setLocal((prev) => ({ ...prev, outputFormat: v }));
+                  onChange(node.id, { outputFormat: v });
+                }}
+              >
+                <SelectTrigger className="h-8">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectGroup>
+                    <SelectItem value="text">Text</SelectItem>
+                    <SelectItem value="json">JSON</SelectItem>
+                  </SelectGroup>
+                </SelectContent>
+              </Select>
+              {String((local as Record<string, unknown>).outputFormat || "text") ===
+              "json" ? (
+                <div className="mt-2">
+                  {((local as Record<string, unknown>).schema as StructuredSchema | undefined) ? (
+                    <button
+                      type="button"
+                      className="inline-flex items-center gap-2 px-3 h-8 rounded-full bg-muted text-sm"
+                      onClick={() => setSchemaOpen(true)}
+                      title="Edit schema"
+                    >
+                      <Braces className="w-4 h-4 text-purple-500" />
+                      <span>{
+                        String(((local as Record<string, unknown>).schema as StructuredSchema | undefined)?.name || "schema")
+                      }</span>
+                    </button>
+                  ) : (
+                    <Button size="sm" variant="secondary" onClick={() => setSchemaOpen(true)}>
+                      + Add schema
+                    </Button>
+                  )}
+                  {!((local as Record<string, unknown>).schema as StructuredSchema | undefined) && (
+                    <div className="mt-1 text-[11px] text-muted-foreground">
+                      No schema configured. A simple {"{ message: string }"} default will be used.
+                    </div>
+                  )}
+                </div>
+              ) : null}
+            </div>
+
+            <div>
+              <div className="text-xs font-medium text-muted-foreground mb-1">
                 Prompt
               </div>
               <Textarea
@@ -168,6 +222,16 @@ export function NodeInspector({
           </div>
         )}
       </div>
+      <SchemaBuilder
+        open={schemaOpen}
+        onOpenChange={setSchemaOpen}
+        value={(local as Record<string, unknown>).schema as StructuredSchema | undefined}
+        onSave={(schema) => {
+          setSchemaOpen(false);
+          setLocal((prev) => ({ ...prev, schema }));
+          onChange(node.id, { schema });
+        }}
+      />
     </div>
   );
 }

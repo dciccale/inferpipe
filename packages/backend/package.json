@@ -28,7 +28,8 @@
     "@ai-sdk/openai": "^2.0.39",
     "ai": "^5.0.57",
     "convex": "^1.27.3",
-    "openai": "^5.23.0"
+    "openai": "^5.23.0",
+    "zod": "^3.25.6"
   },
   "peerDependencies": {
     "convex": "^1.27.3"
