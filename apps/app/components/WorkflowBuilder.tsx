@@ -25,12 +25,11 @@ import {
   CardTitle,
 } from "@inferpipe/ui/components/card";
 import type { Edge, Node } from "@xyflow/react";
+// (Edge already imported above)
+import { Trash } from "lucide-react";
 import { useTheme } from "next-themes";
 import type { Step } from "../hooks/useWorkflowBuilder";
 import { NodeInspector } from "./NodeInspector";
-
-// (Edge already imported above)
-import { Trash } from "lucide-react";
 
 interface ExecutionResult {
   status?: unknown;

@@ -157,10 +157,13 @@ export function NodeInspector({
                   </SelectGroup>
                 </SelectContent>
               </Select>
-              {String((local as Record<string, unknown>).outputFormat || "text") ===
-              "json" ? (
+              {String(
+                (local as Record<string, unknown>).outputFormat || "text",
+              ) === "json" ? (
                 <div className="mt-2">
-                  {((local as Record<string, unknown>).schema as StructuredSchema | undefined) ? (
+                  {((local as Record<string, unknown>).schema as
+                    | StructuredSchema
+                    | undefined) ? (
                     <button
                       type="button"
                       className="inline-flex items-center gap-2 px-3 h-8 rounded-full bg-muted text-sm"
@@ -168,18 +171,31 @@ export function NodeInspector({
                       title="Edit schema"
                     >
                       <Braces className="w-4 h-4 text-purple-500" />
-                      <span>{
-                        String(((local as Record<string, unknown>).schema as StructuredSchema | undefined)?.name || "schema")
-                      }</span>
+                      <span>
+                        {String(
+                          (
+                            (local as Record<string, unknown>).schema as
+                              | StructuredSchema
+                              | undefined
+                          )?.name || "schema",
+                        )}
+                      </span>
                     </button>
                   ) : (
-                    <Button size="sm" variant="secondary" onClick={() => setSchemaOpen(true)}>
+                    <Button
+                      size="sm"
+                      variant="secondary"
+                      onClick={() => setSchemaOpen(true)}
+                    >
                       + Add schema
                     </Button>
                   )}
-                  {!((local as Record<string, unknown>).schema as StructuredSchema | undefined) && (
+                  {!((local as Record<string, unknown>).schema as
+                    | StructuredSchema
+                    | undefined) && (
                     <div className="mt-1 text-[11px] text-muted-foreground">
-                      No schema configured. A simple {"{ message: string }"} default will be used.
+                      No schema configured. A simple {"{ message: string }"}{" "}
+                      default will be used.
                     </div>
                   )}
                 </div>
@@ -225,7 +241,11 @@ export function NodeInspector({
       <SchemaBuilder
         open={schemaOpen}
         onOpenChange={setSchemaOpen}
-        value={(local as Record<string, unknown>).schema as StructuredSchema | undefined}
+        value={
+          (local as Record<string, unknown>).schema as
+            | StructuredSchema
+            | undefined
+        }
         onSave={(schema) => {
           setSchemaOpen(false);
           setLocal((prev) => ({ ...prev, schema }));

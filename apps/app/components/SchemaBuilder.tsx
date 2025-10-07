@@ -1,6 +1,5 @@
 "use client";
 
-import { Button } from "@inferpipe/ui/components/button";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -10,6 +9,8 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@inferpipe/ui/components/alert-dialog";
+import { Button } from "@inferpipe/ui/components/button";
+import { Input } from "@inferpipe/ui/components/input";
 import {
   Select,
   SelectContent,
@@ -18,11 +19,24 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@inferpipe/ui/components/select";
+import {
+  Braces,
+  Brackets,
+  Hash,
+  List,
+  TextCursorInput,
+  ToggleLeft,
+  Trash,
+} from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Trash, Braces, Brackets, List, Hash, ToggleLeft, TextCursorInput } from "lucide-react";
-import { Input } from "@inferpipe/ui/components/input";
 
-export type SchemaPropertyType = "STR" | "NUM" | "BOOL" | "ENUM" | "OBJ" | "ARR";
+export type SchemaPropertyType =
+  | "STR"
+  | "NUM"
+  | "BOOL"
+  | "ENUM"
+  | "OBJ"
+  | "ARR";
 
 export interface SchemaProperty {
   id?: string;
@@ -65,13 +79,21 @@ const TypeIcon = ({ type }: { type: SchemaPropertyType }) => {
     case "BOOL":
       return <ToggleLeft className={`${common} text-amber-500`} />;
     case "STR":
-    default:
       return <TextCursorInput className={`${common} text-green-500`} />;
+    default:
+      return null;
   }
 };
 
-export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuilderProps) {
-  const [schema, setSchema] = useState<StructuredSchema>(value ?? emptySchema());
+export function SchemaBuilder({
+  open,
+  onOpenChange,
+  value,
+  onSave,
+}: SchemaBuilderProps) {
+  const [schema, setSchema] = useState<StructuredSchema>(
+    value ?? emptySchema(),
+  );
 
   useEffect(() => {
     // ensure stable IDs for all properties to avoid re-mounting inputs on change
@@ -125,7 +147,12 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
       const parent = next[parentIdx];
       if (parent.type !== "OBJ") return s;
       const childProps = parent.properties ? [...parent.properties] : [];
-      childProps.push({ id: Math.random().toString(36).slice(2, 10), name: "", type: "STR", required: true });
+      childProps.push({
+        id: Math.random().toString(36).slice(2, 10),
+        name: "",
+        type: "STR",
+        required: true,
+      });
       next[parentIdx] = { ...parent, properties: childProps };
       return { ...s, properties: next };
     });
@@ -155,7 +182,9 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
         </AlertDialogHeader>
         <div className="space-y-3">
           <div>
-            <div className="text-xs font-medium text-muted-foreground mb-1">Name</div>
+            <div className="text-xs font-medium text-muted-foreground mb-1">
+              Name
+            </div>
             <Input
               className="w-full h-8"
               value={schema.name}
@@ -164,7 +193,9 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
             />
           </div>
 
-          <div className="text-xs font-medium text-muted-foreground">Properties</div>
+          <div className="text-xs font-medium text-muted-foreground">
+            Properties
+          </div>
           <div className="space-y-2">
             {schema.properties.map((prop, idx) => (
               <div key={prop.id} className="rounded border border-border p-2">
@@ -180,7 +211,9 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                   />
                   <Select
                     value={prop.type}
-                    onValueChange={(v) => updateProp(idx, { type: v as SchemaPropertyType })}
+                    onValueChange={(v) =>
+                      updateProp(idx, { type: v as SchemaPropertyType })
+                    }
                   >
                     <SelectTrigger className="col-span-2 h-8">
                       <SelectValue />
@@ -199,7 +232,9 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                   <Input
                     className="col-span-4 h-8"
                     value={prop.description || ""}
-                    onChange={(e) => updateProp(idx, { description: e.target.value })}
+                    onChange={(e) =>
+                      updateProp(idx, { description: e.target.value })
+                    }
                     placeholder="Add description"
                   />
                   <label className="col-span-1 flex items-center gap-2 text-xs">
@@ -207,12 +242,20 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                       type="checkbox"
                       className="h-3 w-3"
                       checked={prop.required ?? true}
-                      onChange={(e) => updateProp(idx, { required: e.target.checked })}
+                      onChange={(e) =>
+                        updateProp(idx, { required: e.target.checked })
+                      }
                     />
                     Required
                   </label>
                   <div className="col-span-1 text-right">
-                    <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => removeProp(idx)} title="Delete">
+                    <Button
+                      size="icon"
+                      variant="ghost"
+                      className="h-8 w-8"
+                      onClick={() => removeProp(idx)}
+                      title="Delete"
+                    >
                       <Trash className="w-4 h-4" />
                     </Button>
                   </div>
@@ -220,11 +263,20 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
 
                 {prop.type === "ENUM" && (
                   <div className="mt-2">
-                    <div className="text-[11px] text-muted-foreground mb-1">Enum options (comma-separated)</div>
+                    <div className="text-[11px] text-muted-foreground mb-1">
+                      Enum options (comma-separated)
+                    </div>
                     <Input
                       className="w-full h-8"
                       value={(prop.enum || []).join(",")}
-                      onChange={(e) => updateProp(idx, { enum: e.target.value.split(",").map((s) => s.trim()).filter(Boolean) })}
+                      onChange={(e) =>
+                        updateProp(idx, {
+                          enum: e.target.value
+                            .split(",")
+                            .map((s) => s.trim())
+                            .filter(Boolean),
+                        })
+                      }
                       placeholder="optA,optB,optC"
                     />
                   </div>
@@ -233,14 +285,23 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                 {prop.type === "OBJ" && (
                   <div className="mt-2 space-y-2">
                     <div className="flex items-center justify-between">
-                      <div className="text-[11px] text-muted-foreground">Object properties</div>
-                      <Button size="sm" variant="secondary" onClick={() => addChildProp(idx)}>
+                      <div className="text-[11px] text-muted-foreground">
+                        Object properties
+                      </div>
+                      <Button
+                        size="sm"
+                        variant="secondary"
+                        onClick={() => addChildProp(idx)}
+                      >
                         + Add
                       </Button>
                     </div>
                     <div className="space-y-2">
                       {(prop.properties || []).map((child, cidx) => (
-                        <div key={child.id} className="grid grid-cols-12 gap-2 items-center">
+                        <div
+                          key={child.id}
+                          className="grid grid-cols-12 gap-2 items-center"
+                        >
                           <div className="col-span-1 pl-4 flex items-center">
                             <TypeIcon type={child.type} />
                           </div>
@@ -258,7 +319,10 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                             value={child.type}
                             onValueChange={(v) => {
                               const props = [...(prop.properties || [])];
-                              props[cidx] = { ...child, type: v as SchemaPropertyType };
+                              props[cidx] = {
+                                ...child,
+                                type: v as SchemaPropertyType,
+                              };
                               updateProp(idx, { properties: props });
                             }}
                           >
@@ -278,7 +342,10 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                             value={child.description || ""}
                             onChange={(e) => {
                               const props = [...(prop.properties || [])];
-                              props[cidx] = { ...child, description: e.target.value };
+                              props[cidx] = {
+                                ...child,
+                                description: e.target.value,
+                              };
                               updateProp(idx, { properties: props });
                             }}
                             placeholder="Add description"
@@ -290,14 +357,23 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
                               checked={child.required ?? true}
                               onChange={(e) => {
                                 const props = [...(prop.properties || [])];
-                                props[cidx] = { ...child, required: e.target.checked };
+                                props[cidx] = {
+                                  ...child,
+                                  required: e.target.checked,
+                                };
                                 updateProp(idx, { properties: props });
                               }}
                             />
                             Required
                           </label>
                           <div className="col-span-1 text-right">
-                            <Button size="icon" variant="ghost" className="h-8 w-8" onClick={() => removeChildProp(idx, cidx)} title="Delete">
+                            <Button
+                              size="icon"
+                              variant="ghost"
+                              className="h-8 w-8"
+                              onClick={() => removeChildProp(idx, cidx)}
+                              title="Delete"
+                            >
                               <Trash className="w-4 h-4" />
                             </Button>
                           </div>
@@ -328,5 +404,3 @@ export function SchemaBuilder({ open, onOpenChange, value, onSave }: SchemaBuild
     </AlertDialog>
   );
 }
-
-

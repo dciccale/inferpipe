@@ -266,8 +266,19 @@ export function useWorkflowBuilder({
 
     const snapshot = JSON.stringify({
       name: workflowName || "My Workflow",
-      nodes: nodes.map((n) => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
-      edges: edges.map((e) => ({ id: e.id, s: e.source, t: e.target, sh: e.sourceHandle, th: e.targetHandle })),
+      nodes: nodes.map((n) => ({
+        id: n.id,
+        t: n.type,
+        p: n.position,
+        d: n.data,
+      })),
+      edges: edges.map((e) => ({
+        id: e.id,
+        s: e.source,
+        t: e.target,
+        sh: e.sourceHandle,
+        th: e.targetHandle,
+      })),
     });
 
     if (lastSavedSnapshotRef.current === snapshot) return;
@@ -330,7 +341,9 @@ export function useWorkflowBuilder({
         const node = aiNodes[i];
         const prompt = String(node.data.prompt || "Default prompt");
         const model = String(node.data.model || DEFAULT_MODEL);
-        const outputFormat = String(node.data.outputFormat || "text");
+        const outputFormat: "json" | "text" = String(
+          node.data.outputFormat || "text",
+        );
         const schema = node.data.schema as unknown;
 
         setRunningNodeId(node.id);
@@ -340,7 +353,7 @@ export function useWorkflowBuilder({
           previousOutput: JSON.stringify(currentOutput ?? {}),
           outputFormat,
           schema,
-        } as any);
+        });
 
         const aiStep: Step = {
           id: node.id,
@@ -389,7 +402,9 @@ export function useWorkflowBuilder({
       } else if (node.type === "ai") {
         const prompt = String(node.data.prompt || "");
         const model = String(node.data.model || DEFAULT_MODEL);
-        const outputFormat = String(node.data.outputFormat || "text");
+        const outputFormat: "json" | "text" = String(
+          node.data.outputFormat || "text",
+        );
         const schema = node.data.schema as unknown;
         const input = providedInput || steps[steps.length - 1]?.output || {};
 
@@ -403,7 +418,7 @@ export function useWorkflowBuilder({
             previousOutput: JSON.stringify(input ?? {}),
             outputFormat,
             schema,
-          } as any);
+          });
 
           const aiStep: Step = {
             id: nodeId,
@@ -483,8 +498,19 @@ export function useWorkflowBuilder({
     // prime lastSavedSnapshot to avoid immediate save after hydration
     const snapshot = JSON.stringify({
       name: (initialWorkflow?.name || "My Workflow") as string,
-      nodes: (initialWorkflow?.nodes || []).map((n) => ({ id: n.id, t: n.type, p: n.position, d: n.data })),
-      edges: (initialWorkflow?.edges || []).map((e) => ({ id: e.id, s: e.source, t: e.target, sh: e.sourceHandle, th: e.targetHandle })),
+      nodes: (initialWorkflow?.nodes || []).map((n) => ({
+        id: n.id,
+        t: n.type,
+        p: n.position,
+        d: n.data,
+      })),
+      edges: (initialWorkflow?.edges || []).map((e) => ({
+        id: e.id,
+        s: e.source,
+        t: e.target,
+        sh: e.sourceHandle,
+        th: e.targetHandle,
+      })),
     });
     lastSavedSnapshotRef.current = snapshot;
   }, [initialWorkflow, workflowId]);
