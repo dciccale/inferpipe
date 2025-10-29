@@ -1,13 +1,5 @@
 import { Button } from "@inferpipe/ui/components/button";
-import {
-  ArrowRight,
-  CheckCircle,
-  Code,
-  Shield,
-  Star,
-  Users,
-  Zap,
-} from "lucide-react";
+import { ArrowRight, CheckCircle, Shield, Users, Zap } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 
@@ -64,6 +56,7 @@ export default function HomePage() {
                     height={1080}
                     className="w-full h-auto"
                     priority
+                    unoptimized
                   />
                 </div>
               </div>
@@ -176,6 +169,7 @@ export default function HomePage() {
                     height={1540}
                     className="w-full h-auto"
                     priority
+                    unoptimized
                   />
                 </div>
               </div>
@@ -193,6 +187,7 @@ export default function HomePage() {
                     height={800}
                     className="w-full h-auto"
                     priority
+                    unoptimized
                   />
                 </div>
               </div>
@@ -212,6 +207,95 @@ export default function HomePage() {
                 <li className="flex items-start">
                   <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
                   <span>Personalized email campaigns at scale</span>
+                </li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section className="py-20 lg:py-28">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center mb-16">
+            <h2 className="text-3xl font-bold tracking-tight sm:text-4xl">
+              Custom JSON Schema
+            </h2>
+            <p className="mt-4 text-lg text-muted-foreground max-w-2xl mx-auto">
+              Define a custom JSON schema for structured AI outputs.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+            <div>
+              <h3 className="text-2xl font-bold mb-6">Structured output</h3>
+              <ul className="space-y-4">
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>UI Schema editor</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>
+                    Data types, nested objects, arrays, and validation
+                  </span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Automatic parse retry to match schema</span>
+                </li>
+              </ul>
+            </div>
+
+            <div className="relative">
+              <div className="aspect-video rounded-xl bg-muted/30 border border-border flex items-center justify-center">
+                <div className="rounded-xl overflow-hidden">
+                  <Image
+                    src="/workflow-schema.png"
+                    alt="Visual Pipeline Builder - Drag-and-drop AI workflows"
+                    width={777}
+                    height={484}
+                    className="w-full h-auto"
+                    priority
+                    unoptimized
+                  />
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-20">
+            <div className="relative lg:order-1">
+              <div className="aspect-video rounded-xl flex items-center justify-center">
+                <div className="rounded-xl overflow-hidden">
+                  <Image
+                    src="/workflow-output.png"
+                    alt="Visual Pipeline Builder - Drag-and-drop AI workflows"
+                    width={384}
+                    height={650}
+                    className="w-full h-auto"
+                    priority
+                    unoptimized
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div className="lg:order-2">
+              <h3 className="text-2xl font-bold mb-6">
+                Step by step output overview
+              </h3>
+              <ul className="space-y-4">
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Step 1 - input</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Step 2 - Data extraction with custom schema</span>
+                </li>
+                <li className="flex items-start">
+                  <CheckCircle className="w-5 h-5 text-primary mt-0.5 mr-3 flex-shrink-0" />
+                  <span>Step 3 - Web search using the input from Step 2</span>
                 </li>
               </ul>
             </div>
