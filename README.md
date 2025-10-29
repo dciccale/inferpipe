@@ -1,135 +1,133 @@
-# Turborepo starter
+# inferpipe
 
-This Turborepo starter is maintained by the Turborepo core team.
+## ⚠️ Important Warning
 
-## Using this example
+**inferpipe is currently in alpha stage and is a work in progress.** It is not ready for production use. Features may change, and there may be bugs or incomplete functionality. Use at your own risk for development and testing purposes only.
 
-Run the following command:
+## Overview
 
-```sh
-npx create-turbo@latest
+inferpipe is a visual AI workflow builder that enables you to build, test, and deploy AI pipelines without complex development or infrastructure setup. Add intelligent automation to any application through an intuitive drag-and-drop interface.
+
+Our goal is to democratize AI workflow creation, allowing teams to rapidly prototype and iterate on AI-powered features using structured outputs, multi-step processing, and integration with various AI models.
+
+## Key Goals
+
+- Provide a visual, no-code interface for designing complex AI workflows
+- Support structured JSON schema outputs for reliable data extraction
+- Enable testing and debugging of AI pipelines in real-time
+- Facilitate seamless deployment and integration via SDK and APIs
+- Support a range of AI models with specialized capabilities like web search and audio processing
+
+## Supported Models
+
+inferpipe supports a variety of OpenAI models, categorized as follows:
+
+### Reasoning Models
+- **GPT-4.1**: Latest flagship reasoning model
+- **GPT-4.1 Mini**: Lightweight reasoning with lower cost
+
+### General Purpose Models
+- **GPT-4o**: Balanced quality for multimodal tasks
+- **GPT-4o Mini** (default): Fast, cost-effective general model
+- **GPT-4 Turbo**: High-quality GPT-4 generation
+- **GPT-3.5 Turbo**: Legacy fast model
+
+### Web Search Enabled Models
+- **GPT-4o Search Preview**: Web-enabled GPT-4o preview
+- **GPT-4o Mini Search Preview**: Web-enabled GPT-4o mini preview
+
+### Speech & Audio Models
+- **GPT-4o Transcribe**: High quality speech-to-text
+- **GPT-4o Mini Transcribe**: Fast speech-to-text
+- **GPT-4o Mini TTS**: Text-to-speech generation
+
+These models support various capabilities including text generation, web search integration, and audio processing.
+
+## Workflow Builder Capabilities
+
+The core of inferpipe is the visual Workflow Builder, which allows you to:
+
+### Visual Pipeline Design
+- Drag-and-drop interface to create AI workflows
+- Connect nodes for multi-step processing (e.g., input → extraction → search → output)
+- Pre-built nodes for common operations like data extraction, content generation, and analysis
+
+![Workflow Builder](apps/web/public/workflow-builder-2.png)
+
+### Custom JSON Schema
+- Define structured outputs using a UI schema editor
+- Support for data types, nested objects, arrays, and validation
+- Automatic parse retry to ensure schema compliance
+
+### Testing & Iteration
+- Built-in prompt testing with real-time results
+- Step-by-step debugging and execution tracing
+- A/B testing for prompts and models
+- Performance monitoring and cost metrics
+
+### Node Inspector & Output Overview
+- Inspect node configurations and intermediate results
+- View step-by-step output for each workflow stage
+- Structured data visualization for easy validation
+
+### Example Use Cases
+- **SaaS Applications**: Customer support automation, content generation for marketing
+- **E-commerce**: Product description generation, review analysis, personalized campaigns
+- **Data Processing**: Extraction from documents, sentiment analysis, translation
+
+## Getting Started
+
+### 1. Visual Builder
+- Access the builder at `/app` after signing in
+- Start with templates for common workflows or build from scratch
+- Test inputs and iterate on node configurations
+
+### 2. SDK Integration
+For programmatic access, use the inferpipe SDK:
+
+```bash
+npm install @inferpipe/sdk
 ```
 
-## What's inside?
+Basic setup:
 
-This Turborepo includes the following packages/apps:
+```typescript
+import { InferPipe } from '@inferpipe/sdk';
 
-### Apps and Packages
-
-- `docs`: a [Next.js](https://nextjs.org/) app
-- `web`: another [Next.js](https://nextjs.org/) app
-- `@repo/ui`: a stub React component library shared by both `web` and `docs` applications
-- `@repo/eslint-config`: `eslint` configurations (includes `eslint-config-next` and `eslint-config-prettier`)
-- `@repo/typescript-config`: `tsconfig.json`s used throughout the monorepo
-
-Each package/app is 100% [TypeScript](https://www.typescriptlang.org/).
-
-### Utilities
-
-This Turborepo has some additional tools already setup for you:
-
-- [TypeScript](https://www.typescriptlang.org/) for static type checking
-- [ESLint](https://eslint.org/) for code linting
-- [Prettier](https://prettier.io) for code formatting
-
-### Build
-
-To build all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build
-yarn dlx turbo build
-pnpm exec turbo build
+const inferpipe = new InferPipe({
+  apiKey: process.env.INFERPIPE_API_KEY,
+  workspaceId: process.env.INFERPIPE_WORKSPACE_ID,
+});
 ```
 
-You can build a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+Execute a workflow:
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo build --filter=docs
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo build --filter=docs
-yarn exec turbo build --filter=docs
-pnpm exec turbo build --filter=docs
-```
-
-### Develop
-
-To develop all apps and packages, run the following command:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev
-yarn exec turbo dev
-pnpm exec turbo dev
+```typescript
+const result = await inferpipe.execute({
+  workflowId: 'your-workflow-id',
+  input: {
+    // your input data
+  }
+});
 ```
 
-You can develop a specific package by using a [filter](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters):
+### 3. Deployment
+- Deploy workflows directly from the builder
+- Integrate via API calls or webhooks for async processing
+- Monitor executions and handle errors with built-in tools
 
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo dev --filter=web
+## Architecture
 
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo dev --filter=web
-yarn exec turbo dev --filter=web
-pnpm exec turbo dev --filter=web
-```
+inferpipe uses:
+- **Frontend**: Next.js with React Flow for the visual builder
+- **Backend**: Convex for real-time data and authentication
+- **Workflow Engine**: Inngest for durable execution
+- **UI Components**: Shared Shadcn/UI components
 
-### Remote Caching
+## Contributing
 
-> [!TIP]
-> Vercel Remote Cache is free for all plans. Get started today at [vercel.com](https://vercel.com/signup?/signup?utm_source=remote-cache-sdk&utm_campaign=free_remote_cache).
+Contributions welcome! Please review our [code of conduct](CODE_OF_CONDUCT.md) and open issues for bugs or feature requests.
 
-Turborepo can use a technique known as [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching) to share cache artifacts across machines, enabling you to share build caches with your team and CI/CD pipelines.
+## License
 
-By default, Turborepo will cache locally. To enable Remote Caching you will need an account with Vercel. If you don't have an account you can [create one](https://vercel.com/signup?utm_source=turborepo-examples), then enter the following commands:
-
-```
-cd my-turborepo
-
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo login
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo login
-yarn exec turbo login
-pnpm exec turbo login
-```
-
-This will authenticate the Turborepo CLI with your [Vercel account](https://vercel.com/docs/concepts/personal-accounts/overview).
-
-Next, you can link your Turborepo to your Remote Cache by running the following command from the root of your Turborepo:
-
-```
-# With [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation) installed (recommended)
-turbo link
-
-# Without [global `turbo`](https://turborepo.com/docs/getting-started/installation#global-installation), use your package manager
-npx turbo link
-yarn exec turbo link
-pnpm exec turbo link
-```
-
-## Useful Links
-
-Learn more about the power of Turborepo:
-
-- [Tasks](https://turborepo.com/docs/crafting-your-repository/running-tasks)
-- [Caching](https://turborepo.com/docs/crafting-your-repository/caching)
-- [Remote Caching](https://turborepo.com/docs/core-concepts/remote-caching)
-- [Filtering](https://turborepo.com/docs/crafting-your-repository/running-tasks#using-filters)
-- [Configuration Options](https://turborepo.com/docs/reference/configuration)
-- [CLI Usage](https://turborepo.com/docs/reference/command-line-reference)
+MIT License - see [LICENSE](LICENSE) file for details.
