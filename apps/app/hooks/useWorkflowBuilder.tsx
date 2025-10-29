@@ -1,7 +1,7 @@
 // useWorkflowBuilder.tsx
 
-import { api } from "@packages/backend/api"; // This is the correct import
-import type { Id } from "@packages/backend/dataModel";
+import { api } from "@inferpipe/backend/api"; // This is the correct import
+import type { Id } from "@inferpipe/backend/dataModel";
 import type {
   Connection,
   Edge,
@@ -337,14 +337,15 @@ export function useWorkflowBuilder({
 
       const finalSteps = [inputStep];
 
-      for (let i = 0; i < aiNodes.length; i++) {
-        const node = aiNodes[i];
-        const prompt = String(node.data.prompt || "Default prompt");
-        const model = String(node.data.model || DEFAULT_MODEL);
-        const outputFormat: "json" | "text" = String(
-          node.data.outputFormat || "text",
-        );
-        const schema = node.data.schema as unknown;
+      for (const [index, node] of aiNodes.entries()) {
+        const prompt = String(node.data?.prompt || "Default prompt");
+        const model = String(node.data?.model || DEFAULT_MODEL);
+        const rawOutputFormat = node.data?.outputFormat;
+        const outputFormat: "json" | "text" =
+          rawOutputFormat === "json" || rawOutputFormat === "text"
+            ? rawOutputFormat
+            : "text";
+        const schema = node.data?.schema as unknown;
 
         setRunningNodeId(node.id);
         const aiResult = await executeAI({
@@ -357,13 +358,13 @@ export function useWorkflowBuilder({
 
         const aiStep: Step = {
           id: node.id,
-          step: i + 2,
+          step: index + 2,
           input: currentOutput,
           output: aiResult,
         };
 
         finalSteps.push(aiStep);
-        setSteps(finalSteps);
+        setSteps([...finalSteps]);
         currentOutput = aiResult;
       }
 
@@ -402,9 +403,11 @@ export function useWorkflowBuilder({
       } else if (node.type === "ai") {
         const prompt = String(node.data.prompt || "");
         const model = String(node.data.model || DEFAULT_MODEL);
-        const outputFormat: "json" | "text" = String(
-          node.data.outputFormat || "text",
-        );
+        const rawOutputFormat = node.data.outputFormat;
+        const outputFormat: "json" | "text" =
+          rawOutputFormat === "json" || rawOutputFormat === "text"
+            ? rawOutputFormat
+            : "text";
         const schema = node.data.schema as unknown;
         const input = providedInput || steps[steps.length - 1]?.output || {};
 

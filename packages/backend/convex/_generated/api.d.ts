@@ -8,16 +8,17 @@
  * @module
  */
 
-import type {
-  ApiFromModules,
-  FilterApi,
-  FunctionReference,
-} from "convex/server";
 import type * as http from "../http.js";
 import type * as inngest from "../inngest.js";
 import type * as runs from "../runs.js";
 import type * as steps from "../steps.js";
 import type * as workflows from "../workflows.js";
+
+import type {
+  ApiFromModules,
+  FilterApi,
+  FunctionReference,
+} from "convex/server";
 
 /**
  * A utility for referencing Convex functions in your app's API.
@@ -34,11 +35,15 @@ declare const fullApi: ApiFromModules<{
   steps: typeof steps;
   workflows: typeof workflows;
 }>;
+declare const fullApiWithMounts: typeof fullApi;
+
 export declare const api: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "public">
 >;
 export declare const internal: FilterApi<
-  typeof fullApi,
+  typeof fullApiWithMounts,
   FunctionReference<any, "internal">
 >;
+
+export declare const components: {};

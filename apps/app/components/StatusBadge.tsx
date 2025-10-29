@@ -1,4 +1,4 @@
-import { cn } from "@/lib/utils";
+import { cn } from "@inferpipe/ui/lib/utils";
 
 type WorkflowStatus =
   | "draft"

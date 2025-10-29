@@ -1,5 +1,5 @@
 {
-  "name": "@packages/backend",
+  "name": "@inferpipe/backend",
   "version": "1.0.0",
   "description": "Convex backend for Inferpipe",
   "main": "convex/_generated/api.js",
@@ -19,6 +19,7 @@
   },
   "scripts": {
     "dev": "convex dev",
+    "lint": "biome lint",
     "build": "echo 'Build step skipped - Convex API files should be pre-generated'",
     "deploy": "convex deploy"
   },
@@ -31,7 +32,7 @@
     "openai": "^5.23.0",
     "zod": "^3.25.6"
   },
-  "peerDependencies": {
-    "convex": "^1.27.3"
+  "devDependencies": {
+    "@biomejs/biome": "2.3.1"
   }
 }

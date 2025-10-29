@@ -126,10 +126,26 @@ export function SchemaBuilder({
     }));
   };
 
+  // Merge helper that ignores undefined values so required fields stay intact
+  function mergeDefined<T extends object>(base: T, patch: Partial<T>): T {
+    const result = { ...base };
+    for (const key of Object.keys(patch) as Array<keyof T>) {
+      const value = patch[key];
+      if (value !== undefined) {
+        result[key] = value;
+      }
+    }
+    return result;
+  }
+
   const updateProp = (idx: number, update: Partial<SchemaProperty>) => {
     setSchema((s) => {
       const next = [...s.properties];
-      next[idx] = { ...next[idx], ...update };
+      const current = next[idx];
+      if (!current) {
+        return s;
+      }
+      next[idx] = mergeDefined(current, update);
       return { ...s, properties: next };
     });
   };
@@ -145,7 +161,9 @@ export function SchemaBuilder({
     setSchema((s) => {
       const next = [...s.properties];
       const parent = next[parentIdx];
-      if (parent.type !== "OBJ") return s;
+      if (!parent || parent.type !== "OBJ") {
+        return s;
+      }
       const childProps = parent.properties ? [...parent.properties] : [];
       childProps.push({
         id: Math.random().toString(36).slice(2, 10),
@@ -153,7 +171,7 @@ export function SchemaBuilder({
         type: "STR",
         required: true,
       });
-      next[parentIdx] = { ...parent, properties: childProps };
+      next[parentIdx] = mergeDefined(parent, { properties: childProps });
       return { ...s, properties: next };
     });
   };
@@ -162,9 +180,11 @@ export function SchemaBuilder({
     setSchema((s) => {
       const next = [...s.properties];
       const parent = next[parentIdx];
-      if (parent.type !== "OBJ" || !parent.properties) return s;
+      if (!parent || parent.type !== "OBJ" || !parent.properties) {
+        return s;
+      }
       const childProps = parent.properties.filter((_, i) => i !== childIdx);
-      next[parentIdx] = { ...parent, properties: childProps };
+      next[parentIdx] = mergeDefined(parent, { properties: childProps });
       return { ...s, properties: next };
     });
   };

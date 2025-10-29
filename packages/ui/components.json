@@ -5,15 +5,15 @@
   "tsx": true,
   "tailwind": {
     "config": "",
-    "css": "src/styles/globals.css",
+    "css": "styles/globals.css",
     "baseColor": "zinc",
     "cssVariables": true
   },
   "iconLibrary": "lucide",
   "aliases": {
-    "components": "@/components",
-    "hooks": "@/hooks",
-    "lib": "@/lib",
+    "components": "@inferpipe/ui/components",
+    "hooks": "@inferpipe/ui/hooks",
+    "lib": "@inferpipe/ui/lib",
     "utils": "@inferpipe/ui/lib/utils",
     "ui": "@inferpipe/ui/components"
   }

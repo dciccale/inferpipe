@@ -4,8 +4,8 @@
   "rsc": true,
   "tsx": true,
   "tailwind": {
-    "config": "tailwind.config.js",
-    "css": "../../packages/ui/src/styles/globals.css",
+    "config": "",
+    "css": "../../packages/ui/styles/globals.css",
     "baseColor": "zinc",
     "cssVariables": true
   },

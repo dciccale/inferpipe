@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
+import "@inferpipe/ui/globals.css";
 import { Geist, Geist_Mono } from "next/font/google";
-import "@inferpipe/ui/styles/globals.css";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
 import { Toaster } from "@inferpipe/ui/components/sonner";

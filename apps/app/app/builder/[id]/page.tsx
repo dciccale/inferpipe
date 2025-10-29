@@ -2,8 +2,8 @@
 
 import { Button } from "@inferpipe/ui/components/button";
 import { Input } from "@inferpipe/ui/components/input";
-import { api } from "@packages/backend/api";
-import type { Id } from "@packages/backend/dataModel";
+import { api } from "@inferpipe/backend/api";
+import type { Id } from "@inferpipe/backend/dataModel";
 import { useQuery } from "convex/react";
 import { ArrowLeft, Play, Plus } from "lucide-react";
 import { useParams, useRouter } from "next/navigation";
