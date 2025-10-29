@@ -9,6 +9,14 @@ export default function DocsPage() {
       <section className="py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center mb-16">
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+              <span className="inline-flex items-center rounded-full border border-border bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                Work in Progress
+              </span>
+              <span className="inline-flex items-center rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                Alpha
+              </span>
+            </div>
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl mb-6">
               <span className="block">inferpipe</span>
               <span className="block text-primary">Documentation</span>

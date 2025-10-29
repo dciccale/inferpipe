@@ -18,9 +18,13 @@ export default function HomePage() {
       <section className="relative overflow-hidden py-20 lg:py-28">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="text-center">
-            <div className="inline-flex items-center rounded-full px-4 py-1.5 text-sm font-medium bg-secondary text-secondary-foreground mb-8">
-              <Star className="w-4 h-4 mr-2" />
-              Visual AI Pipeline Builder
+            <div className="mb-6 flex flex-wrap items-center justify-center gap-3">
+              <span className="inline-flex items-center rounded-full border border-border bg-amber-100 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-amber-700">
+                Work in Progress
+              </span>
+              <span className="inline-flex items-center rounded-full border border-border bg-primary/10 px-3 py-1 text-xs font-semibold uppercase tracking-wide text-primary">
+                Alpha
+              </span>
             </div>
 
             <h1 className="text-4xl font-bold tracking-tight sm:text-6xl lg:text-7xl">
@@ -164,11 +168,15 @@ export default function HomePage() {
 
             <div className="relative">
               <div className="aspect-video rounded-xl bg-muted/30 border border-border flex items-center justify-center">
-                <div className="text-center">
-                  <Users className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    SaaS Workflow Example
-                  </p>
+                <div className="rounded-xl overflow-hidden">
+                  <Image
+                    src="/workflow-builder-node.png"
+                    alt="Visual Pipeline Builder - Drag-and-drop AI workflows"
+                    width={1540}
+                    height={1540}
+                    className="w-full h-auto"
+                    priority
+                  />
                 </div>
               </div>
             </div>
@@ -177,11 +185,15 @@ export default function HomePage() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center mt-20">
             <div className="relative lg:order-1">
               <div className="aspect-video rounded-xl bg-muted/30 border border-border flex items-center justify-center">
-                <div className="text-center">
-                  <Code className="w-12 h-12 text-muted-foreground mx-auto mb-3" />
-                  <p className="text-sm text-muted-foreground">
-                    E-commerce Workflow Example
-                  </p>
+                <div className="rounded-xl overflow-hidden">
+                  <Image
+                    src="/workflow-executing.png"
+                    alt="Visual Pipeline Builder - Drag-and-drop AI workflows"
+                    width={812}
+                    height={800}
+                    className="w-full h-auto"
+                    priority
+                  />
                 </div>
               </div>
             </div>

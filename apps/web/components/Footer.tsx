@@ -24,7 +24,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href="/features"
+                  href="/"
                   className="hover:text-foreground transition-colors"
                 >
                   Features
@@ -48,7 +48,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/api"
+                  href="/docs"
                   className="hover:text-foreground transition-colors"
                 >
                   API Reference
@@ -62,7 +62,7 @@ export function Footer() {
             <ul className="space-y-2 text-sm text-muted-foreground">
               <li>
                 <Link
-                  href="/about"
+                  href="/"
                   className="hover:text-foreground transition-colors"
                 >
                   About
@@ -70,7 +70,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/blog"
+                  href="/"
                   className="hover:text-foreground transition-colors"
                 >
                   Blog
@@ -78,7 +78,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/contact"
+                  href="/"
                   className="hover:text-foreground transition-colors"
                 >
                   Contact
@@ -86,7 +86,7 @@ export function Footer() {
               </li>
               <li>
                 <Link
-                  href="/privacy"
+                  href="/"
                   className="hover:text-foreground transition-colors"
                 >
                   Privacy
