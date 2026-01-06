@@ -1,6 +1,7 @@
 import { httpRouter } from "convex/server";
 import { httpAction } from "./_generated/server";
 import { api } from "./_generated/api";
+import type { Id } from "./_generated/dataModel";
 
 const http = httpRouter();
 
@@ -44,7 +45,7 @@ http.route({
 
       // Delegate to the executeWorkflow mutation
       const result = await ctx.runMutation(api.workflows.executeWorkflow, {
-        workflowId: workflowId as any,
+        workflowId: workflowId as Id<"workflows">,
         input: input || {},
         stepId: stepId || undefined,
       });
@@ -93,7 +94,7 @@ http.route({
       }
 
       const run = await ctx.runQuery(api.runs.getRun, {
-        runId: runId as any,
+        runId: runId as Id<"runs">,
       });
 
       if (!run) {

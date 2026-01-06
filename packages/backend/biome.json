@@ -4,11 +4,11 @@
   "vcs": {
     "enabled": true,
     "clientKind": "git",
-    "useIgnoreFile": true
+    "useIgnoreFile": false
   },
   "files": {
-    "ignoreUnknown": true,
-    "includes": ["**", "!node_modules", "!.next", "!dist", "!build"]
+    "ignoreUnknown": false,
+    "includes": ["**", "!convex/_generated"]
   },
   "formatter": {
     "enabled": true,
@@ -18,13 +18,7 @@
   "linter": {
     "enabled": true,
     "rules": {
-      "recommended": true,
-      "complexity": {
-        "noImportantStyles": "off"
-      },
-      "suspicious": {
-        "noUnknownAtRules": "off"
-      }
+      "recommended": true
     }
   },
   "javascript": {

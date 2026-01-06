@@ -76,7 +76,6 @@ export default function DocsPage() {
       </section>
 
       {/* Getting Started */}
-      {/* biome-ignore lint/correctness/useUniqueElementIds: This page is rendered once; anchors are stable and intentional. */}
       <section id="getting-started" className="py-20 lg:py-28 bg-muted/30">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
@@ -130,7 +129,6 @@ export default function DocsPage() {
       </section>
 
       {/* SDK Documentation */}
-      {/* biome-ignore lint/correctness/useUniqueElementIds: Single-render docs page with anchor links. */}
       <section id="sdk" className="py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">
@@ -297,7 +295,6 @@ app.post('/extract', async (req, res) => {
       </section>
 
       {/* API Reference */}
-      {/* biome-ignore lint/correctness/useUniqueElementIds: Single-render docs page with anchor links. */}
       <section id="api" className="py-20 lg:py-28">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
           <h2 className="text-3xl font-bold tracking-tight sm:text-4xl mb-8">

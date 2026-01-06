@@ -48,19 +48,23 @@ export const updateStep = mutation({
       v.literal("pending"),
       v.literal("running"),
       v.literal("completed"),
-      v.literal("failed")
+      v.literal("failed"),
     ),
     output: v.optional(v.any()),
     error: v.optional(v.string()),
-    metadata: v.optional(v.object({
-      model: v.optional(v.string()),
-      tokens: v.optional(v.object({
-        input: v.optional(v.number()),
-        output: v.optional(v.number()),
-      })),
-      cost: v.optional(v.number()),
-      duration: v.optional(v.number()),
-    })),
+    metadata: v.optional(
+      v.object({
+        model: v.optional(v.string()),
+        tokens: v.optional(
+          v.object({
+            input: v.optional(v.number()),
+            output: v.optional(v.number()),
+          }),
+        ),
+        cost: v.optional(v.number()),
+        duration: v.optional(v.number()),
+      }),
+    ),
   },
   handler: async (ctx, args) => {
     // Get the authenticated user
@@ -82,14 +86,12 @@ export const updateStep = mutation({
       throw new Error("Access denied");
     }
 
-    const updateData: any = {
+    const updateData = {
       ...updates,
+      ...(updates.status === "completed" || updates.status === "failed"
+        ? { completedAt: Date.now() }
+        : {}),
     };
-
-    // Set completion time if status is completed or failed
-    if (updates.status === "completed" || updates.status === "failed") {
-      updateData.completedAt = Date.now();
-    }
 
     await ctx.db.patch(stepId, updateData);
     return stepId;

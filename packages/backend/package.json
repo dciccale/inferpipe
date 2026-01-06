@@ -20,6 +20,7 @@
   "scripts": {
     "dev": "convex dev",
     "lint": "biome lint",
+    "format": "biome format --write",
     "build": "echo 'Build step skipped - Convex API files should be pre-generated'",
     "deploy": "convex deploy"
   },

@@ -11,7 +11,7 @@
     "@inferpipe/ui#build": {
       "outputs": []
     },
-    "@packages/backend#build": {
+    "@inferpipe/backend#build": {
       "outputs": []
     },
     "dev": {

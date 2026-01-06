@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 import "@inferpipe/ui/globals.css";
-import { Geist, Geist_Mono } from "next/font/google";
 import { ClerkProvider } from "@clerk/nextjs";
 import { shadcn } from "@clerk/themes";
 import { Toaster } from "@inferpipe/ui/components/sonner";
+import { Geist, Geist_Mono } from "next/font/google";
 import { ConvexClientProvider } from "@/components/ConvexClientProvider";
 import { Header } from "@/components/Header";
 import { ThemeProvider } from "@/components/theme-provider";

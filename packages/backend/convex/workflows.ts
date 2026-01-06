@@ -1,5 +1,5 @@
 import { v } from "convex/values";
-import { mutation, query } from "./_generated/server";
+import { mutation, query, type MutationCtx } from "./_generated/server";
 import type { Id } from "./_generated/dataModel";
 
 // Create a new workflow
@@ -222,7 +222,7 @@ interface WorkflowNode {
   id: string;
   type: string;
   position: { x: number; y: number };
-  data: any;
+  data: Record<string, unknown>;
 }
 
 interface Workflow {
@@ -232,6 +232,16 @@ interface Workflow {
 
 interface UserIdentity {
   subject: string;
+}
+
+interface StepMetadata {
+  model?: string;
+  tokens?: {
+    input?: number;
+    output?: number;
+  };
+  cost?: number;
+  duration?: number;
 }
 
 // Execute a workflow - creates a run and executes it
@@ -329,7 +339,7 @@ export const executeWorkflow = mutation({
 
 // Execute a single step
 async function executeStep(
-  ctx: any,
+  ctx: MutationCtx,
   workflow: Workflow,
   runId: Id<"runs">,
   input: Record<string, unknown>,
@@ -358,7 +368,7 @@ async function executeStep(
       status: "running",
     });
 
-    let result: { output: unknown; metadata?: Record<string, unknown> };
+    let result: { output: unknown; metadata?: StepMetadata };
     if (targetNode.type === "ai") {
       result = await executeAINode(targetNode, input);
     } else if (targetNode.type === "input") {
@@ -370,7 +380,7 @@ async function executeStep(
     await ctx.db.patch(stepId, {
       status: "completed",
       output: result.output,
-      metadata: result.metadata || {},
+      metadata: result.metadata,
       completedAt: Date.now(),
     });
 
@@ -387,7 +397,7 @@ async function executeStep(
 
 // Execute the full workflow
 async function executeFullWorkflow(
-  ctx: any,
+  ctx: MutationCtx,
   workflow: Workflow,
   runId: Id<"runs">,
   input: Record<string, unknown>,
@@ -428,7 +438,7 @@ async function executeFullWorkflow(
       await ctx.db.patch(stepId, {
         status: "completed",
         output: result.output,
-        metadata: result.metadata || {},
+        metadata: result.metadata,
         completedAt: Date.now(),
       });
 
@@ -454,18 +464,22 @@ async function executeAINode(
   input: Record<string, unknown>,
 ) {
   // This will be moved to Inngest later, but for now keep it simple
-  const prompt = node.data.prompt || "Hello, how can I help you today?";
-  const model = node.data.model || "gpt-3.5-turbo";
+  const prompt =
+    typeof node.data.prompt === "string"
+      ? node.data.prompt
+      : "Hello, how can I help you today?";
+  const model =
+    typeof node.data.model === "string" ? node.data.model : "gpt-3.5-turbo";
 
   // Simple template replacement
   let processedPrompt = prompt;
   if (input) {
-    Object.keys(input).forEach((key) => {
+    for (const key of Object.keys(input)) {
       processedPrompt = processedPrompt.replace(
         new RegExp(`{{${key}}}`, "g"),
         String(input[key]),
       );
-    });
+    }
   }
 
   // For now, return a mock response

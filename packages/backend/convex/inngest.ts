@@ -8,7 +8,8 @@ import { action } from "./_generated/server";
 // TODO: Install and configure Inngest SDK if serving functions from our code
 // npm install inngest
 
-const INNGEST_API_BASE = process.env.INNGEST_API_BASE ?? "https://api.inngest.com";
+const INNGEST_API_BASE =
+  process.env.INNGEST_API_BASE ?? "https://api.inngest.com";
 const INNGEST_API_KEY = process.env.INNGEST_API_KEY ?? "";
 
 // We consistently use the Inngest HTTP API from the backend.
@@ -32,20 +33,39 @@ export interface WorkflowGraph {
   outputNodeId: string;
 }
 
-function labelForStep(node: WorkflowNode): string {
+interface InngestJob {
+  id: string;
+  name: string;
+  status: string;
+  startedAt?: string;
+  started_at?: string;
+  finishedAt?: string;
+  finished_at?: string;
+  durationMs?: number;
+  duration_ms?: number;
+  output?: unknown;
+  result?: unknown;
+  error?: unknown;
+}
+
+function _labelForStep(node: WorkflowNode): string {
   return `node-${node.id}-${node.type}`;
 }
 
-function renderPromptTemplate(
+function _renderPromptTemplate(
   template: string | undefined,
   initialInput: unknown,
-  nodeIdToResult: Record<string, unknown>
+  nodeIdToResult: Record<string, unknown>,
 ): string {
   if (!template) return "";
   // Very basic template replacement for MVP.
   // Replace {{input.*}} and {{node.<id>.*}} tokens with JSON values.
-  const withInput = template.split("{{input}}").join(JSON.stringify(initialInput));
-  const withResults = withInput.split("{{results}}").join(JSON.stringify(nodeIdToResult));
+  const withInput = template
+    .split("{{input}}")
+    .join(JSON.stringify(initialInput));
+  const withResults = withInput
+    .split("{{results}}")
+    .join(JSON.stringify(nodeIdToResult));
   return withResults;
 }
 
@@ -74,7 +94,7 @@ export const triggerInngestRun = action({
     graph: v.any(),
     input: v.any(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     // Use Cloud API directly
     await inngestApi(`/v1/events`, {
       method: "POST",
@@ -103,13 +123,21 @@ export const compileAndTrigger = action({
     runId: v.string(),
     input: v.any(),
   },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     // TODO: Fetch workflow graph by (workspaceId, workflowId, workflowVersionId) from Convex store
     // const graph = await ctx.runQuery(api.workflows.getVersionGraph, {...})
     const graph: WorkflowGraph = {
       topologicallySortedNodes: [
-        { id: "n1", type: "llm", config: { model: "gpt-4", prompt: "Summarize: {{input}}" } },
-        { id: "n2", type: "transform", config: { script: "return { summary: results['n1'] }" } },
+        {
+          id: "n1",
+          type: "llm",
+          config: { model: "gpt-4", prompt: "Summarize: {{input}}" },
+        },
+        {
+          id: "n2",
+          type: "transform",
+          config: { script: "return { summary: results['n1'] }" },
+        },
       ],
       outputNodeId: "n2",
     };
@@ -135,7 +163,7 @@ export const compileAndTrigger = action({
 // Fetch run status for observability pages
 export const getInngestRun = action({
   args: { runId: v.string() },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const res = await inngestApi(`/v1/runs/${args.runId}`);
     const json = await res.json();
     return json;
@@ -145,13 +173,13 @@ export const getInngestRun = action({
 // Fetch jobs (steps) for a given run and map them to our step model
 export const getInngestRunJobs = action({
   args: { runId: v.string() },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     const res = await inngestApi(`/v1/runs/${args.runId}/jobs`);
     const json = await res.json();
 
     // Map to a simple UI-friendly structure
-    const jobs = Array.isArray(json?.data) ? json.data : [];
-    const mapped = jobs.map((job: any) => ({
+    const jobs: InngestJob[] = Array.isArray(json?.data) ? json.data : [];
+    const mapped = jobs.map((job) => ({
       id: job.id,
       name: job.name, // should be our labelForStep(...)
       status: job.status,
@@ -169,7 +197,7 @@ export const getInngestRunJobs = action({
 // Cancel a running execution
 export const cancelInngestRun = action({
   args: { runId: v.string() },
-  handler: async (ctx, args) => {
+  handler: async (_ctx, args) => {
     await inngestApi(`/v1/runs/${args.runId}`, { method: "DELETE" });
     return { canceled: true };
   },
